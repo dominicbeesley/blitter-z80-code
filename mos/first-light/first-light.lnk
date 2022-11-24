@@ -1,5 +1,5 @@
 -i build/first-light.ihx
--b CODE=0xF000
+-b CODE=0xC000
 -b CODE_VEC=0xFF00
 -b DATA=0x100
 -m

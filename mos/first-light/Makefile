@@ -30,9 +30,9 @@ $(BUILD)first-light.ihx: $(BUILD)first-light.rel $(BUILD)font_data.rel first-lig
 
 $(BUILD)first-light.bin: $(BUILD)first-light.ihx
 	hex2bin 0xC000 $< $@
-	echo M.FIRSTL FFC000 FFC000 > $(BUILD)/first-light.bin.inf
-	echo $.\!FIRST 000000 000000 > $(BUILD)/_21FIRST.txt.inf
-	echo "*BLLOAD M.FIRSTL #D1 7D0000" > $(BUILD)/_21FIRST.txt
+	echo -en "M.FIRSTL FFC000 FFC000\\r" > $(BUILD)/first-light.bin.inf
+	echo -en "$.!FIRST 000000 000000\\r" > $(BUILD)/_21FIRST.txt.inf
+	echo -en "*BLLOAD M.FIRSTL #D1 7D0000\\r" > $(BUILD)/_21FIRST.txt
 
 
 clean:

@@ -12,8 +12,8 @@ scr_ptr:	.rmb 2
 
 		.globl	font_data
 
-SCREEN_BASE	= 0xA000
-SCREEN_LEN	= 0x4000
+SCREEN_BASE	= 0x3000
+SCREEN_LEN	= 0x5000
 
 handle_res3::	di
 		ld	sp, 0x3000
@@ -56,7 +56,7 @@ clp:		ld	d,(hl)
 		ld	bc, SCREEN_LEN-1
 		ldir
 
-		ld	hl, SCREEN_BASE + 640 * 5
+		ld	hl, SCREEN_BASE + 64 + 640 * 5
 		ld	(scr_ptr), hl
 		ld	hl, message
 
