@@ -59,34 +59,58 @@ lp2:		ld	(hl), a
 
 		.endm
 
-		.macro MAGNIFY
-;;		; show 8 bytes from 3000-3007 magnified at bottom of screen
-;;		
-;;		lea.l	-0hD000,A0	; src
-;;		lea.l	-0hA800,A1	; dest
-;;		moveq	#7,D4
-;;.\@_lp0:	move.b	(A0)+,D3
-;;		moveq	#7,D5
-;;.\@_lp1:	rol.b	#1,D3
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		scs.b	(A1)+
-;;		dbf	D5,.\@_lp1
-;;		adda	#640-128,A1
-;;		dbf	D4,.\@_lp0
+		.macro MAGNIFY ?lp, ?lp2, ?sk2, ?lp3
+		; show 8 bytes from 3000-3007 magnified at bottom of screen
+		exx
+		ld	ix, SCREEN_BASE_MO4
+		ld	hl, SCREEN_BASE_MO4+320*16
+		ld	c, 8
+lp:		ld	a,(ix+0)
+		inc	ix
+		ld	e,a
+		ld	b, 8
+lp2:		ld	a,0
+		rlc	e		; shift out leftmost
+		jr	nc, sk2
+		dec	a
+sk2:		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		djnz	lp2
+		ld	de,320-8*16
+		add	hl,de
+		dec	c
+		jr	nz, lp
+		exx
 		.endm
 
 
