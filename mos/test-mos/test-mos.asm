@@ -44,7 +44,8 @@ lp:		ld	d,(hl)
 
 		.macro PAL f, ?lp, ?lp2
 
-
+		exx
+		ex	AF,AF'
 		; set up palette as B&W
 		ld	a, 7
 		ld	hl, sheila_VIDULA_pal
@@ -57,13 +58,15 @@ lp2:		ld	(hl), a
 		add	a, 0h10
 		jp	m, lp2
 
+		exx
+		ex	AF,AF'
 		.endm
 
 		.macro MAGNIFY ?lp, ?lp2, ?sk2, ?lp3
 		; show 8 bytes from 3000-3007 magnified at bottom of screen
 		exx
 		ld	ix, SCREEN_BASE_MO4
-		ld	hl, SCREEN_BASE_MO4+320*16
+		ld	hl, SCREEN_BASE_MO4+(320*24)
 		ld	c, 8
 lp:		ld	a,(ix+0)
 		inc	ix
@@ -281,9 +284,9 @@ $103:
 		; increment bytes
 
 		ld	e,0
-ilo:		ld	hl,SCREEN_BASE_MO4
 		ld	b,0
-		ld	c,>SCREEN_SIZE_MO4
+ilo:		ld	hl,SCREEN_BASE_MO4
+		ld	c,>(320*24)
 ilo2:		inc	(hl)
 		inc	hl
 		djnz	ilo2
@@ -292,8 +295,12 @@ ilo2:		inc	(hl)
 
 		MAGNIFY
 
+		ld	a,e
+		rlc	a
+		jr	c,palw
+
 		dec	e
-		jr	nz,ilo
+		jp	nz,ilo
 
 
 		WAITL
