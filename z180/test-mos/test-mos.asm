@@ -1,5 +1,6 @@
+		.hd64
 
-		.include "../../includes/hardware.inc"
+		.include "../includes/hardware.inc"
 
 		.globl screen_mo7
 
@@ -363,10 +364,32 @@ handle_res:
 
 		jp	handle_res2
 
-handle_res2:	; we are now running in ROM and can disable the boot mapping by writing to FCFF
+handle_res2:	
+		; on the z180 we need to map the MOS ROM into the top bank
+
+		; first set banking boundaries, for this test we'll map: 
+		; ChipRAM 		0..2FFF (Common Area 0)
+		; SysRAM/screen 		3000..C000 (Banked Area)
+		; the MOS ROM at 		C000 (Common Area 1)
+
+		ld	a,#0xC3
+		out0	(CBAR),a
+
+		ld	a,#0xF0
+		out0	(BBR),a
+
+		ld	a,#0xF0
+		out0	(CBR),a
+
+		ld	a,#"a"
+		ld	(0x7C02),a
+
+; we are now running in ROM and can disable the boot mapping by writing to FCFF
 
 		ld	a,#0xD1
-		ld	(0xFCFF),a
+		ld	bc,#0xFCFF
+		out	(c),a
+
 
 		jp	handle_res3
 
