@@ -39,7 +39,7 @@ $(BUILD)test-mos.bin: $(BUILD)test-mos.ihx
 	/bin/echo -e -n "OSCLI(\"EXEC\"):OSCLI(\"BLLOAD M.TEST #D1 7D0000\"):PRINT \"PRESS BREAK\"\\r" > $(BUILD)/_21BOOT.txt
 
 
-z180logo.mo7.asm:  z180logo.mo7
+$(BUILD)z180logo.mo7.rel:  z180logo.mo7
 
 clean:
 	-rm $(BUILD)*.s19
