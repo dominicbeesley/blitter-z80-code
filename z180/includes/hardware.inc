@@ -7,13 +7,13 @@ Z180_INTERNAL_BASE = 0 ; override externally if required
 CNTLA0	= Z180_INTERNAL_BASE + 0x00	; ASCI control A 		ch.0 
 CNTLA1	= Z180_INTERNAL_BASE + 0x01	; ASCI control A 		ch.1 
 CNTLB0	= Z180_INTERNAL_BASE + 0x02	; ASCI control B 		ch.0 
-CNTLB1	= Z180_INTERNAL_BASE + 0x03	; ASCI control B 		ch.0 
+CNTLB1	= Z180_INTERNAL_BASE + 0x03	; ASCI control B 		ch.1 
 STAT0	= Z180_INTERNAL_BASE + 0x04	; ASCI status    		ch.0 
 STAT1	= Z180_INTERNAL_BASE + 0x05	; ASCI status    		ch.1 
 TDR0	= Z180_INTERNAL_BASE + 0x06	; ASCI transmit data 		ch.0 
 TDR1	= Z180_INTERNAL_BASE + 0x07	; ASCI transmit data 		ch.1 
 RDR0	= Z180_INTERNAL_BASE + 0x08	; ASCI receive data	  	ch.0 
-RDR1	= Z180_INTERNAL_BASE + 0x09	; ASCI receive data	  	ch.0 
+RDR1	= Z180_INTERNAL_BASE + 0x09	; ASCI receive data	  	ch.1 
 CNTR	= Z180_INTERNAL_BASE + 0x0A	; CSI/0 control  
 TRDR	= Z180_INTERNAL_BASE + 0x0B	; CSI/0 transmit/receive data
 
@@ -22,11 +22,20 @@ TMDR0H	= Z180_INTERNAL_BASE + 0x0D	; Timer data			ch.0H
 RLDR0L	= Z180_INTERNAL_BASE + 0x0E	; Timer reload			ch.0L
 RLDR0H	= Z180_INTERNAL_BASE + 0x0F	; Timer reload			ch.0H
 TCR	= Z180_INTERNAL_BASE + 0x10	; Timer control 
+
+ASEXT0	= Z180_INTERNAL_BASE + 0x12	; ASCI extension ctl		ch.0
+ASEXT1	= Z180_INTERNAL_BASE + 0x13	; ASCI extension ctl		ch.1
+
 TMDR1L	= Z180_INTERNAL_BASE + 0x14	; Timer data			ch.1L
 TMDR1H	= Z180_INTERNAL_BASE + 0x15	; Timer data			ch.1H
 RLDR1L	= Z180_INTERNAL_BASE + 0x16	; Timer reload			ch.1L
 RLDR1H	= Z180_INTERNAL_BASE + 0x17	; Timer reload			ch.1H
 FRC	= Z180_INTERNAL_BASE + 0x18	; Timer free run counter
+
+TC0L	= Z180_INTERNAL_BASE + 0x1A	; BRG time constant L		ch.0L
+TC0H	= Z180_INTERNAL_BASE + 0x1B	; BRG time constant H		ch.0H
+TC1L	= Z180_INTERNAL_BASE + 0x1C	; BRG time constant L		ch.1H
+TC1H	= Z180_INTERNAL_BASE + 0x1D	; BRG time constant H		ch.1H
 
 CMR	= Z180_INTERNAL_BASE + 0x1E	; Clock multiplier
 CCR	= Z180_INTERNAL_BASE + 0x1F	; CPU Control

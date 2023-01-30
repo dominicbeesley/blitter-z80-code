@@ -159,8 +159,6 @@ $100:		ld	(sheila_SYSVIA_orb), a
 		cp	9
 		jr	nc, $100
 
-
-
 	; SN76489 data byte format
 	; %1110-wnn latch noise (channel 3) w=white noise (otherwise periodic), nn: 0=hi, 1=med, 2=lo, 3=freq from channel %10
 	; %1cc0pppp latch channel (%00-%10) period (low bits)
@@ -199,6 +197,48 @@ $101:
 		ld	de,SCREEN_BASE_MO7
 		ld	bc,SCREEN_SIZE_MO7
 		ldir
+
+		; send out something on Serial link ASCI0
+
+		ld	a,0x64				; enable Xmit/Rcv, 8n1
+		out0	(CNTLA0),a
+
+		ld	a,0x08				; ???
+		out0	(CNTLB0),a
+
+		; extension control
+		ld	a,0x18				; brg on X1
+		out0	(ASEXT0),a
+
+BAUD_TC = 415		; not sure yet 16Mhz/19200/2/1-2
+		ld	a,<BAUD_TC
+		out0	(TC0L),a
+		ld	a,>BAUD_TC
+		out0	(TC0H),a
+
+		
+		ld	hl,str_serial_welcome
+
+$200:		ld	de,0
+
+$201:		in0	a,(STAT0)
+		and	0x02
+		jr	nz, $202
+		dec	e
+		jr	nz, $201
+		dec	d
+		jr	nz, $201
+		jr	$203
+
+
+$202:		ld	a,(hl)
+		inc	hl
+		or	a
+		jr	Z,$203
+		out0	(TDR0),a
+		jr	$200
+$203:
+
 
 		WAITL
 		WAITL
@@ -349,11 +389,16 @@ here:		jp	handle_res3
 
 
 
+
+
+
 mode_7_setup: 	.db 0h3F, 0h28, 0h33, 0h24, 0h1E, 0h02, 0h19, 0h1C, 0h93, 0h12, 0h72, 0h13, 0h28, 0h00, 0h00, 0h00, 0h28, 0h00 ;; HI(((mode_7_screen) - &74) EOR &20), LO(mode_7_screen)
 mode_0_setup: 	.db 0h7F, 0h50, 0h62, 0h28, 0h26, 0h00, 0h20, 0h23, 0h01, 0h07, 0h67, 0h08, 0h06, 0h00, 0h00, 0h00, 0h06, 0h00 ;; addr / 8
 mode_4_setup: 	.db 0h3F, 0h28, 0h31, 0h24, 0h26, 0h00, 0h20, 0h22, 0h01, 0h07, 0h67, 0h08, 0h0B, 0h00, 0h00, 0h00, 0h0B, 0h00 ;; addr / 8
 
-
+str_serial_welcome:
+		.ascii "ASCI test 19200 baud"
+		.db 13,10,0
 
 		.area   CODE_VEC (CON, ABS)
 handle_res:
