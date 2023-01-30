@@ -28,6 +28,9 @@ RLDR1L	= Z180_INTERNAL_BASE + 0x16	; Timer reload			ch.1L
 RLDR1H	= Z180_INTERNAL_BASE + 0x17	; Timer reload			ch.1H
 FRC	= Z180_INTERNAL_BASE + 0x18	; Timer free run counter
 
+CMR	= Z180_INTERNAL_BASE + 0x1E	; Clock multiplier
+CCR	= Z180_INTERNAL_BASE + 0x1F	; CPU Control
+
 SAR0L  	= Z180_INTERNAL_BASE + 0x20	; DMA source address 		ch.0L
 SAR0H  	= Z180_INTERNAL_BASE + 0x21	; DMA source address 		ch.0H
 SAR0B  	= Z180_INTERNAL_BASE + 0x22	; DMA source address 		ch.0B

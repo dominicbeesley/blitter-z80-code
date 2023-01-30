@@ -372,17 +372,27 @@ handle_res2:
 		; SysRAM/screen 		3000..C000 (Banked Area)
 		; the MOS ROM at 		C000 (Common Area 1)
 
-		ld	a,#0xC3
+		ld	a,0xC3
 		out0	(CBAR),a
 
-		ld	a,#0xF0
+		ld	a,0xF0
 		out0	(BBR),a
 
-		ld	a,#0xF0
+		ld	a,0xF0
 		out0	(CBR),a
 
-		ld	a,#"a"
-		ld	(0x7C02),a
+		; turn off refresh
+
+		ld	a,0
+		out0	(RCR),a
+
+		; disable clock divider
+		ld	a,0x80
+		out0	(CCR),a
+
+		; remove automatic wait states
+		ld	a,0
+		out	(DCNTL),a
 
 ; we are now running in ROM and can disable the boot mapping by writing to FCFF
 
