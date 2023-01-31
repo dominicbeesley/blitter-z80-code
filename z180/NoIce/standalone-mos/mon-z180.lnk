@@ -1,0 +1,8 @@
+-i build/mon-z180.ihx
+-b CODE=0xC000
+-b CODE_VEC=0xFF00
+-b NOICE_DATA=0x900
+-m
+-j
+build/mon-z180.rel
+-e
