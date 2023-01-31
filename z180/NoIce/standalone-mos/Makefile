@@ -13,6 +13,10 @@ DEPS=../../../includes/hardware.inc ../../includes/hardware-z180.inc
 
 X:=$(shell mkdir -p $(BUILD))
 
+#asz80 is an ashat and creates a file when there's an error and pisses around
+#with the filename so you can't bloody rename it easily
+.DELETE_ON_ERROR:
+
 all:: $(addprefix $(BUILD),$(TARGETS))
 
 ssd:: all
@@ -27,13 +31,7 @@ hostfs:: ssd
 
 
 $(BUILD)%.rel: %.asm $(DEPS)
-	$(AS) $(ASFLAGS) $(basename $@)_tmp $<
-	#asz80 is a PITA it makes a broken file on error!
-	find -name "$(basename $@)_tmp.*" -type f -exec sh -c ' \
-	for x in () do; 										\
-		mv $$x $${x//_tmp\./.} 								\
-	done; 													\
-	'
+	$(AS) $(ASFLAGS) $(basename $@) $<
 
 $(BUILD)mon-z180.ihx: $(OBJS2) mon-z180.lnk
 	$(LD) $(LDFLAGS) -f $(basename mon-z180)
