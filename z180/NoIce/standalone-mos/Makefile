@@ -6,10 +6,10 @@ BUILD=./build/
 TARGETS=mon-z180.bin
 HOSTFS=~/hostfs/noice-z180
 SSD=$(BUILD)/z180first.ssd
-OBJS=mon-z180.rel font_data.rel z180logo.mo7.rel
+OBJS=mon-z180.rel
 OBJS2=$(addprefix $(BUILD),$(OBJS))
 
-DEPS=../../../includes/hardware.inc ../../includes/hardware.inc
+DEPS=../../../includes/hardware.inc ../../includes/hardware-z180.inc
 
 X:=$(shell mkdir -p $(BUILD))
 
@@ -27,7 +27,13 @@ hostfs:: ssd
 
 
 $(BUILD)%.rel: %.asm $(DEPS)
-	$(AS) $(ASFLAGS) $@ $<
+	$(AS) $(ASFLAGS) $(basename $@)_tmp $<
+	#asz80 is a PITA it makes a broken file on error!
+	find -name "$(basename $@)_tmp.*" -type f -exec sh -c ' \
+	for x in () do; 										\
+		mv $$x $${x//_tmp\./.} 								\
+	done; 													\
+	'
 
 $(BUILD)mon-z180.ihx: $(OBJS2) mon-z180.lnk
 	$(LD) $(LDFLAGS) -f $(basename mon-z180)

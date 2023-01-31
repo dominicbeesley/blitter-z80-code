@@ -18,7 +18,7 @@
 ;
 
                 .include        "../../../includes/hardware.inc"
-                .include        "../../includes/hardware.inc"
+                .include        "../../includes/hardware-z180.inc"
                 .hd64                   ; z180 instruction set
 
 NOICE_STACK_SIZE        =       64              ; size of local stack
@@ -159,7 +159,7 @@ DEFAULT_NMI:
 ;  Or, if user wants control of NMI:
 ;;      JP      USER_CODE + 0x66         ;JUMP THRU VECTOR IN RAM
 ;;  (and enable NMI handler in DEFAULT_INTS below)
-DEFAULT_NMI_SIZE = .-NMI_ENTRY
+DEFAULT_NMI_SIZE = .-DEFAULT_NMI
 
 
 ;
@@ -172,7 +172,7 @@ RESET:
         LD      (REG_SP),SP     ;save user's stack pointer (or zero after reset)
         LD      SP,MONSTACK     ;and get a guaranteed stack
         PUSH    AF              ;SAVE A AND FLAGS
-        IN0     a,(ITC)         ;ChECK TRAP STATUS (FLAGS DESTROYED!!)
+        IN0     a,(Z180_ITC)    ;ChECK TRAP STATUS (FLAGS DESTROYED!!)
         BIT     7,A             ;IF THIS BIT IS ONE, THERE WAS TRAP!
         JR      Z,INIT          ;JIF RESET (AF on stack, but SP will be reloaded)
 ;
@@ -192,7 +192,7 @@ RESET:
 ;
 ;  Reset the trap bit
 TR20:   AND     0x7F             ;CLEAR THE TRAP BIT
-        out0    (ITC),a
+        out0    (Z180_ITC),a
 ;
 ;  Get IFF2
 ;  It is not clear that we can determine the pre-trap state of the
@@ -294,20 +294,18 @@ GETCHAR:
         PUSH    DE
 
         LD      DE,0x08000               ;long timeout
-        LD      BC,SERIAL_STATUS         ;status reg. for loop
 GC10:   DEC     DE
         LD      A,D
         OR      E
         JR      Z,GC90                  ;exit if timeout
 
-        IN      A,(C)                   ;read device status
-        BIT     RXRDY,A
+        IN0     A,(Z180_STAT0)          ;read device status
+        BIT     Z180bit_STATx_RDRF, A
         JR      Z,GC10                  ;not ready yet.
 ;
 ;  Data received:  return CY=0. data in A
         XOR     A                       ;CY=0
-        LD      BC,SERIAL_DATA
-        IN      A,(C)                   ;read data
+        IN0     A,(Z180_RDR0)           ;read data
         POP     DE
         POP     BC
         RET

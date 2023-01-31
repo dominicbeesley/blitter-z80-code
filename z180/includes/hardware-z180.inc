@@ -10,6 +10,18 @@ Z180_CNTLB0	= Z180_INTERNAL_BASE + 0x02	; ASCI control B 		ch.0
 Z180_CNTLB1	= Z180_INTERNAL_BASE + 0x03	; ASCI control B 		ch.1 
 Z180_STAT0	= Z180_INTERNAL_BASE + 0x04	; ASCI status    		ch.0 
 Z180_STAT1	= Z180_INTERNAL_BASE + 0x05	; ASCI status    		ch.1 
+
+Z180bit_STATx_RDRF		= 0
+Z180bit_STATx_OVRN		= 1
+Z180bit_STATx_PE		= 2
+Z180bit_STATx_FE		= 3
+Z180bit_STATx_RIE		= 4
+Z180bit_STATx_TDRE		= 6
+Z180bit_STATx_TIE		= 7
+
+Z180bit_STAT0_DCD0		= 5
+Z180bit_STAT1_CTS1E		= 5
+
 Z180_TDR0	= Z180_INTERNAL_BASE + 0x06	; ASCI transmit data 		ch.0 
 Z180_TDR1	= Z180_INTERNAL_BASE + 0x07	; ASCI transmit data 		ch.1 
 Z180_RDR0	= Z180_INTERNAL_BASE + 0x08	; ASCI receive data	  	ch.0 
