@@ -16,6 +16,8 @@
 ;	12-Nov-18 JLH modify to assemble with Arnold's as
 ;	31-Jan-23 .db  modify for asz180 and to run on the Blitter+z180 platform
 ;
+; NOTE: this monitor expects interrupt mode 1
+
 
 		.include	"../../../includes/hardware.inc"
 		.include	"../../includes/hardware-z180.inc"
@@ -941,6 +943,7 @@ OUTCNT	=     (.-INIOUT)/2    ; NUMBER OF INITIALIZING PAIRS
 
 RESET_0_0000:		  
 		di
+		im	1
 
 		; setup a catch-all NMI to just do RETN - a real one will be
 		; set up in the main code

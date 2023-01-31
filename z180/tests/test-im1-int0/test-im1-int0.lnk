@@ -1,0 +1,6 @@
+-i build/test-im1-int0.ihx
+-b CODE=0x400
+-m
+-j
+build/test-im1-int0.rel
+-e

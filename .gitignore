@@ -1,3 +1,4 @@
 **/build/*
 *.sublime-*
 z180/test-mos/z180logo.mo7.NoiCtx
+*.NoiCtx
