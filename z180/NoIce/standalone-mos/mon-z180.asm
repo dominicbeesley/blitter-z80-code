@@ -392,6 +392,7 @@ BREAK10: LD	(REG_IFF),A	;SAVE INTERRUPT FLAG
 	JR	NZ,NOTBP	;JIF NOT A BREAKPOINT
 	DEC	HL		;BACK UP PC TO POINT AT BREAKPOINT
 NOTBP:	JP	ENTER_MON	;HL POINTS AT BREAKPOINT OPCODE
+
 ;
 ;===========================================================================
 ;  Main loop:  wait for command frame from master
@@ -915,7 +916,7 @@ INIOUT:
 	;	        1	Break detect OFF
 	;	         0	Normal positive transmit
 
-BAUD_TC = 415 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/19200/2/1)-2
+BAUD_TC = 414 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/19200/2/1)-2 (round down seems to work best!)
 	.db	Z180_TC0L
 	.db	<BAUD_TC
 	.db	Z180_TC0H
