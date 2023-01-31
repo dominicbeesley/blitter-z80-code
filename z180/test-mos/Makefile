@@ -9,7 +9,7 @@ SSD=$(BUILD)/z180first.ssd
 OBJS=test-mos.rel font_data.rel z180logo.mo7.rel
 OBJS2=$(addprefix $(BUILD),$(OBJS))
 
-DEPS=../../includes/hardware.inc ../includes/hardware.inc
+DEPS=../../includes/hardware.inc ../includes/hardware-z180.inc
 
 X:=$(shell mkdir -p $(BUILD))
 

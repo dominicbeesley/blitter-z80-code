@@ -1,6 +1,7 @@
 		.hd64
 
-		.include "../includes/hardware.inc"
+		.include "../../includes/hardware.inc"
+		.include "../includes/hardware-z180.inc"
 
 		.globl screen_mo7
 
@@ -201,27 +202,27 @@ $101:
 		; send out something on Serial link ASCI0
 
 		ld	a,0x64				; enable Xmit/Rcv, 8n1
-		out0	(CNTLA0),a
+		out0	(Z180_CNTLA0),a
 
 		ld	a,0x08				; ???
-		out0	(CNTLB0),a
+		out0	(Z180_CNTLB0),a
 
 		; extension control
 		ld	a,0x18				; brg on X1
-		out0	(ASEXT0),a
+		out0	(Z180_ASEXT0),a
 
 BAUD_TC = 415		; not sure yet 16Mhz/19200/2/1-2
 		ld	a,<BAUD_TC
-		out0	(TC0L),a
+		out0	(Z180_TC0L),a
 		ld	a,>BAUD_TC
-		out0	(TC0H),a
+		out0	(Z180_TC0H),a
 
 		
 		ld	hl,str_serial_welcome
 
 $200:		ld	de,0
 
-$201:		in0	a,(STAT0)
+$201:		in0	a,(Z180_STAT0)
 		and	0x02
 		jr	nz, $202
 		dec	e
@@ -235,7 +236,7 @@ $202:		ld	a,(hl)
 		inc	hl
 		or	a
 		jr	Z,$203
-		out0	(TDR0),a
+		out0	(Z180_TDR0),a
 		jr	$200
 $203:
 
@@ -402,6 +403,12 @@ str_serial_welcome:
 
 		.area   CODE_VEC (CON, ABS)
 handle_res:
+		; setup NMI
+		ld	a,0xED
+		ld	(0x66),a
+		ld	a,0x45
+		ld	(0x67),a
+
 
 		; this area contains boot code and is mapped read-only to address 00xx in the CPU during boot
 		; until the blitter FCFF address is written with 0hD1, writes still write memory at 00 0000
@@ -418,26 +425,26 @@ handle_res2:
 		; the MOS ROM at 		C000 (Common Area 1)
 
 		ld	a,0xC3
-		out0	(CBAR),a
+		out0	(Z180_CBAR),a
 
 		ld	a,0xF0
-		out0	(BBR),a
+		out0	(Z180_BBR),a
 
 		ld	a,0xF0
-		out0	(CBR),a
+		out0	(Z180_CBR),a
 
 		; turn off refresh
 
 		ld	a,0
-		out0	(RCR),a
+		out0	(Z180_RCR),a
 
 		; disable clock divider
 		ld	a,0x80
-		out0	(CCR),a
+		out0	(Z180_CCR),a
 
 		; remove automatic wait states
 		ld	a,0
-		out	(DCNTL),a
+		out	(Z180_DCNTL),a
 
 ; we are now running in ROM and can disable the boot mapping by writing to FCFF
 
