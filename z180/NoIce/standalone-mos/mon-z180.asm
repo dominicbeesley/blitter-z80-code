@@ -23,15 +23,12 @@
 		.include	"../../includes/hardware-z180.inc"
 		.hd64			; z180 instruction set
 
-NOICE_STACK_SIZE	=	64		; size of local stack
+INITSTACK	= 0x8F0	; grow down from NoIce area with a guard of 16 bytes
+
+
 NOICE_COMBUF_SIZE	=	67		; DATA SIZE FOR COMM BUFFER
 
 		.area NOICE_DATA(ABS,CON,DSEG)
-;
-;  Initial user stack
-;  (Size and location is user option)
-		.ds	 NOICE_STACK_SIZE
-INITSTACK:
 ;
 ;  Monitor stack
 ;  (Calculated use is at most 6 bytes.	Leave plenty of spare)
@@ -93,10 +90,10 @@ R0:	DI
 	NOP
 	NOP
 ;
-;  (vectored only if not used for breakpoint)
 ;  RST 8
 	PUSH	AF
-	LD	A,3			;STATE = 3 (INTERRUPT 8)
+;;	LD	A,3			;STATE = 3 (INTERRUPT 8);  (vectored only if not used for breakpoint)
+	LD	A,1			; Break point instruction!
 	JP	INT_ENTRY
 	NOP
 	NOP
@@ -155,8 +152,20 @@ DEFAULT_INTS_SIZE      = .-DEFAULT_INTS
 ;	 ORG	 R0+0x66
 DEFAULT_NMI:
 	PUSH	AF
-	LD	A,2
+	PUSH	HL
+	LD	HL,0
+	ADD	HL,SP
+	LD	A,H
+	POP	HL
+	CP	A,>MONSTACK	; check to see if we're already in the monitor
+	JR	Z, IGNORE_NMI
+	LD	A,2	
 	JP	INT_ENTRY
+
+IGNORE_NMI:
+	POP	AF
+	RETN
+
 ;
 ;  Or, if user wants control of NMI:
 ;;	JP	USER_CODE + 0x66	 ;JUMP THRU VECTOR IN RAM
