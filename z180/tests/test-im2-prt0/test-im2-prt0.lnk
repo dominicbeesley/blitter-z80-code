@@ -1,0 +1,6 @@
+-i build/test-im2-prt0.ihx
+-b CODE=0x400
+-m
+-j
+build/test-im2-prt0.rel
+-e
