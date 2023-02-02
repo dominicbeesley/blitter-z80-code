@@ -414,15 +414,15 @@ MAIN:	LD	SP,MONSTACK		;CLEAN STACK IS HAPPY STACK
 	CALL	GETCHAR			;GET A FUNCTION (uses 6 bytes of stack)
 	JR	C,MAIN			;JIF TIMEOUT: RESYNC
 	CP	FN_MIN
-	JR	C,MAIN			;JIF BELOW MIN: ILLEGAL FUNCTION
+	JR	C,MAIN_ERR_FN		;JIF BELOW MIN: ILLEGAL FUNCTION
 	LD	(HL),A			;SAVE FUNCTION CODE
 	INC	HL
 ;
 ;  Second byte is data byte count (may be zero)
 	CALL	GETCHAR			;GET A LENGTH BYTE
-	JR	C,MAIN			;JIF TIMEOUT: RESYNC
+	JR	C,MAIN_ERR_TO1		;JIF TIMEOUT: RESYNC
 	CP	NOICE_COMBUF_SIZE+1
-	JR	NC,MAIN			;JIF TOO LONG: ILLEGAL LENGTH
+	JR	NC,MAIN_ERR_TOOLONG	;JIF TOO LONG: ILLEGAL LENGTH
 	LD	(HL),A			;SAVE LENGTH
 	INC	HL
 	OR	A
@@ -431,21 +431,21 @@ MAIN:	LD	SP,MONSTACK		;CLEAN STACK IS HAPPY STACK
 ;  Loop for data
 	LD	B,A			;SAVE LENGTH FOR LOOP
 MA10:	CALL	GETCHAR			;GET A DATA BYTE
-	JR	C,MAIN			;JIF TIMEOUT: RESYNC
+	JR	C,MAIN_ERR_TO2		;JIF TIMEOUT: RESYNC
 	LD	(HL),A			;SAVE DATA BYTE
 	INC	HL
 	DJNZ	MA10
 ;
 ;  Get the checksum
 MA80:	CALL	GETCHAR			;GET THE ChECKSUM
-	JR	C,MAIN			;JIF TIMEOUT: RESYNC
+	JR	C,MAIN_ERR_TO3		;JIF TIMEOUT: RESYNC
 	LD	C,A			;SAVE ChECKSUM
 ;
 ;  Compare received checksum to that calculated on received buffer
 ;  (Sum should be 0)
 	CALL	ChECKSUM
 	ADD	A,C
-	JR	NZ,MAIN			;JIF BAD ChECKSUM
+	JR	NZ,MAIN_ERR_CKSUM	;JIF BAD ChECKSUM
 ;
 ;  Process the message.
 	LD	A,(COMBUF+0)		;GET THE FUNCTION CODE
@@ -473,6 +473,52 @@ MA80:	CALL	GETCHAR			;GET THE ChECKSUM
 	LD	(COMBUF+0),A	;SET FUNCTION AS "ERROR"
 	LD	A,1
 	JP	SEND_STATUS	;VALUE IS "ERROR"
+
+MAIN_ERR_FN:
+	LD	HL,str_MAIN_ERR_FN
+	JR	MAIN_ERR_STR
+MAIN_ERR_TO1:
+	LD	HL,str_MAIN_ERR_TO1
+	JR	MAIN_ERR_STR
+MAIN_ERR_TO2:
+	LD	HL,str_MAIN_ERR_TO2
+	JR	MAIN_ERR_STR
+MAIN_ERR_TO3:
+	LD	HL,str_MAIN_ERR_TO3
+	JR	MAIN_ERR_STR
+MAIN_ERR_TOOLONG:
+	LD	HL,str_MAIN_ERR_TOOLONG
+	JR	MAIN_ERR_STR
+MAIN_ERR_CKSUM:
+	LD	HL,str_MAIN_ERR_CKSUM
+	JR	MAIN_ERR_STR
+
+MAIN_ERR_STR:
+	LD	B,100
+	LD	A,0
+10$:	CALL	PUTCHAR
+	DJNZ	10$
+
+20$:	LD	A,(HL)
+	OR	A
+	JR	Z,30$
+	INC	HL
+	CALL	PUTCHAR
+	JR	20$
+
+30$:	LD	A,0x0D
+	CALL	PUTCHAR
+	LD	A,0x0A
+	CALL	PUTCHAR
+	JP	MAIN
+
+str_MAIN_ERR_FN:	.asciz "FN"
+str_MAIN_ERR_TO1:	.asciz "TO1"
+str_MAIN_ERR_TO2:	.asciz "TO2"
+str_MAIN_ERR_TO3:	.asciz "TO3"
+str_MAIN_ERR_TOOLONG:	.asciz "TOOLONG"
+str_MAIN_ERR_CKSUM:	.asciz "CKSUM"
+
 
 ;===========================================================================
 ;
@@ -919,8 +965,8 @@ INIOUT:
 	.db	Z180_ASEXT0
 	.db	0b11111110
 	;	  1		RDRF interrupt inhibit
-	;	   1		DCD disable, ignore handshake
-	;	    1		CTS disable, ignore handshake
+	;	   0		auto DCD enable, respect handshake
+	;	    0		auto CTS enable, respect handshake
 	;	     1		X1 CKA prescale (64 - ignored?)
 	;	      1		BRG - use baud rate generator
 	;	       1	Break feature OFF
