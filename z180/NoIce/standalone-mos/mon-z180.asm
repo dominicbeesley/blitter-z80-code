@@ -963,7 +963,8 @@ INIOUT:
 	;  receiver is synchronous and bits must arrive synchronized to CLKA!
 	;  We turn of X1 and must use either a 16 or 64 prescaler (PS bit of CNTLB)
 
-BAUD_TC = 24;;(16000000/19200/2/16)-2
+;;BAUD_TC = 24;;(16000000/19200/2/16)-2
+BAUD_TC = 11;;(16000000/38400/2/16)-2		; 38400 is the highest common speed that doesn't have a big error due to prescale
 
 	.db	Z180_TC0H
 	.db	>BAUD_TC
