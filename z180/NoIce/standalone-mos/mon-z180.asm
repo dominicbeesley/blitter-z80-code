@@ -67,6 +67,8 @@ TASK_REGS_SIZE	=     .-TASK_REGS
 COMBUF:		.ds	 2+NOICE_COMBUF_SIZE+1 ;BUFFER ALSO HAS FN, LEN, AND ChECK
 ;
 
+DEBUG_SERIAL:	.ds	1	; toggles when there's a serial error
+
 RAM_END:			;ADDRESS OF TOP+1 OF RAM
 
 
@@ -285,6 +287,30 @@ RST10:	LD	C,(HL)		;load address from table
 	LD	(REG_PAGE),A		;page 0
 ;;;	LD	(PAGEIMAGE),A
 ;;;	OUT	(PAGELATCH),A		;set hardware page
+
+
+
+;; TEST SERIAL
+
+100$:
+	LD	B,10
+	LD	A,"U"
+10$:	CALL	PUTCHAR
+	DJNZ	10$
+
+	LD	A,0xA5
+20$:	CALL	PUTCHAR
+	DJNZ	20$
+
+	LD	A,0x5A
+30$:	CALL	PUTCHAR
+	DJNZ	30$
+
+	JP	100$
+
+
+
+
 ;
 ;  Set function code for "GO".	Then if we reset after being told to
 ;  GO, we will come back with registers so user can see the crash
@@ -312,6 +338,10 @@ GC10:	DEC	DE
 	IN0	A,(Z180_STAT0)		;read device status
 	BIT	Z180bit_STATx_RDRF, A
 	JR	Z,GC10			;not ready yet.
+
+	AND	1<<Z180bit_STATx_OVRN|1<<Z180bit_STATx_PE|1<<Z180bit_STATx_FE
+	CALL	NZ, DBG_TOG
+
 ;
 ;  Data received:  return CY=0. data in A
 	XOR	A			;CY=0
@@ -323,6 +353,18 @@ GC10:	DEC	DE
 GC90:	SCF				;cy=1
 	POP	DE
 	RET
+
+DBG_TOG:
+	; toggle the caps lock led when there's an error
+	ld	a,(DEBUG_SERIAL)
+	xor	a,8
+	or	a,7
+	ld	(DEBUG_SERIAL),a
+	push	BC
+	ld	BC,sheila_SYSVIA_orb
+	out	(C),A
+	pop	BC
+	ret
 ;
 ;===========================================================================
 ;  Output character in A
@@ -444,6 +486,7 @@ MA80:	CALL	GETCHAR			;GET THE ChECKSUM
 ;  Compare received checksum to that calculated on received buffer
 ;  (Sum should be 0)
 	CALL	ChECKSUM
+	LD	B,A			;TODO:remove with CKSUM error feedback
 	ADD	A,C
 	JR	NZ,MAIN_ERR_CKSUM	;JIF BAD ChECKSUM
 ;
@@ -475,42 +518,82 @@ MA80:	CALL	GETCHAR			;GET THE ChECKSUM
 	JP	SEND_STATUS	;VALUE IS "ERROR"
 
 MAIN_ERR_FN:
-	LD	HL,str_MAIN_ERR_FN
+	LD	A,0
 	JR	MAIN_ERR_STR
 MAIN_ERR_TO1:
-	LD	HL,str_MAIN_ERR_TO1
+	LD	A,1
 	JR	MAIN_ERR_STR
 MAIN_ERR_TO2:
-	LD	HL,str_MAIN_ERR_TO2
+	LD	A,2
 	JR	MAIN_ERR_STR
 MAIN_ERR_TO3:
-	LD	HL,str_MAIN_ERR_TO3
+	LD	A,3
 	JR	MAIN_ERR_STR
 MAIN_ERR_TOOLONG:
-	LD	HL,str_MAIN_ERR_TOOLONG
+	LD	A,4
 	JR	MAIN_ERR_STR
 MAIN_ERR_CKSUM:
-	LD	HL,str_MAIN_ERR_CKSUM
+	LD	A,B
 	JR	MAIN_ERR_STR
 
 MAIN_ERR_STR:
-	LD	B,100
-	LD	A,0
-10$:	CALL	PUTCHAR
+	CALL	PUTCHAR
+
+	; dump com buffer to 7c00
+
+	LD	HL,0x7C00
+	LD	IX,COMBUF
+	LD	B,(IX+1)
+	INC	B
+	INC	B
+10$:	LD	A,(IX+0)
+	INC	IX
+	CALL	print_hex8
+	LD	A," "
+	CALL	CONS
 	DJNZ	10$
 
-20$:	LD	A,(HL)
-	OR	A
-	JR	Z,30$
-	INC	HL
-	CALL	PUTCHAR
-	JR	20$
+	LD	A,"<"
+	CALL	CONS
+	LD	A,"<"
+	CALL	CONS
+	LD	A,"<"
+	CALL	CONS
 
-30$:	LD	A,0x0D
-	CALL	PUTCHAR
-	LD	A,0x0A
-	CALL	PUTCHAR
+	; show the ASCI Status register errors if any
+	IN0	A,(Z180_STAT0)
+	AND	1<<Z180bit_STATx_OVRN|1<<Z180bit_STATx_PE|1<<Z180bit_STATx_FE
+	CALL	print_hex8
+
+	IN0	A,(Z180_CNTLA0)
+	RES	Z180bit_CNTLAx_EFR,A
+	OUT0	(Z180_CNTLA0),A
+
 	JP	MAIN
+
+CONS:	LD	(HL),A
+	INC	HL
+	RET
+
+print_hex8:
+		push	af
+		rra
+		rra
+		rra
+		rra
+		call	print_hexNyb
+		pop	af		
+print_hexNyb:
+		push	af
+   		and	a,0x0F
+   		add	a,0x90
+   		daa
+   		adc	a,0x40
+   		daa
+   		call	CONS
+   		pop	af
+   		ret
+
 
 str_MAIN_ERR_FN:	.asciz "FN"
 str_MAIN_ERR_TO1:	.asciz "TO1"
@@ -518,6 +601,7 @@ str_MAIN_ERR_TO2:	.asciz "TO2"
 str_MAIN_ERR_TO3:	.asciz "TO3"
 str_MAIN_ERR_TOOLONG:	.asciz "TOOLONG"
 str_MAIN_ERR_CKSUM:	.asciz "CKSUM"
+
 
 
 ;===========================================================================
@@ -954,30 +1038,37 @@ INIOUT:
 	;	       100	MOD = 8n1
 
 	.db	Z180_CNTLB0
-	.db	0b00001000
+	.db	0b00000000
 	;	  0		multiprocessor bit transmit
 	;	   0		multiprocessor mode
-	;	    0		PS prescale (10 ignored?)
+	;	    0		PS prescale div 1 with BRG
 	;	     0		parity
-	;	      1		divide ratio (64 ignored?)
+	;	      0		divide ratio 16 with BRG
 	;	       000	SSx - PHI prescalar scalar = 1
 
 	.db	Z180_ASEXT0
-	.db	0b11111110
+	.db	0b11101110
 	;	  1		RDRF interrupt inhibit
-	;	   0		auto DCD enable, respect handshake
-	;	    0		auto CTS enable, respect handshake
-	;	     1		X1 CKA prescale (64 - ignored?)
+	;	   1		auto DCD disable, ignore handshake
+	;	    1		auto CTS disable, ignore handshake
+	;	     0		X1 - turn off synchronous mode
 	;	      1		BRG - use baud rate generator
 	;	       1	Break feature OFF
 	;	        1	Break detect OFF
 	;	         0	Normal positive transmit
 
-BAUD_TC = 414 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/19200/2/1)-2 (round down seems to work best!)
-	.db	Z180_TC0L
-	.db	<BAUD_TC
+;;;BAUD_TC = 414 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/19200/2/1)-2 (round down seems to work best!)
+;;;;BAUD_TC = 414 ; 
+;;;;;BAUD_TC = 398 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/20000/2/1)-2 (round down seems to work best!)
+
+;;;BAUD_TC = 49 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/20000/2/8)-2 
+
+BAUD_TC = 26;;(16000000/19200/2/16)-2
+
 	.db	Z180_TC0H
 	.db	>BAUD_TC
+	.db	Z180_TC0L
+	.db	<BAUD_TC
 
 ;-------------------------------------------------------------------------
 OUTCNT	=     (.-INIOUT)/2    ; NUMBER OF INITIALIZING PAIRS

@@ -6,6 +6,8 @@ Z180_INTERNAL_BASE = 0 ; override externally if required
 
 Z180_CNTLA0	= Z180_INTERNAL_BASE + 0x00	; ASCI control A 		ch.0 
 Z180_CNTLA1	= Z180_INTERNAL_BASE + 0x01	; ASCI control A 		ch.1 
+Z180bit_CNTLAx_EFR		= 3
+
 Z180_CNTLB0	= Z180_INTERNAL_BASE + 0x02	; ASCI control B 		ch.0 
 Z180_CNTLB1	= Z180_INTERNAL_BASE + 0x03	; ASCI control B 		ch.1 
 Z180_STAT0	= Z180_INTERNAL_BASE + 0x04	; ASCI status    		ch.0 
