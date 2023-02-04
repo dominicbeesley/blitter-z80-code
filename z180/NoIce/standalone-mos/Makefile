@@ -1,7 +1,7 @@
 AS=asz80
 ASFLAGS=-ols
 LD=aslink
-LDFLAGS=
+LDFLAGS=-m1 -j -u
 BUILD=./build/
 TARGETS=mon-z180.bin
 HOSTFS=~/hostfs/noice-z180
