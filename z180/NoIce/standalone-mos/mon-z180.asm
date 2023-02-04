@@ -287,30 +287,6 @@ RST10:	LD	C,(HL)		;load address from table
 	LD	(REG_PAGE),A		;page 0
 ;;;	LD	(PAGEIMAGE),A
 ;;;	OUT	(PAGELATCH),A		;set hardware page
-
-
-
-;; TEST SERIAL
-
-100$:
-	LD	B,10
-	LD	A,"U"
-10$:	CALL	PUTCHAR
-	DJNZ	10$
-
-	LD	A,0xA5
-20$:	CALL	PUTCHAR
-	DJNZ	20$
-
-	LD	A,0x5A
-30$:	CALL	PUTCHAR
-	DJNZ	30$
-
-	JP	100$
-
-
-
-
 ;
 ;  Set function code for "GO".	Then if we reset after being told to
 ;  GO, we will come back with registers so user can see the crash
@@ -486,7 +462,6 @@ MA80:	CALL	GETCHAR			;GET THE ChECKSUM
 ;  Compare received checksum to that calculated on received buffer
 ;  (Sum should be 0)
 	CALL	ChECKSUM
-	LD	B,A			;TODO:remove with CKSUM error feedback
 	ADD	A,C
 	JR	NZ,MAIN_ERR_CKSUM	;JIF BAD ChECKSUM
 ;
@@ -517,92 +492,19 @@ MA80:	CALL	GETCHAR			;GET THE ChECKSUM
 	LD	A,1
 	JP	SEND_STATUS	;VALUE IS "ERROR"
 
+;; These left in for debugging/tracing purposes TODO: remove
 MAIN_ERR_FN:
-	LD	A,0
-	JR	MAIN_ERR_STR
+	JR	MAIN
 MAIN_ERR_TO1:
-	LD	A,1
-	JR	MAIN_ERR_STR
+	JR	MAIN
 MAIN_ERR_TO2:
-	LD	A,2
-	JR	MAIN_ERR_STR
+	JR	MAIN
 MAIN_ERR_TO3:
-	LD	A,3
-	JR	MAIN_ERR_STR
+	JR	MAIN
 MAIN_ERR_TOOLONG:
-	LD	A,4
-	JR	MAIN_ERR_STR
+	JR	MAIN
 MAIN_ERR_CKSUM:
-	LD	A,B
-	JR	MAIN_ERR_STR
-
-MAIN_ERR_STR:
-	CALL	PUTCHAR
-
-	; dump com buffer to 7c00
-
-	LD	HL,0x7C00
-	LD	IX,COMBUF
-	LD	B,(IX+1)
-	INC	B
-	INC	B
-10$:	LD	A,(IX+0)
-	INC	IX
-	CALL	print_hex8
-	LD	A," "
-	CALL	CONS
-	DJNZ	10$
-
-	LD	A,"<"
-	CALL	CONS
-	LD	A,"<"
-	CALL	CONS
-	LD	A,"<"
-	CALL	CONS
-
-	; show the ASCI Status register errors if any
-	IN0	A,(Z180_STAT0)
-	AND	1<<Z180bit_STATx_OVRN|1<<Z180bit_STATx_PE|1<<Z180bit_STATx_FE
-	CALL	print_hex8
-
-	IN0	A,(Z180_CNTLA0)
-	RES	Z180bit_CNTLAx_EFR,A
-	OUT0	(Z180_CNTLA0),A
-
-	JP	MAIN
-
-CONS:	LD	(HL),A
-	INC	HL
-	RET
-
-print_hex8:
-		push	af
-		rra
-		rra
-		rra
-		rra
-		call	print_hexNyb
-		pop	af		
-print_hexNyb:
-		push	af
-   		and	a,0x0F
-   		add	a,0x90
-   		daa
-   		adc	a,0x40
-   		daa
-   		call	CONS
-   		pop	af
-   		ret
-
-
-str_MAIN_ERR_FN:	.asciz "FN"
-str_MAIN_ERR_TO1:	.asciz "TO1"
-str_MAIN_ERR_TO2:	.asciz "TO2"
-str_MAIN_ERR_TO3:	.asciz "TO3"
-str_MAIN_ERR_TOOLONG:	.asciz "TOOLONG"
-str_MAIN_ERR_CKSUM:	.asciz "CKSUM"
-
-
+	JR	MAIN
 
 ;===========================================================================
 ;
@@ -1041,9 +943,9 @@ INIOUT:
 	.db	0b00000000
 	;	  0		multiprocessor bit transmit
 	;	   0		multiprocessor mode
-	;	    0		PS prescale div 1 with BRG
+	;	    0		PS prescale div 16 for BRG
 	;	     0		parity
-	;	      0		divide ratio 16 with BRG
+	;	      0		divide ratio 16 with (ignored)
 	;	       000	SSx - PHI prescalar scalar = 1
 
 	.db	Z180_ASEXT0
@@ -1057,13 +959,11 @@ INIOUT:
 	;	        1	Break detect OFF
 	;	         0	Normal positive transmit
 
-;;;BAUD_TC = 414 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/19200/2/1)-2 (round down seems to work best!)
-;;;;BAUD_TC = 414 ; 
-;;;;;BAUD_TC = 398 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/20000/2/1)-2 (round down seems to work best!)
+	;; NOTE: some datasheets do not make it clear that if the X1 bit is in force the 
+	;  receiver is synchronous and bits must arrive synchronized to CLKA!
+	;  We turn of X1 and must use either a 16 or 64 prescaler (PS bit of CNTLB)
 
-;;;BAUD_TC = 49 ; (PHI/BAUD/2/SSx prescale)-2 = (16Mhz/20000/2/8)-2 
-
-BAUD_TC = 26;;(16000000/19200/2/16)-2
+BAUD_TC = 24;;(16000000/19200/2/16)-2
 
 	.db	Z180_TC0H
 	.db	>BAUD_TC
