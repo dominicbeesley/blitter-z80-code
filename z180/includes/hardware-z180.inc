@@ -74,3 +74,8 @@ Z180_BBR	= Z180_INTERNAL_BASE + 0x39 	; MMU bank base
 Z180_CBAR	= Z180_INTERNAL_BASE + 0x3A 	; MMU common/bank area
 Z180_OMCR	= Z180_INTERNAL_BASE + 0x3E   	; Operation mode control
 Z180_ICR	= 0x3F 				; I/O base control - does not move
+
+
+; Blitter stuff
+
+IM2_INT0_VEC = 0x56 ; this is set in the Blitter firmware
