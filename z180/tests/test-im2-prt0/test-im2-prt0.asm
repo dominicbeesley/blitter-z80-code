@@ -11,12 +11,6 @@
 		.area CODE(REL,CON)
 
 start:		di			; disable interrupts
-		im	1		; force interrupt mode 1 for external interrupts
-
-		ld	a,0
-		ld	i,a		; set mode2 interrupt vector in page 0
-		ld	a,0x80		
-		out0	(Z180_IL),a	; set mode2 interrupt vector at 0080 onwards
 
 		; disable int0 in case there's pending stuff
 		ld	a,0
@@ -46,10 +40,17 @@ PRT0_VAL	= (200 * 16 / 20) - 1
 
 
 
-		; now set up am rst 0x84 interrupt handler
+		; now set up a PRT0 handler at IL+4
 
-		ld	hl,int84_handle
-		ld	(0x84),hl
+		ld	bc,int_prt0_handle
+		ld	a,i
+		ld	h,a
+		in0	a,(Z180_IL)	; get base of im2 vectors
+		add	a,4		; PRT0 interrupt is in 2nd word entry
+		ld	l,a
+		ld	(hl),c
+		inc	hl
+		ld	(hl),b
 
 		ld	a,0
 		ld	bc,3
@@ -83,7 +84,7 @@ here:		di
 
 		rst	8		; return to NoIce Debugger
 
-int84_handle:	push	af
+int_prt0_handle:	push	af
 		push	hl
 		push	bc
 

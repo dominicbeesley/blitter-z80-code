@@ -78,4 +78,4 @@ Z180_ICR	= 0x3F 				; I/O base control - does not move
 
 ; Blitter stuff
 
-IM2_INT0_VEC = 0x56 ; this is set in the Blitter firmware
+IM2_INT0_VEC = 0x3E ; this is set in the Blitter firmware

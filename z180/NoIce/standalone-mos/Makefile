@@ -9,7 +9,7 @@ SSD=$(BUILD)/z180first.ssd
 OBJS=mon-z180.rel
 OBJS2=$(addprefix $(BUILD),$(OBJS))
 
-DEPS=../../../includes/hardware.inc ../../includes/hardware-z180.inc
+DEPS=../../../includes/hardware.inc ../../includes/hardware-z180.inc ../lib/noice-z180.asm
 
 X:=$(shell mkdir -p $(BUILD))
 
