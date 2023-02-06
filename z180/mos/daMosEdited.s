@@ -1470,505 +1470,505 @@ STARTUP:		jmp	_VDU_INIT_MODE			; Initialise screen with mode in A.
 			.byte	$08,$0d,$0d			; Termination byte in next table
 
 
-;****** 16 COLOUR MODE BYTE MASK LOOK UP TABLE******
-
-_COL16_MASK_TAB:	.byte	$00				; 00000000
-			.byte	$11				; 00010001
-			.byte	$22				; 00100010
-			.byte	$33				; 00110011
-			.byte	$44				; 01000100
-			.byte	$55				; 01010101
-			.byte	$66				; 01100110
-			.byte	$77				; 01110111
-			.byte	$88				; 10001000
-			.byte	$99				; 10011001
-			.byte	$aa				; 10101010
-			.byte	$bb				; 10111011
-			.byte	$cc				; 11001100
-			.byte	$dd				; 11011101
-			.byte	$ee				; 11101110
-			.byte	$ff				; 11111111
-
-
-;****** 4 COLOUR MODE BYTE MASK LOOK UP TABLE******
-
-_COL4_MASK_TAB:		.byte	$00				; 00000000
-			.byte	$55				; 01010101
-			.byte	$aa				; 10101010
-			.byte	$ff				; 11111111
-
-
-;****** VDU ENTRY POINT LO	 LOOK UP TABLE******
-
-.macro vdu_lo		addr
-			.byte	<(addr)
-.endmacro
-
-.macro vdu_hi		addr, count
-	.ifblank	count
-			.byte	>(addr)
-	.else
-			.byte	(>(addr - VDU_DRIVER_PAGE) << 4) + (16 - count)
-	.endif
-.endmacro
-
-_VDU_TABLE_LO:		vdu_lo	_VDU_0
-			vdu_lo	_VDU_1
-			vdu_lo	_VDU_2
-			vdu_lo	_VDU_3
-			vdu_lo	_VDU_4
-			vdu_lo	_VDU_5
-			vdu_lo	_VDU_6
-			vdu_lo	_VDU_7
-			vdu_lo	_VDU_8
-			vdu_lo	_VDU_9
-			vdu_lo	_VDU_10
-			vdu_lo	_VDU_11
-			vdu_lo	_VDU_12
-			vdu_lo	_VDU_13
-			vdu_lo	_VDU_14
-			vdu_lo	_VDU_15
-			vdu_lo	_VDU_16
-			vdu_lo	_VDU_17
-			vdu_lo	_VDU_18
-			vdu_lo	_VDU_19
-			vdu_lo	_VDU_20
-			vdu_lo	_VDU_21
-			vdu_lo	_VDU_22
-			vdu_lo	_VDU_23
-			vdu_lo	_VDU_24
-			vdu_lo	_VDU_25
-			vdu_lo	_VDU_26
-			vdu_lo	_VDU_27
-			vdu_lo	_VDU_28
-			vdu_lo	_VDU_29
-			vdu_lo	_VDU_30
-			vdu_lo	_VDU_31
-			vdu_lo	_VDU_127
-
-
-;****** VDU ENTRY POINT HI PARAMETER LOOK UP TABLE******
-
-; 1xxxxxxx - no parameters, address high byte
-; 0aaapppp - parameter count 16-p, address high byte &C3+a
-
-_VDU_TABLE_HI:		vdu_hi	_VDU_0				; VDU  0   - &C511, no parameters
-			vdu_hi	_VDU_1, 1			; VDU  1   - &C53B, 1 parameter
-			vdu_hi	_VDU_2				; VDU  2   - &C596, no parameters
-			vdu_hi	_VDU_3				; VDU  3   - &C5A1, no parameters
-			vdu_hi	_VDU_4				; VDU  4   - &C5AD, no parameters
-			vdu_hi	_VDU_5				; VDU  5   - &C5B9, no parameters
-			vdu_hi	_VDU_6				; VDU  6   - &C511, no parameters
-			vdu_hi	_VDU_7				; VDU  7   - &E86F, no parameters
-			vdu_hi	_VDU_8				; VDU  8   - &C5C5, no parameters
-			vdu_hi	_VDU_9				; VDU  9   - &C664, no parameters
-			vdu_hi	_VDU_10				; VDU 10  - &C6F0, no parameters
-			vdu_hi	_VDU_11				; VDU 11  - &C65B, no parameters
-			vdu_hi	_VDU_12				; VDU 12  - &C759, no parameters
-			vdu_hi	_VDU_13				; VDU 13  - &C7AF, no parameters
-			vdu_hi	_VDU_14				; VDU 14  - &C58D, no parameters
-			vdu_hi	_VDU_15				; VDU 15  - &C5A6, no parameters
-			vdu_hi	_VDU_16				; VDU 16  - &C7C0, no parameters
-			vdu_hi	_VDU_17, 1			; VDU 17  - &C7F9, 1 parameter
-			vdu_hi	_VDU_18, 2			; VDU 18  - &C7FD, 2 parameters
-			vdu_hi	_VDU_19, 5			; VDU 19  - &C892, 5 parameters
-			vdu_hi	_VDU_20				; VDU 20  - &C839, no parameters
-			vdu_hi	_VDU_21				; VDU 21  - &C59B, no parameters
-			vdu_hi	_VDU_22, 1			; VDU 22  - &C8EB, 1 parameter
-			vdu_hi	_VDU_23, 9			; VDU 23  - &C8F1, 9 parameters
-			vdu_hi	_VDU_24, 8			; VDU 24  - &CA39, 8 parameters
-			vdu_hi	_VDU_25, 5			; VDU 25  - &C9AC, 5 parameters
-			vdu_hi	_VDU_26				; VDU 26  - &C9BD, no parameters
-			vdu_hi	_VDU_27				; VDU 27  - &C511, no parameters
-			vdu_hi	_VDU_28, 4			; VDU 28  - &C6FA, 4 parameters
-			vdu_hi	_VDU_29, 4			; VDU 29  - &CAA2, 4 parameters
-			vdu_hi	_VDU_30				; VDU 30  - &C779, no parameters
-			vdu_hi	_VDU_31, 2			; VDU 31  - &C787, 2 parameters
-			vdu_hi	_VDU_127			; VDU 127 - &CAAC, no parameters
-
-
-;****** 640 MULTIPLICATION TABLE  40COL, 80COL MODES  HIBYTE, LOBYTE ******
-
-_MUL640_TABLE:		.dbyt	640 *  0
-			.dbyt	640 *  1
-			.dbyt	640 *  2
-			.dbyt	640 *  3
-			.dbyt	640 *  4
-			.dbyt	640 *  5
-			.dbyt	640 *  6
-			.dbyt	640 *  7
-			.dbyt	640 *  8
-			.dbyt	640 *  9
-			.dbyt	640 * 10
-			.dbyt	640 * 11
-			.dbyt	640 * 12
-			.dbyt	640 * 13
-			.dbyt	640 * 14
-			.dbyt	640 * 15
-			.dbyt	640 * 16
-			.dbyt	640 * 17
-			.dbyt	640 * 18
-			.dbyt	640 * 19
-			.dbyt	640 * 20
-			.dbyt	640 * 21
-			.dbyt	640 * 22
-			.dbyt	640 * 23
-			.dbyt	640 * 24
-			.dbyt	640 * 25
-			.dbyt	640 * 26
-			.dbyt	640 * 27
-			.dbyt	640 * 28
-			.dbyt	640 * 29
-			.dbyt	640 * 30
-			.dbyt	640 * 31
-
-;****** *40 MULTIPLICATION TABLE  TELETEXT  MODE   HIBYTE, LOBYTE  ******
-
-_MUL40_TABLE:		.dbyt	40 *  0
-			.dbyt	40 *  1
-			.dbyt	40 *  2
-			.dbyt	40 *  3
-			.dbyt	40 *  4
-			.dbyt	40 *  5
-			.dbyt	40 *  6
-			.dbyt	40 *  7
-			.dbyt	40 *  8
-			.dbyt	40 *  9
-			.dbyt	40 * 10
-			.dbyt	40 * 11
-			.dbyt	40 * 12
-			.dbyt	40 * 13
-			.dbyt	40 * 14
-			.dbyt	40 * 15
-			.dbyt	40 * 16
-			.dbyt	40 * 17
-			.dbyt	40 * 18
-			.dbyt	40 * 19
-			.dbyt	40 * 20
-			.dbyt	40 * 21
-			.dbyt	40 * 22
-			.dbyt	40 * 23
-			.dbyt	40 * 24
-
-
-;****** TEXT WINDOW -BOTTOM ROW LOOK UP TABLE ******
-
-_TEXT_ROW_TABLE:	.byte	$1f				; MODE 0 - 32 ROWS
-			.byte	$1f				; MODE 1 - 32 ROWS
-			.byte	$1f				; MODE 2 - 32 ROWS
-			.byte	$18				; MODE 3 - 25 ROWS
-			.byte	$1f				; MODE 4 - 32 ROWS
-			.byte	$1f				; MODE 5 - 32 ROWS
-			.byte	$18				; MODE 6 - 25 ROWS
-			.byte	$18				; MODE 7 - 25 ROWS
-
-
-;****** TEXT WINDOW -RIGHT HAND COLUMN LOOK UP TABLE ******
-
-_TEXT_COL_TABLE:	.byte	$4f				; MODE 0 - 80 COLUMNS
-			.byte	$27				; MODE 1 - 40 COLUMNS
-			.byte	$13				; MODE 2 - 20 COLUMNS
-			.byte	$4f				; MODE 3 - 80 COLUMNS
-			.byte	$27				; MODE 4 - 40 COLUMNS
-			.byte	$13				; MODE 5 - 20 COLUMNS
-			.byte	$27				; MODE 6 - 40 COLUMNS
-			.byte	$27				; MODE 7 - 40 COLUMNS
-
-
-;*************************************************************************
-;*									 *
-;*	 SEVERAL OF THE FOLLOWING TABLES OVERLAP EACH OTHER		 *
-;*	 SOME ARE DUAL PURPOSE						 *
-;*									 *
-;*************************************************************************
-
-;************** VIDEO ULA CONTROL REGISTER SETTINGS ***********************
-
-_ULA_SETTINGS:		.byte	$9c				; 10011100
-			.byte	$d8				; 11011000
-			.byte	$f4				; 11110100
-			.byte	$9c				; 10011100
-			.byte	$88				; 10001000
-			.byte	$c4				; 11000100
-			.byte	$88				; 10001000
-			.byte	$4b				; 01001011
-
-
-;******** NUMBER OF BYTES PER CHARACTER FOR EACH DISPLAY MODE ************
-
-_TXT_BPC_TABLE:		.byte	$08				; 00001000
-			.byte	$10				; 00010000
-			.byte	$20				; 00100000
-			.byte	$08				; 00001000
-			.byte	$08				; 00001000
-			.byte	$10				; 00010000
-			.byte	$08				; 00001000
-_TAB_VDU_MASK_R:	.byte	$01				; 00000001
-	; _TAB_VDU_MASK_R is used to make a right most pixel mask by taking the
-	; number of pixels per byte-1 (7,3,1)*2 as an index ($01,$11,$55)
-
-;******************* MASK TABLE FOR  2 COLOUR MODES **********************
-
-_COL2_MASK_TAB:		.byte	$aa				; 10101010
-			.byte	$55				; 01010101
-
-
-;****************** MASK TABLE FOR  4 COLOUR MODES ***********************
-
-			.byte	$88				; 10001000
-			.byte	$44				; 01000100
-			.byte	$22				; 00100010
-			.byte	$11				; 00010001
-
-
-;********** MASK TABLE FOR  4 COLOUR MODES FONT FLAG MASK TABLE **********
-
-_LC40D:			.byte	$80				; 10000000
-			.byte	$40				; 01000000
-			.byte	$20				; 00100000
-			.byte	$10				; 00010000
-			.byte	$08				; 00001000
-			.byte	$04				; 00000100
-			.byte	$02				; 00000010  -  NEXT BYTE IN FOLLOWING TABLE
-
-
-;********* NUMBER OF TEXT COLOURS -1 FOR EACH MODE ************************
-
-_TBL_MODE_COLOURS:	.byte	$01				; MODE 0 - 2 COLOURS
-			.byte	$03				; MODE 1 - 4 COLOURS
-			.byte	$0f				; MODE 2 - 16 COLOURS
-			.byte	$01				; MODE 3 - 2 COLOURS
-			.byte	$01				; MODE 4 - 2 COLOURS
-			.byte	$03				; MODE 5 - 4 COLOURS
-			.byte	$01				; MODE 6 - 2 COLOURS
-_LC41B:			.byte	$00				; MODE 7 - 1 'COLOUR'
-
-
-;************** GCOL PLOT OPTIONS PROCESSING LOOK UP TABLE ***************
-
-_LC41C:			.byte	$ff				; 11111111
-_LC41D:			.byte	$00				; 00000000
-			.byte	$00				; 00000000
-			.byte	$ff				; 11111111
-_LC420:			.byte	$ff				; 11111111
-			.byte	$ff				; 11111111
-			.byte	$ff				; 11111111
-_LC423:			.byte	$00				; 00000000
-
-
-;********** 2 COLOUR MODES PARAMETER LOOK UP TABLE WITHIN TABLE **********
-
-			.byte	$00				; 00000000
-			.byte	$ff				; 11111111
-
-
-;*************** 4 COLOUR MODES PARAMETER LOOK UP TABLE ******************
-
-			.byte	$00				; 00000000
-			.byte	$0f				; 00001111
-			.byte	$f0				; 11110000
-			.byte	$ff				; 11111111
-
-
-;***************16 COLOUR MODES PARAMETER LOOK UP TABLE ******************
-
-			.byte	$00				; 00000000
-			.byte	$03				; 00000011
-			.byte	$0c				; 00001100
-			.byte	$0f				; 00001111
-			.byte	$30				; 00110000
-			.byte	$33				; 00110011
-			.byte	$3c				; 00111100
-			.byte	$3f				; 00111111
-			.byte	$c0				; 11000000
-			.byte	$c3				; 11000011
-			.byte	$cc				; 11001100
-			.byte	$cf				; 11001111
-			.byte	$f0				; 11110000
-			.byte	$f3				; 11110011
-			.byte	$fc				; 11111100
-			.byte	$ff				; 11111111
-
-
-;********** DISPLAY MODE PIXELS/BYTE-1 TABLE *********************
-
-_TBL_VDU_PIXPB:		.byte	$07				; MODE 0 - 8 PIXELS/BYTE
-			.byte	$03				; MODE 1 - 4 PIXELS/BYTE
-			.byte	$01				; MODE 2 - 2 PIXELS/BYTE
-_LC43D:			.byte	$00				; MODE 3 - 1 PIXEL/BYTE (NON-GRAPHICS)
-			.byte	$07				; MODE 4 - 8 PIXELS/BYTE
-			.byte	$03				; MODE 5 - 4 PIXELS/BYTE
-
-;********* SCREEN DISPLAY MEMORY TYPE TABLE OVERLAPS ************
-
-; _TAB_MAP_TYPE - indexed by mode, type of mode (0=20K, 1=16K, 2=10k, 3=8K, 4=1K)
-_TAB_MAP_TYPE:		.byte	$00				; MODE 6 - 1 PIXEL/BYTE	 //  MODE 0 - TYPE 0
-
-;***** SOUND PITCH OFFSET BY CHANNEL TABLE WITHIN TABLE **********
-
-			.byte	$00				; MODE 7 - 1 PIXEL/BYTE	 //  MODE 1 - TYPE 0  //  CHANNEL 0
-			.byte	$00				; //  MODE 2 - TYPE 0  //  CHANNEL 1
-			.byte	$01				; //  MODE 3 - TYPE 1  //  CHANNEL 2
-			.byte	$02				; //  MODE 4 - TYPE 2  //  CHANNEL 3
-
-;**** REST OF DISPLAY MEMORY TYPE TABLE ****
-
-			.byte	$02				; //  MODE 5 - TYPE 2
-			.byte	$03				; //  MODE 6 - TYPE 3
-
-;***************** VDU SECTION CONTROL NUMBERS ***************************
-
-_LC447:			.byte	$04				; 00000100		  //  MODE 7 - TYPE 4
-			.byte	$00				; 00000000
-			.byte	$06				; 00000110
-			.byte	$02				; 00000010
-
-;*********** CRTC SETUP PARAMETERS TABLE 1 WITHIN TABLE ******************
-
-; value to write to 8 bit latch bit 4 indexed by mode size type (see _TAB_MAP_TYPE)
-_TAB_LAT4_MOSZ:		.byte	$0d				; 00001101
-			.byte	$05				; 00000101
-			.byte	$0d				; 00001101
-			.byte	$05				; 00000101
-
-;*********** CRTC SETUP PARAMETERS TABLE 2 WITHIN TABLE *****************
-
-; value to write to 8 bit latch bit 4 indexed by mode size type (see _TAB_MAP_TYPE)
-_TAB_LAT5_MOSZ:		.byte	$04				; 00000100
-			.byte	$04				; 00000100
-			.byte	$0c				; 00001100
-			.byte	$0c				; 00001100
-			.byte	$04				; 00000100
-
-;**** REST OF VDU SECTION CONTROL NUMBERS ****
-
-_TAB_CLS_ENTER:		.byte	<_VDU_CLEAR_20K
-			.byte	<_VDU_CLEAR_16K
-			.byte	<_VDU_CLEAR_10K
-			.byte	<_VDU_CLEAR_8K
-			.byte	<_VDU_CLEAR_1K
-
-
-;************** MSB OF MEMORY OCCUPIED BY SCREEN BUFFER	 *****************
-
-_VDU_MEMSZ_TAB:		.byte	$50				; Type 0: &5000 - 20K
-			.byte	$40				; Type 1: &4000 - 16K
-			.byte	$28				; Type 2: &2800 - 10K
-			.byte	$20				; Type 3: &2000 - 8K
-			.byte	$04				; Type 4: &0400 - 1K
-
-
-;************ MSB OF FIRST LOCATION OCCUPIED BY SCREEN BUFFER ************
-
-_VDU_MEMLOC_TAB:	.byte	$30				; Type 0: &3000
-			.byte	$40				; Type 1: &4000
-			.byte	$58				; Type 2: &5800
-			.byte	$60				; Type 3: &6000
-			.byte	$7c				; Type 4: &7C00
-
-
-;***************** NUMBER OF BYTES PER ROW *******************************
-
-_TAB_BPR:		.byte	$28				; 00101000
-			.byte	$40				; 01000000
-			.byte	$80				; 10000000
-
-
-;******** ROW MULTIPLIACTION TABLE POINTER TO LOOK UP TABLE **************
-
-_TAB_MULTBL_LKUP:	.byte	<_MUL40_TABLE			; 10110101
-			.byte	<_MUL640_TABLE			; 01110101
-			.byte	<_MUL640_TABLE			; 01110101
-
-
-;********** CRTC CURSOR END REGISTER SETTING LOOK UP TABLE ***************
-
-; CRTC last register to program by mode size
-_TAB_CRTCBYMOSZ:	.byte	$0b				; 20k mode 0,1,2
-			.byte	$17				; 16k mode 3
-			.byte	$23				; 10k mode 4,5
-			.byte	$2f				; 8k mode 6
-			.byte	$3b				; 1k mode 7
-
-
-;************* 6845 REGISTERS 0-11 FOR SCREEN TYPE 0 - MODES 0-2 *********
-
-_CRTC_REG_TAB:		.byte	$7f				; 0 Horizontal Total	 =128
-			.byte	$50				; 1 Horizontal Displayed =80
-			.byte	$62				; 2 Horizontal Sync	 =&62
-			.byte	$28				; 3 HSync Width+VSync	 =&28  VSync=2, HSync Width=8
-			.byte	$26				; 4 Vertical Total	 =38
-			.byte	$00				; 5 Vertial Adjust	 =0
-			.byte	$20				; 6 Vertical Displayed	 =32
-			.byte	$22				; 7 VSync Position	 =&22
-			.byte	$01				; 8 Interlace+Cursor	 =&01  Cursor=0, Display=0, Interlace=Sync
-			.byte	$07				; 9 Scan Lines/Character =8
-			.byte	$67				; 10 Cursor Start Line	  =&67	Blink=On, Speed=1/32, Line=7
-			.byte	$08				; 11 Cursor End Line	  =8
-
-
-;************* 6845 REGISTERS 0-11 FOR SCREEN TYPE 1 - MODE 3 ************
-
-			.byte	$7f				; 0 Horizontal Total	 =128
-			.byte	$50				; 1 Horizontal Displayed =80
-			.byte	$62				; 2 Horizontal Sync	 =&62
-			.byte	$28				; 3 HSync Width+VSync	 =&28  VSync=2, HSync=8
-			.byte	$1e				; 4 Vertical Total	 =30
-			.byte	$02				; 5 Vertical Adjust	 =2
-			.byte	$19				; 6 Vertical Displayed	 =25
-			.byte	$1b				; 7 VSync Position	 =&1B
-			.byte	$01				; 8 Interlace+Cursor	 =&01  Cursor=0, Display=0, Interlace=Sync
-			.byte	$09				; 9 Scan Lines/Character =10
-			.byte	$67				; 10 Cursor Start Line	  =&67	Blink=On, Speed=1/32, Line=7
-			.byte	$09				; 11 Cursor End Line	  =9
-
-
-;************ 6845 REGISTERS 0-11 FOR SCREEN TYPE 2 - MODES 4-5 **********
-
-			.byte	$3f				; 0 Horizontal Total	 =64
-			.byte	$28				; 1 Horizontal Displayed =40
-			.byte	$31				; 2 Horizontal Sync	 =&31
-			.byte	$24				; 3 HSync Width+VSync	 =&24  VSync=2, HSync=4
-			.byte	$26				; 4 Vertical Total	 =38
-			.byte	$00				; 5 Vertical Adjust	 =0
-			.byte	$20				; 6 Vertical Displayed	 =32
-			.byte	$22				; 7 VSync Position	 =&22
-			.byte	$01				; 8 Interlace+Cursor	 =&01  Cursor=0, Display=0, Interlace=Sync
-			.byte	$07				; 9 Scan Lines/Character =8
-			.byte	$67				; 10 Cursor Start Line	  =&67	Blink=On, Speed=1/32, Line=7
-			.byte	$08				; 11 Cursor End Line	  =8
-
-
-;********** 6845 REGISTERS 0-11 FOR SCREEN TYPE 3 - MODE 6 ***************
-
-			.byte	$3f				; 0 Horizontal Total	 =64
-			.byte	$28				; 1 Horizontal Displayed =40
-			.byte	$31				; 2 Horizontal Sync	 =&31
-			.byte	$24				; 3 HSync Width+VSync	 =&24  VSync=2, HSync=4
-			.byte	$1e				; 4 Vertical Total	 =30
-			.byte	$02				; 5 Vertical Adjust	 =0
-			.byte	$19				; 6 Vertical Displayed	 =25
-			.byte	$1b				; 7 VSync Position	 =&1B
-			.byte	$01				; 8 Interlace+Cursor	 =&01  Cursor=0, Display=0, Interlace=Sync
-			.byte	$09				; 9 Scan Lines/Character =10
-			.byte	$67				; 10 Cursor Start Line	  =&67	Blink=On, Speed=1/32, Line=7
-			.byte	$09				; 11 Cursor End Line	  =9
-
-
-;********* 6845 REGISTERS 0-11 FOR SCREEN TYPE 4 - MODE 7 ****************
-
-			.byte	$3f				; 0 Horizontal Total	 =64
-			.byte	$28				; 1 Horizontal Displayed =40
-			.byte	$33				; 2 Horizontal Sync	 =&33  Note: &31 is a better value
-			.byte	$24				; 3 HSync Width+VSync	 =&24  VSync=2, HSync=4
-			.byte	$1e				; 4 Vertical Total	 =30
-			.byte	$02				; 5 Vertical Adjust	 =2
-			.byte	$19				; 6 Vertical Displayed	 =25
-			.byte	$1b				; 7 VSync Position	 =&1B
-			.byte	$93				; 8 Interlace+Cursor	 =&93  Cursor=2, Display=1, Interlace=Sync+Video
-			.byte	$12				; 9 Scan Lines/Character =19
-			.byte	$72				; 10 Cursor Start Line	  =&72	Blink=On, Speed=1/32, Line=18
-			.byte	$13				; 11 Cursor End Line	  =19
+;;#;;;****** 16 COLOUR MODE BYTE MASK LOOK UP TABLE******
+;;#;;
+;;#;;_COL16_MASK_TAB:	.byte	$00				; 00000000
+;;#;;			.byte	$11				; 00010001
+;;#;;			.byte	$22				; 00100010
+;;#;;			.byte	$33				; 00110011
+;;#;;			.byte	$44				; 01000100
+;;#;;			.byte	$55				; 01010101
+;;#;;			.byte	$66				; 01100110
+;;#;;			.byte	$77				; 01110111
+;;#;;			.byte	$88				; 10001000
+;;#;;			.byte	$99				; 10011001
+;;#;;			.byte	$aa				; 10101010
+;;#;;			.byte	$bb				; 10111011
+;;#;;			.byte	$cc				; 11001100
+;;#;;			.byte	$dd				; 11011101
+;;#;;			.byte	$ee				; 11101110
+;;#;;			.byte	$ff				; 11111111
+;;#;;
+;;#;;
+;;#;;;****** 4 COLOUR MODE BYTE MASK LOOK UP TABLE******
+;;#;;
+;;#;;_COL4_MASK_TAB:		.byte	$00				; 00000000
+;;#;;			.byte	$55				; 01010101
+;;#;;			.byte	$aa				; 10101010
+;;#;;			.byte	$ff				; 11111111
+
+
+;;#;;;****** VDU ENTRY POINT LO	 LOOK UP TABLE******
+;;#;;
+;;#;;.macro vdu_lo		addr
+;;#;;			.byte	<(addr)
+;;#;;.endmacro
+;;#;;
+;;#;;.macro vdu_hi		addr, count
+;;#;;	.ifblank	count
+;;#;;			.byte	>(addr)
+;;#;;	.else
+;;#;;			.byte	(>(addr - VDU_DRIVER_PAGE) << 4) + (16 - count)
+;;#;;	.endif
+;;#;;.endmacro
+
+;;#;;_VDU_TABLE_LO:		vdu_lo	_VDU_0
+;;#;;			vdu_lo	_VDU_1
+;;#;;			vdu_lo	_VDU_2
+;;#;;			vdu_lo	_VDU_3
+;;#;;			vdu_lo	_VDU_4
+;;#;;			vdu_lo	_VDU_5
+;;#;;			vdu_lo	_VDU_6
+;;#;;			vdu_lo	_VDU_7
+;;#;;			vdu_lo	_VDU_8
+;;#;;			vdu_lo	_VDU_9
+;;#;;			vdu_lo	_VDU_10
+;;#;;			vdu_lo	_VDU_11
+;;#;;			vdu_lo	_VDU_12
+;;#;;			vdu_lo	_VDU_13
+;;#;;			vdu_lo	_VDU_14
+;;#;;			vdu_lo	_VDU_15
+;;#;;			vdu_lo	_VDU_16
+;;#;;			vdu_lo	_VDU_17
+;;#;;			vdu_lo	_VDU_18
+;;#;;			vdu_lo	_VDU_19
+;;#;;			vdu_lo	_VDU_20
+;;#;;			vdu_lo	_VDU_21
+;;#;;			vdu_lo	_VDU_22
+;;#;;			vdu_lo	_VDU_23
+;;#;;			vdu_lo	_VDU_24
+;;#;;			vdu_lo	_VDU_25
+;;#;;			vdu_lo	_VDU_26
+;;#;;			vdu_lo	_VDU_27
+;;#;;			vdu_lo	_VDU_28
+;;#;;			vdu_lo	_VDU_29
+;;#;;			vdu_lo	_VDU_30
+;;#;;			vdu_lo	_VDU_31
+;;#;;			vdu_lo	_VDU_127
+;;#;;
+;;#;;
+;;#;;;****** VDU ENTRY POINT HI PARAMETER LOOK UP TABLE******
+;;#;;
+;;#;;; 1xxxxxxx - no parameters, address high byte
+;;#;;; 0aaapppp - parameter count 16-p, address high byte &C3+a
+;;#;;
+;;#;;_VDU_TABLE_HI:		vdu_hi	_VDU_0				; VDU  0   - &C511, no parameters
+;;#;;			vdu_hi	_VDU_1, 1			; VDU  1   - &C53B, 1 parameter
+;;#;;			vdu_hi	_VDU_2				; VDU  2   - &C596, no parameters
+;;#;;			vdu_hi	_VDU_3				; VDU  3   - &C5A1, no parameters
+;;#;;			vdu_hi	_VDU_4				; VDU  4   - &C5AD, no parameters
+;;#;;			vdu_hi	_VDU_5				; VDU  5   - &C5B9, no parameters
+;;#;;			vdu_hi	_VDU_6				; VDU  6   - &C511, no parameters
+;;#;;			vdu_hi	_VDU_7				; VDU  7   - &E86F, no parameters
+;;#;;			vdu_hi	_VDU_8				; VDU  8   - &C5C5, no parameters
+;;#;;			vdu_hi	_VDU_9				; VDU  9   - &C664, no parameters
+;;#;;			vdu_hi	_VDU_10				; VDU 10  - &C6F0, no parameters
+;;#;;			vdu_hi	_VDU_11				; VDU 11  - &C65B, no parameters
+;;#;;			vdu_hi	_VDU_12				; VDU 12  - &C759, no parameters
+;;#;;			vdu_hi	_VDU_13				; VDU 13  - &C7AF, no parameters
+;;#;;			vdu_hi	_VDU_14				; VDU 14  - &C58D, no parameters
+;;#;;			vdu_hi	_VDU_15				; VDU 15  - &C5A6, no parameters
+;;#;;			vdu_hi	_VDU_16				; VDU 16  - &C7C0, no parameters
+;;#;;			vdu_hi	_VDU_17, 1			; VDU 17  - &C7F9, 1 parameter
+;;#;;			vdu_hi	_VDU_18, 2			; VDU 18  - &C7FD, 2 parameters
+;;#;;			vdu_hi	_VDU_19, 5			; VDU 19  - &C892, 5 parameters
+;;#;;			vdu_hi	_VDU_20				; VDU 20  - &C839, no parameters
+;;#;;			vdu_hi	_VDU_21				; VDU 21  - &C59B, no parameters
+;;#;;			vdu_hi	_VDU_22, 1			; VDU 22  - &C8EB, 1 parameter
+;;#;;			vdu_hi	_VDU_23, 9			; VDU 23  - &C8F1, 9 parameters
+;;#;;			vdu_hi	_VDU_24, 8			; VDU 24  - &CA39, 8 parameters
+;;#;;			vdu_hi	_VDU_25, 5			; VDU 25  - &C9AC, 5 parameters
+;;#;;			vdu_hi	_VDU_26				; VDU 26  - &C9BD, no parameters
+;;#;;			vdu_hi	_VDU_27				; VDU 27  - &C511, no parameters
+;;#;;			vdu_hi	_VDU_28, 4			; VDU 28  - &C6FA, 4 parameters
+;;#;;			vdu_hi	_VDU_29, 4			; VDU 29  - &CAA2, 4 parameters
+;;#;;			vdu_hi	_VDU_30				; VDU 30  - &C779, no parameters
+;;#;;			vdu_hi	_VDU_31, 2			; VDU 31  - &C787, 2 parameters
+;;#;;			vdu_hi	_VDU_127			; VDU 127 - &CAAC, no parameters
+
+
+;;#;; ;****** 640 MULTIPLICATION TABLE  40COL, 80COL MODES  HIBYTE, LOBYTE ******
+;;#;; 
+;;#;; _MUL640_TABLE:		.dbyt	640 *  0
+;;#;; 			.dbyt	640 *  1
+;;#;; 			.dbyt	640 *  2
+;;#;; 			.dbyt	640 *  3
+;;#;; 			.dbyt	640 *  4
+;;#;; 			.dbyt	640 *  5
+;;#;; 			.dbyt	640 *  6
+;;#;; 			.dbyt	640 *  7
+;;#;; 			.dbyt	640 *  8
+;;#;; 			.dbyt	640 *  9
+;;#;; 			.dbyt	640 * 10
+;;#;; 			.dbyt	640 * 11
+;;#;; 			.dbyt	640 * 12
+;;#;; 			.dbyt	640 * 13
+;;#;; 			.dbyt	640 * 14
+;;#;; 			.dbyt	640 * 15
+;;#;; 			.dbyt	640 * 16
+;;#;; 			.dbyt	640 * 17
+;;#;; 			.dbyt	640 * 18
+;;#;; 			.dbyt	640 * 19
+;;#;; 			.dbyt	640 * 20
+;;#;; 			.dbyt	640 * 21
+;;#;; 			.dbyt	640 * 22
+;;#;; 			.dbyt	640 * 23
+;;#;; 			.dbyt	640 * 24
+;;#;; 			.dbyt	640 * 25
+;;#;; 			.dbyt	640 * 26
+;;#;; 			.dbyt	640 * 27
+;;#;; 			.dbyt	640 * 28
+;;#;; 			.dbyt	640 * 29
+;;#;; 			.dbyt	640 * 30
+;;#;; 			.dbyt	640 * 31
+;;#;; 
+;;#;; ;****** *40 MULTIPLICATION TABLE  TELETEXT  MODE   HIBYTE, LOBYTE  ******
+;;#;; 
+;;#;; _MUL40_TABLE:		.dbyt	40 *  0
+;;#;; 			.dbyt	40 *  1
+;;#;; 			.dbyt	40 *  2
+;;#;; 			.dbyt	40 *  3
+;;#;; 			.dbyt	40 *  4
+;;#;; 			.dbyt	40 *  5
+;;#;; 			.dbyt	40 *  6
+;;#;; 			.dbyt	40 *  7
+;;#;; 			.dbyt	40 *  8
+;;#;; 			.dbyt	40 *  9
+;;#;; 			.dbyt	40 * 10
+;;#;; 			.dbyt	40 * 11
+;;#;; 			.dbyt	40 * 12
+;;#;; 			.dbyt	40 * 13
+;;#;; 			.dbyt	40 * 14
+;;#;; 			.dbyt	40 * 15
+;;#;; 			.dbyt	40 * 16
+;;#;; 			.dbyt	40 * 17
+;;#;; 			.dbyt	40 * 18
+;;#;; 			.dbyt	40 * 19
+;;#;; 			.dbyt	40 * 20
+;;#;; 			.dbyt	40 * 21
+;;#;; 			.dbyt	40 * 22
+;;#;; 			.dbyt	40 * 23
+;;#;; 			.dbyt	40 * 24
+;;#;; 
+;;#;; 
+;;#;; ;****** TEXT WINDOW -BOTTOM ROW LOOK UP TABLE ******
+;;#;; 
+;;#;; _TEXT_ROW_TABLE:	.byte	$1f				; MODE 0 - 32 ROWS
+;;#;; 			.byte	$1f				; MODE 1 - 32 ROWS
+;;#;; 			.byte	$1f				; MODE 2 - 32 ROWS
+;;#;; 			.byte	$18				; MODE 3 - 25 ROWS
+;;#;; 			.byte	$1f				; MODE 4 - 32 ROWS
+;;#;; 			.byte	$1f				; MODE 5 - 32 ROWS
+;;#;; 			.byte	$18				; MODE 6 - 25 ROWS
+;;#;; 			.byte	$18				; MODE 7 - 25 ROWS
+;;#;; 
+;;#;; 
+;;#;; ;****** TEXT WINDOW -RIGHT HAND COLUMN LOOK UP TABLE ******
+;;#;; 
+;;#;; _TEXT_COL_TABLE:	.byte	$4f				; MODE 0 - 80 COLUMNS
+;;#;; 			.byte	$27				; MODE 1 - 40 COLUMNS
+;;#;; 			.byte	$13				; MODE 2 - 20 COLUMNS
+;;#;; 			.byte	$4f				; MODE 3 - 80 COLUMNS
+;;#;; 			.byte	$27				; MODE 4 - 40 COLUMNS
+;;#;; 			.byte	$13				; MODE 5 - 20 COLUMNS
+;;#;; 			.byte	$27				; MODE 6 - 40 COLUMNS
+;;#;; 			.byte	$27				; MODE 7 - 40 COLUMNS
+
+
+;;#;; ;*************************************************************************
+;;#;; ;*									 *
+;;#;; ;*	 SEVERAL OF THE FOLLOWING TABLES OVERLAP EACH OTHER		 *
+;;#;; ;*	 SOME ARE DUAL PURPOSE						 *
+;;#;; ;*									 *
+;;#;; ;*************************************************************************
+;;#;; 
+;;#;; ;************** VIDEO ULA CONTROL REGISTER SETTINGS ***********************
+;;#;; 
+;;#;; _ULA_SETTINGS:		.byte	$9c				; 10011100
+;;#;; 			.byte	$d8				; 11011000
+;;#;; 			.byte	$f4				; 11110100
+;;#;; 			.byte	$9c				; 10011100
+;;#;; 			.byte	$88				; 10001000
+;;#;; 			.byte	$c4				; 11000100
+;;#;; 			.byte	$88				; 10001000
+;;#;; 			.byte	$4b				; 01001011
+;;#;; 
+;;#;; 
+;;#;; ;******** NUMBER OF BYTES PER CHARACTER FOR EACH DISPLAY MODE ************
+;;#;; 
+;;#;; _TXT_BPC_TABLE:		.byte	$08				; 00001000
+;;#;; 			.byte	$10				; 00010000
+;;#;; 			.byte	$20				; 00100000
+;;#;; 			.byte	$08				; 00001000
+;;#;; 			.byte	$08				; 00001000
+;;#;; 			.byte	$10				; 00010000
+;;#;; 			.byte	$08				; 00001000
+;;#;; _TAB_VDU_MASK_R:	.byte	$01				; 00000001
+;;#;; 	; _TAB_VDU_MASK_R is used to make a right most pixel mask by taking the
+;;#;; 	; number of pixels per byte-1 (7,3,1)*2 as an index ($01,$11,$55)
+;;#;; 
+;;#;; ;******************* MASK TABLE FOR  2 COLOUR MODES **********************
+;;#;; 
+;;#;; _COL2_MASK_TAB:		.byte	$aa				; 10101010
+;;#;; 			.byte	$55				; 01010101
+;;#;; 
+;;#;; 
+;;#;; ;****************** MASK TABLE FOR  4 COLOUR MODES ***********************
+;;#;; 
+;;#;; 			.byte	$88				; 10001000
+;;#;; 			.byte	$44				; 01000100
+;;#;; 			.byte	$22				; 00100010
+;;#;; 			.byte	$11				; 00010001
+;;#;; 
+;;#;; 
+;;#;; ;********** MASK TABLE FOR  4 COLOUR MODES FONT FLAG MASK TABLE **********
+;;#;; 
+;;#;; _LC40D:			.byte	$80				; 10000000
+;;#;; 			.byte	$40				; 01000000
+;;#;; 			.byte	$20				; 00100000
+;;#;; 			.byte	$10				; 00010000
+;;#;; 			.byte	$08				; 00001000
+;;#;; 			.byte	$04				; 00000100
+;;#;; 			.byte	$02				; 00000010  -  NEXT BYTE IN FOLLOWING TABLE
+;;#;; 
+;;#;; 
+;;#;; ;********* NUMBER OF TEXT COLOURS -1 FOR EACH MODE ************************
+;;#;; 
+;;#;; _TBL_MODE_COLOURS:	.byte	$01				; MODE 0 - 2 COLOURS
+;;#;; 			.byte	$03				; MODE 1 - 4 COLOURS
+;;#;; 			.byte	$0f				; MODE 2 - 16 COLOURS
+;;#;; 			.byte	$01				; MODE 3 - 2 COLOURS
+;;#;; 			.byte	$01				; MODE 4 - 2 COLOURS
+;;#;; 			.byte	$03				; MODE 5 - 4 COLOURS
+;;#;; 			.byte	$01				; MODE 6 - 2 COLOURS
+;;#;; _LC41B:			.byte	$00				; MODE 7 - 1 'COLOUR'
+;;#;; 
+;;#;; 
+;;#;; ;************** GCOL PLOT OPTIONS PROCESSING LOOK UP TABLE ***************
+;;#;; 
+;;#;; _LC41C:			.byte	$ff				; 11111111
+;;#;; _LC41D:			.byte	$00				; 00000000
+;;#;; 			.byte	$00				; 00000000
+;;#;; 			.byte	$ff				; 11111111
+;;#;; _LC420:			.byte	$ff				; 11111111
+;;#;; 			.byte	$ff				; 11111111
+;;#;; 			.byte	$ff				; 11111111
+;;#;; _LC423:			.byte	$00				; 00000000
+;;#;; 
+;;#;; 
+;;#;; ;********** 2 COLOUR MODES PARAMETER LOOK UP TABLE WITHIN TABLE **********
+;;#;; 
+;;#;; 			.byte	$00				; 00000000
+;;#;; 			.byte	$ff				; 11111111
+;;#;; 
+;;#;; 
+;;#;; ;*************** 4 COLOUR MODES PARAMETER LOOK UP TABLE ******************
+;;#;; 
+;;#;; 			.byte	$00				; 00000000
+;;#;; 			.byte	$0f				; 00001111
+;;#;; 			.byte	$f0				; 11110000
+;;#;; 			.byte	$ff				; 11111111
+;;#;; 
+;;#;; 
+;;#;; ;***************16 COLOUR MODES PARAMETER LOOK UP TABLE ******************
+;;#;; 
+;;#;; 			.byte	$00				; 00000000
+;;#;; 			.byte	$03				; 00000011
+;;#;; 			.byte	$0c				; 00001100
+;;#;; 			.byte	$0f				; 00001111
+;;#;; 			.byte	$30				; 00110000
+;;#;; 			.byte	$33				; 00110011
+;;#;; 			.byte	$3c				; 00111100
+;;#;; 			.byte	$3f				; 00111111
+;;#;; 			.byte	$c0				; 11000000
+;;#;; 			.byte	$c3				; 11000011
+;;#;; 			.byte	$cc				; 11001100
+;;#;; 			.byte	$cf				; 11001111
+;;#;; 			.byte	$f0				; 11110000
+;;#;; 			.byte	$f3				; 11110011
+;;#;; 			.byte	$fc				; 11111100
+;;#;; 			.byte	$ff				; 11111111
+;;#;; 
+;;#;; 
+;;#;; ;********** DISPLAY MODE PIXELS/BYTE-1 TABLE *********************
+;;#;; 
+;;#;; _TBL_VDU_PIXPB:		.byte	$07				; MODE 0 - 8 PIXELS/BYTE
+;;#;; 			.byte	$03				; MODE 1 - 4 PIXELS/BYTE
+;;#;; 			.byte	$01				; MODE 2 - 2 PIXELS/BYTE
+;;#;; _LC43D:			.byte	$00				; MODE 3 - 1 PIXEL/BYTE (NON-GRAPHICS)
+;;#;; 			.byte	$07				; MODE 4 - 8 PIXELS/BYTE
+;;#;; 			.byte	$03				; MODE 5 - 4 PIXELS/BYTE
+;;#;; 
+;;#;; ;********* SCREEN DISPLAY MEMORY TYPE TABLE OVERLAPS ************
+;;#;; 
+;;#;; ; _TAB_MAP_TYPE - indexed by mode, type of mode (0=20K, 1=16K, 2=10k, 3=8K, 4=1K)
+;;#;; _TAB_MAP_TYPE:		.byte	$00				; MODE 6 - 1 PIXEL/BYTE	 //  MODE 0 - TYPE 0
+;;#;; 
+;;#;; ;***** SOUND PITCH OFFSET BY CHANNEL TABLE WITHIN TABLE **********
+;;#;; 
+;;#;; 			.byte	$00				; MODE 7 - 1 PIXEL/BYTE	 //  MODE 1 - TYPE 0  //  CHANNEL 0
+;;#;; 			.byte	$00				; //  MODE 2 - TYPE 0  //  CHANNEL 1
+;;#;; 			.byte	$01				; //  MODE 3 - TYPE 1  //  CHANNEL 2
+;;#;; 			.byte	$02				; //  MODE 4 - TYPE 2  //  CHANNEL 3
+;;#;; 
+;;#;; ;**** REST OF DISPLAY MEMORY TYPE TABLE ****
+;;#;; 
+;;#;; 			.byte	$02				; //  MODE 5 - TYPE 2
+;;#;; 			.byte	$03				; //  MODE 6 - TYPE 3
+;;#;; 
+;;#;; ;***************** VDU SECTION CONTROL NUMBERS ***************************
+;;#;; 
+;;#;; _LC447:			.byte	$04				; 00000100		  //  MODE 7 - TYPE 4
+;;#;; 			.byte	$00				; 00000000
+;;#;; 			.byte	$06				; 00000110
+;;#;; 			.byte	$02				; 00000010
+;;#;; 
+;;#;; ;*********** CRTC SETUP PARAMETERS TABLE 1 WITHIN TABLE ******************
+;;#;; 
+;;#;; ; value to write to 8 bit latch bit 4 indexed by mode size type (see _TAB_MAP_TYPE)
+;;#;; _TAB_LAT4_MOSZ:		.byte	$0d				; 00001101
+;;#;; 			.byte	$05				; 00000101
+;;#;; 			.byte	$0d				; 00001101
+;;#;; 			.byte	$05				; 00000101
+;;#;; 
+;;#;; ;*********** CRTC SETUP PARAMETERS TABLE 2 WITHIN TABLE *****************
+;;#;; 
+;;#;; ; value to write to 8 bit latch bit 4 indexed by mode size type (see _TAB_MAP_TYPE)
+;;#;; _TAB_LAT5_MOSZ:		.byte	$04				; 00000100
+;;#;; 			.byte	$04				; 00000100
+;;#;; 			.byte	$0c				; 00001100
+;;#;; 			.byte	$0c				; 00001100
+;;#;; 			.byte	$04				; 00000100
+;;#;; 
+;;#;; ;**** REST OF VDU SECTION CONTROL NUMBERS ****
+;;#;; 
+;;#;; _TAB_CLS_ENTER:		.byte	<_VDU_CLEAR_20K
+;;#;; 			.byte	<_VDU_CLEAR_16K
+;;#;; 			.byte	<_VDU_CLEAR_10K
+;;#;; 			.byte	<_VDU_CLEAR_8K
+;;#;; 			.byte	<_VDU_CLEAR_1K
+;;#;; 
+;;#;; 
+;;#;; ;************** MSB OF MEMORY OCCUPIED BY SCREEN BUFFER	 *****************
+;;#;; 
+;;#;; _VDU_MEMSZ_TAB:		.byte	$50				; Type 0: &5000 - 20K
+;;#;; 			.byte	$40				; Type 1: &4000 - 16K
+;;#;; 			.byte	$28				; Type 2: &2800 - 10K
+;;#;; 			.byte	$20				; Type 3: &2000 - 8K
+;;#;; 			.byte	$04				; Type 4: &0400 - 1K
+;;#;; 
+;;#;; 
+;;#;; ;************ MSB OF FIRST LOCATION OCCUPIED BY SCREEN BUFFER ************
+;;#;; 
+;;#;; _VDU_MEMLOC_TAB:	.byte	$30				; Type 0: &3000
+;;#;; 			.byte	$40				; Type 1: &4000
+;;#;; 			.byte	$58				; Type 2: &5800
+;;#;; 			.byte	$60				; Type 3: &6000
+;;#;; 			.byte	$7c				; Type 4: &7C00
+;;#;; 
+;;#;; 
+;;#;; ;***************** NUMBER OF BYTES PER ROW *******************************
+;;#;; 
+;;#;; _TAB_BPR:		.byte	$28				; 00101000
+;;#;; 			.byte	$40				; 01000000
+;;#;; 			.byte	$80				; 10000000
+;;#;; 
+;;#;; 
+;;#;; ;******** ROW MULTIPLIACTION TABLE POINTER TO LOOK UP TABLE **************
+;;#;; 
+;;#;; _TAB_MULTBL_LKUP:	.byte	<_MUL40_TABLE			; 10110101
+;;#;; 			.byte	<_MUL640_TABLE			; 01110101
+;;#;; 			.byte	<_MUL640_TABLE			; 01110101
+;;#;; 
+;;#;; 
+;;#;; ;********** CRTC CURSOR END REGISTER SETTING LOOK UP TABLE ***************
+;;#;; 
+;;#;; ; CRTC last register to program by mode size
+;;#;; _TAB_CRTCBYMOSZ:	.byte	$0b				; 20k mode 0,1,2
+;;#;; 			.byte	$17				; 16k mode 3
+;;#;; 			.byte	$23				; 10k mode 4,5
+;;#;; 			.byte	$2f				; 8k mode 6
+;;#;; 			.byte	$3b				; 1k mode 7
+;;#;; 
+;;#;; 
+;;#;; ;************* 6845 REGISTERS 0-11 FOR SCREEN TYPE 0 - MODES 0-2 *********
+;;#;; 
+;;#;; _CRTC_REG_TAB:		.byte	$7f				; 0 Horizontal Total	 =128
+;;#;; 			.byte	$50				; 1 Horizontal Displayed =80
+;;#;; 			.byte	$62				; 2 Horizontal Sync	 =&62
+;;#;; 			.byte	$28				; 3 HSync Width+VSync	 =&28  VSync=2, HSync Width=8
+;;#;; 			.byte	$26				; 4 Vertical Total	 =38
+;;#;; 			.byte	$00				; 5 Vertial Adjust	 =0
+;;#;; 			.byte	$20				; 6 Vertical Displayed	 =32
+;;#;; 			.byte	$22				; 7 VSync Position	 =&22
+;;#;; 			.byte	$01				; 8 Interlace+Cursor	 =&01  Cursor=0, Display=0, Interlace=Sync
+;;#;; 			.byte	$07				; 9 Scan Lines/Character =8
+;;#;; 			.byte	$67				; 10 Cursor Start Line	  =&67	Blink=On, Speed=1/32, Line=7
+;;#;; 			.byte	$08				; 11 Cursor End Line	  =8
+;;#;; 
+;;#;; 
+;;#;; ;************* 6845 REGISTERS 0-11 FOR SCREEN TYPE 1 - MODE 3 ************
+;;#;; 
+;;#;; 			.byte	$7f				; 0 Horizontal Total	 =128
+;;#;; 			.byte	$50				; 1 Horizontal Displayed =80
+;;#;; 			.byte	$62				; 2 Horizontal Sync	 =&62
+;;#;; 			.byte	$28				; 3 HSync Width+VSync	 =&28  VSync=2, HSync=8
+;;#;; 			.byte	$1e				; 4 Vertical Total	 =30
+;;#;; 			.byte	$02				; 5 Vertical Adjust	 =2
+;;#;; 			.byte	$19				; 6 Vertical Displayed	 =25
+;;#;; 			.byte	$1b				; 7 VSync Position	 =&1B
+;;#;; 			.byte	$01				; 8 Interlace+Cursor	 =&01  Cursor=0, Display=0, Interlace=Sync
+;;#;; 			.byte	$09				; 9 Scan Lines/Character =10
+;;#;; 			.byte	$67				; 10 Cursor Start Line	  =&67	Blink=On, Speed=1/32, Line=7
+;;#;; 			.byte	$09				; 11 Cursor End Line	  =9
+;;#;; 
+;;#;; 
+;;#;; ;************ 6845 REGISTERS 0-11 FOR SCREEN TYPE 2 - MODES 4-5 **********
+;;#;; 
+;;#;; 			.byte	$3f				; 0 Horizontal Total	 =64
+;;#;; 			.byte	$28				; 1 Horizontal Displayed =40
+;;#;; 			.byte	$31				; 2 Horizontal Sync	 =&31
+;;#;; 			.byte	$24				; 3 HSync Width+VSync	 =&24  VSync=2, HSync=4
+;;#;; 			.byte	$26				; 4 Vertical Total	 =38
+;;#;; 			.byte	$00				; 5 Vertical Adjust	 =0
+;;#;; 			.byte	$20				; 6 Vertical Displayed	 =32
+;;#;; 			.byte	$22				; 7 VSync Position	 =&22
+;;#;; 			.byte	$01				; 8 Interlace+Cursor	 =&01  Cursor=0, Display=0, Interlace=Sync
+;;#;; 			.byte	$07				; 9 Scan Lines/Character =8
+;;#;; 			.byte	$67				; 10 Cursor Start Line	  =&67	Blink=On, Speed=1/32, Line=7
+;;#;; 			.byte	$08				; 11 Cursor End Line	  =8
+;;#;; 
+;;#;; 
+;;#;; ;********** 6845 REGISTERS 0-11 FOR SCREEN TYPE 3 - MODE 6 ***************
+;;#;; 
+;;#;; 			.byte	$3f				; 0 Horizontal Total	 =64
+;;#;; 			.byte	$28				; 1 Horizontal Displayed =40
+;;#;; 			.byte	$31				; 2 Horizontal Sync	 =&31
+;;#;; 			.byte	$24				; 3 HSync Width+VSync	 =&24  VSync=2, HSync=4
+;;#;; 			.byte	$1e				; 4 Vertical Total	 =30
+;;#;; 			.byte	$02				; 5 Vertical Adjust	 =0
+;;#;; 			.byte	$19				; 6 Vertical Displayed	 =25
+;;#;; 			.byte	$1b				; 7 VSync Position	 =&1B
+;;#;; 			.byte	$01				; 8 Interlace+Cursor	 =&01  Cursor=0, Display=0, Interlace=Sync
+;;#;; 			.byte	$09				; 9 Scan Lines/Character =10
+;;#;; 			.byte	$67				; 10 Cursor Start Line	  =&67	Blink=On, Speed=1/32, Line=7
+;;#;; 			.byte	$09				; 11 Cursor End Line	  =9
+;;#;; 
+;;#;; 
+;;#;; ;********* 6845 REGISTERS 0-11 FOR SCREEN TYPE 4 - MODE 7 ****************
+;;#;; 
+;;#;; 			.byte	$3f				; 0 Horizontal Total	 =64
+;;#;; 			.byte	$28				; 1 Horizontal Displayed =40
+;;#;; 			.byte	$33				; 2 Horizontal Sync	 =&33  Note: &31 is a better value
+;;#;; 			.byte	$24				; 3 HSync Width+VSync	 =&24  VSync=2, HSync=4
+;;#;; 			.byte	$1e				; 4 Vertical Total	 =30
+;;#;; 			.byte	$02				; 5 Vertical Adjust	 =2
+;;#;; 			.byte	$19				; 6 Vertical Displayed	 =25
+;;#;; 			.byte	$1b				; 7 VSync Position	 =&1B
+;;#;; 			.byte	$93				; 8 Interlace+Cursor	 =&93  Cursor=2, Display=1, Interlace=Sync+Video
+;;#;; 			.byte	$12				; 9 Scan Lines/Character =19
+;;#;; 			.byte	$72				; 10 Cursor Start Line	  =&72	Blink=On, Speed=1/32, Line=18
+;;#;; 			.byte	$13				; 11 Cursor End Line	  =19
 
 
 ;************* VDU ROUTINE VECTOR ADDRESSES   ******************************
@@ -1993,22 +1993,22 @@ _LC4B2:			.byte	>_PLOT_D36A
 			.byte	>_PLOT_D34B
 
 
-;*********** TELETEXT CHARACTER CONVERSION TABLE  ************************
-
-_TELETEXT_CHAR_TAB:	.byte	$23				; '#' -> '_'
-			.byte	$5f				; '_' -> '`'
-			.byte	$60				; '`' -> '#'
-			.byte	$23				; '#'
-
-
-;*********** SOFT CHARACTER RAM ALLOCATION   *****************************
-
-_LC4BA:			.byte	$04				; &20-&3F - OSHWM+&0400
-			.byte	$05				; &40-&5F - OSHWM+&0500
-			.byte	$06				; &60-&7F - OSHWM+&0600
-			.byte	$00				; &80-&9F - OSHWM+&0000
-			.byte	$01				; &A0-&BF - OSHWM+&0100
-			.byte	$02				; &C0-&DF - OSHWM+&0200
+;;#;; ;*********** TELETEXT CHARACTER CONVERSION TABLE  ************************
+;;#;; 
+;;#;; _TELETEXT_CHAR_TAB:	.byte	$23				; '#' -> '_'
+;;#;; 			.byte	$5f				; '_' -> '`'
+;;#;; 			.byte	$60				; '`' -> '#'
+;;#;; 			.byte	$23				; '#'
+;;#;; 
+;;#;; 
+;;#;; ;*********** SOFT CHARACTER RAM ALLOCATION   *****************************
+;;#;; 
+;;#;; _LC4BA:		.byte	$04				; &20-&3F - OSHWM+&0400
+;;#;; 			.byte	$05				; &40-&5F - OSHWM+&0500
+;;#;; 			.byte	$06				; &60-&7F - OSHWM+&0600
+;;#;; 			.byte	$00				; &80-&9F - OSHWM+&0000
+;;#;; 			.byte	$01				; &A0-&BF - OSHWM+&0100
+;;#;; 			.byte	$02				; &C0-&DF - OSHWM+&0200
 
 ;*************************************************************************
 ;*									 *
