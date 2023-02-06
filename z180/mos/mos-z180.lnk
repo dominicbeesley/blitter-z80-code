@@ -1,0 +1,12 @@
+-i build/mos-z180.ihx
+-b NOICE_DATA=0x900
+-b MOS_CODE=0xC000
+-b CODE_BOOT=0xFF00
+-m
+-j
+build/font_data.rel
+build/mos-z180.rel
+build/noice-z180.rel
+build/hw_z180_init.rel
+build/z180_boot.rel
+-e
