@@ -1,3 +1,6 @@
+		.list(me,meb)
+
+
 ;  Adapted from MONZ80.asm - Z80 Debug monitor for use with NoICEZ80
 ;  This file may be assembled with the asz80 assembler
 ;
@@ -18,9 +21,8 @@
 ;
 ; NOTE: this monitor expects interrupt mode 1
 
+		.include "config.inc"
 
-		.include	"../../includes/hardware.inc"
-		.include	"../includes/hardware-z180.inc"
 		.hd64			; z180 instruction set
 
 		.globl	NOICE_INIT
@@ -28,7 +30,6 @@
 
 
 		.area	MOS_CODE (CON, REL)
-
 
 
 
@@ -42,6 +43,8 @@ mos_handle_res::
 
 		call	NOICE_INIT			; Call the initialisation routine for
 							; NoIce
+
+		TODO	^/HERE WE ARE/
 
 
 HERE:		jp	HERE

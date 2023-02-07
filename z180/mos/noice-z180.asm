@@ -1,3 +1,5 @@
+	.list(me,meb)
+
 ;  Adapted from MONZ80.asm - Z80 Debug monitor for use with NoICEZ80
 ;  This file may be assembled with the asz80 assembler
 ;
@@ -461,6 +463,7 @@ DBG_TOG:
 ;
 ;  Uses 6 bytes of stack including return address
 ;
+NOICE_PUTCHAR::
 PUTCHAR:
 	PUSH	AF			;save byte to output
 PC10:

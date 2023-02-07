@@ -7,6 +7,7 @@
 build/font_data.rel
 build/vdu.rel
 build/mos-z180.rel
+build/debug.rel
 build/noice-z180.rel
 build/hw_z180_init.rel
 build/z180_boot.rel

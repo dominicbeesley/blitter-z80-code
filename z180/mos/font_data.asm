@@ -1,4 +1,6 @@
-			.area MOS_CODE(REL, CON)
+		.list(me,meb)
+
+		.area MOS_CODE(REL, CON)
 
 font_data::
 	.db 0H0

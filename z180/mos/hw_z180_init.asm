@@ -1,3 +1,5 @@
+		.list(me,meb)
+
 		.area	MOS_CODE (CON, REL)
 
 		.hd64

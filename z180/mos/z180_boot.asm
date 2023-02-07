@@ -1,3 +1,5 @@
+		.list(me,meb)
+
 		.area	CODE_BOOT (CON, REL)
 
 		.hd64
