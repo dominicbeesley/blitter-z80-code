@@ -32,9 +32,11 @@
 		.area	MOS_CODE (CON, REL)
 
 
+		.globl	mos_VDU_init
+
 
 mos_handle_res::	
-		ld	HL,0x8000
+		ld	HL,STACKTOP
 		ld	SP,HL
 
 		; set up the basic hardware for the z180
@@ -44,13 +46,162 @@ mos_handle_res::
 		call	NOICE_INIT			; Call the initialisation routine for
 							; NoIce
 
-		TODO	^/HERE WE ARE/
+		; bodge a few values
 
+		ld	A,0
+		ld	(oswksp_VDU_VERTADJ),A
+		ld	(oswksp_VDU_INTERLACE),A
+
+
+		rst 8
+
+		; bodge to set crtc regs
+
+		ld	BC,sheila_CRTC_reg
+		ld	A,0xC
+		out	(C),A
+		inc	BC
+		ld	A,0x6
+		out	(C),A
+		ld	BC,sheila_CRTC_reg
+		ld	A,0xD
+		out	(C),A
+		inc	BC
+		ld	A,0x0
+		out	(C),A
+
+
+		ld	a,1
+		call	mos_VDU_init
+
+
+		rst	8
 
 HERE:		jp	HERE
 
+
+;;DUMMY ROUTINES....
+
+
+mos_poke_SYSVIA_orb::
+;		pshs	CC
+;		SEI
+;		sta	sheila_SYSVIA_orb
+;
+;		puls	CC,PC
+; TODO: what is the purpose of turning off/on interrupts here!?!
+		push	BC
+		ld	BC,sheila_SYSVIA_orb
+		out	(C),A
+		pop	BC
+		ret
+
+
+LE1A2::		; should do a NETV then UPTV
+
+		ret
+
+	; This is needed for the Zx80 as there is no simple way to push/pop
+	; the interrupt enable status
+
+	; this routine messes with the stack so that when it exits
+	; the stack will contain a pushed AF containing the P flag from 
+	; and LD A,I
+
+pushIFF_DI::	
+	push	HL	; make some space
+	push	AF
+	push	IX
+	ld	IX,0
+	add	IX,SP
+
+	; move return into the "space"
+	ld	A,(IX+6)
+	ld	(IX+4),A
+	ld	A,(IX+7)
+	ld	(IX+5),A
+
+	; store flag
+	ld	A,I
+	push	AF
+	ld	A,(IX-2)	; get flags
+	ld	(IX+6),A
+
+	pop	AF
+	pop	IX
+	pop	AF
+	ret
+
+	; reenable interrupts if they were enabled
+popIFF::
+	push	AF
+	push	IX
+	ld	IX,0
+	add	IX,SP
+
+	; get back flags and test P
+	bit	2,(IX+6)
+	jr	Z,10$
+	EI
+10$:	
+	; move saved AF and return up 2 bytes
+	ld	A,(IX+4)
+	ld	(IX+6),A
+	ld	A,(IX+5)
+	ld	(IX+7),A
+
+	ld	A,(IX+2)
+	ld	(IX+4),A
+	ld	A,(IX+3)
+	ld	(IX+5),A
+
+	pop	IX
+	pop	AF
+	pop	AF
+	ret
 
 
 		.area	NOICE_CODE(CON, REL)
 	; placeholder to make sure the linker puts it in the right spot
 
+
+
+; *************************************************************************
+; *                                                                       *
+; *       OSBYTE 154 (&9A) SET VIDEO ULA                                  *       
+; *                                                                       *
+; *************************************************************************
+;;mos_OSBYTE_154
+;;		m_txa					;osbyte entry! X transferred to A thence to
+mos_VIDPROC_set_CTL::
+		call	pushIFF_DI
+		ld	(sysvar_VIDPROC_CTL_COPY),A	;save RAM copy of new parameter
+		push	BC
+		ld	BC,sheila_VIDULA_ctl
+		out	(C),A
+		pop	BC
+
+		ld	A,(sysvar_FLASH_MARK_PERIOD)	;read  space count
+		ld	(sysvar_FLASH_CTDOWN),A		;set flash counter to this value
+		call	popIFF
+		ret	; NOTE: do not remove this ret popIFF frigs the stack
+
+; *************************************************************************
+; *                                                                       *
+; *        OSBYTE &9B (155) write to pallette register                    *       
+; *                                                                       *
+; *************************************************************************
+                ;entry X contains value to write
+
+;;mos_OSBYTE_155
+;;		m_txa					;	EA10
+write_pallette_reg::
+		xor	A,7				;	EA11
+		push	BC
+		call	pushIFF_DI
+		ld	(sysvar_VIDPROC_PAL_COPY), A	;	EA15
+		ld	BC, sheila_VIDULA_pal
+		out	(C), A
+		call	popIFF
+		pop	BC
+		ret

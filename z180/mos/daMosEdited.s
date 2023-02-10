@@ -3411,11 +3411,11 @@ _LCB33:			bit	OSB_RAM_PAGES			; Check available RAM
 _BCB3A:			and	#$07				; X=A and 7 ensure legal mode
 			tax					; X=mode
 			stx	VDU_MODE			; Save current screen MODE
-			lda	_TBL_MODE_COLOURS,X			; Get number of colours -1 for this MODE
+			lda	_TBL_MODE_COLOURS,X		; Get number of colours -1 for this MODE
 			sta	VDU_COL_MASK			; Set current number of logical colours less 1
 			lda	_TXT_BPC_TABLE,X		; Get bytes/character for this MODE
 			sta	VDU_BPC				; Set bytes per character
-			lda	_TBL_VDU_PIXPB,X			; Get pixels/byte for this MODE
+			lda	_TBL_VDU_PIXPB,X		; Get pixels/byte for this MODE
 			sta	VDU_PIX_BYTE			; Set pixels per byte
 			bne	_BCB56				; If non-zero, skip past
 			lda	#$07				; byte/pixel=0, this is MODE 7, prepare A=7 offset into mask table
