@@ -7,7 +7,7 @@
 		.globl	pushIFF_DI
 		.globl	popIFF
 		.globl	mos_VIDPROC_set_CTL
-		.globl	write_pallette_reg
+		.globl	write_pallette_reg		
 
 		.area	MOS_CODE (REL, CON)
 
@@ -794,7 +794,7 @@ LC850:		ld	B,A				; remember # of colours
 
 		cp	A, 3				;	C85F
 		jr	Z, x_4_colour_mode		;	C861
-		jp	NC, x_2colour_mode		;	C863
+		jp	C, x_2colour_mode		;	C863
 		; 16 colour mode do them all...
 		ld	(IX+vduIX_VDU_Q_END-4), A	;	C865
 LC868:		call	mos_VDU_19			;	C868
@@ -808,7 +808,7 @@ x_4_colour_mode::
 		ld	A, 7				;	C874
 		ld	(IX+vduIX_VDU_Q_END-4), A	;	C876
 LC879:		call	mos_VDU_19			;	C879
-		sla	(IX+vduIX_VDU_Q_END-4)		; Q-4
+		sra	(IX+vduIX_VDU_Q_END-4)		; Q-4
 		dec	(IX+vduIX_VDU_Q_END-5)		; Q - 5
 		jp	P, LC879			;	C882
 		ret					;	C884
@@ -824,18 +824,12 @@ mos_VDU_19::
 		call	pushIFF_DI
 		ld	D,0
 		ld	E,(IX+vduIX_VDU_Q_END-5)	; E <= logical colour
-
-		ld	A,E
-		DEBUG_HEX_A
-
 		ld	A,(vduvar_COL_COUNT_MINUS1)	; 
 		ld	C,A				; save it
 		and	A,E
 		ld	E,A
 		ld	A,(IX+vduIX_VDU_Q_END-4)	; a <= physical colour
 LC89E:		and	A,0x0F				; 
-
-		DEBUG_HEX_A
 
 		ld	HL, vduvar_PALLETTE		;
 		add	HL,DE
@@ -861,11 +855,12 @@ LC89E:		and	A,0x0F				;
 		jr	Z,35$
 		cp	A,0b01100000
 		jr	Z,35$
-		ld	A,B
+		ld	A,E
 		xor	A,0b01100000
 		jr	40$
-35$:		ld	A,B
-40$:		call	write_pallette_reg				; LC8CC
+35$:		ld	A,E
+40$:		
+		call	write_pallette_reg				; LC8CC
 		
 		; get back unmessed A value
 		ld	A,E

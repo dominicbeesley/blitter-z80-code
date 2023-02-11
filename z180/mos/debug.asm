@@ -4,6 +4,9 @@
 		.area	NOICE_CODE	(CON, REL)
 
 
+DEBUG_PRT_A::
+	jp NOICE_PUTCHAR
+
 DEBUG_PRINT_STR_I::
 		ex	(SP),HL
 		call	DEBUG_PRINT_HL
