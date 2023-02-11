@@ -55,27 +55,27 @@ mos_handle_res::
 
 		rst 8
 
-		; bodge to set crtc regs
-
-		ld	BC,sheila_CRTC_reg
-		ld	A,0xC
-		out	(C),A
-		inc	BC
-		ld	A,0x6
-		out	(C),A
-		ld	BC,sheila_CRTC_reg
-		ld	A,0xD
-		out	(C),A
-		inc	BC
-		ld	A,0x0
-		out	(C),A
+;;		; bodge to set crtc regs
+;;
+;;		ld	BC,sheila_CRTC_reg
+;;		ld	A,0xC
+;;		out	(C),A
+;;		inc	BC
+;;		ld	A,0x6
+;;		out	(C),A
+;;		ld	BC,sheila_CRTC_reg
+;;		ld	A,0xD
+;;		out	(C),A
+;;		inc	BC
+;;		ld	A,0x0
+;;		out	(C),A
 
 
 		ld	a,4
 		call	mos_VDU_init
 
 
-		rst	8
+		TODO	"VDU_INIT_DONE"
 
 HERE:		jp	HERE
 

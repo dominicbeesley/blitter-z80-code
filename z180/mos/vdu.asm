@@ -320,7 +320,7 @@ x_start_curs_edit::	TODO "x_start_curs_edit"
 ;		jsr	x_exchange_2atY_with_2atX	;	C56E
 ;		jsr	x_set_up_displayaddress		;	C571
 ;		ldx	zp_vdu_top_scanline
-;		jsr	x_set_cursor_position_X		;	C574
+;		jsr	x_set_cursor_position_HL		;	C574
 ;		lda	zp_vdu_status			;	C577
 ;		eora	#0x02				; toggle scrolling disabled
 ;		sta	zp_vdu_status			;	C57B
@@ -412,7 +412,7 @@ mos_VDU_8::	TODO "mos_VDU_8"
 ;		bhs	LC5EA				;	C5E5
 ;		adda	vduvar_SCREEN_SIZE_HIGH		;	C5E7
 ;LC5EA:		tfr	D,X				;	C5EA
-;		jmp	mos_set_cursor_X		;	C5EB
+;		jmp	mos_set_cursor_HL		;	C5EB
 ;; ----------------------------------------------------------------------------
 ;; execute wraparound left-up
 x_execute_wraparound_left_up::	TODO "x_execute_wraparound_left_up"
@@ -507,7 +507,7 @@ mos_VDU_9::	TODO "mos_VDU_9"
 ;		ldx	vduvar_6845_CURSOR_ADDR
 ;		ldb	vduvar_BYTES_PER_CHAR		;	C678
 ;		abx
-;		jmp	mos_set_cursor_X		;	C681
+;		jmp	mos_set_cursor_HL		;	C681
 ;; ----------------------------------------------------------------------------
 ;; : text cursor down and right
 x_text_cursor_down_and_right::	TODO "x_text_cursor_down_and_right"
@@ -542,7 +542,7 @@ x_setup_displayaddress_and_cursor_position::	TODO "x_setup_displayaddress_and_cu
 ;
 ;		jsr	x_set_up_displayaddress
 ;		ldx	zp_vdu_top_scanline
-;		jmp	x_set_cursor_position_X
+;		jmp	x_set_cursor_position_HL
 
 ;; graphic cursor right
 x_graphic_cursor_right::	TODO "x_graphic_cursor_right"
@@ -616,7 +616,7 @@ mos_VDU_28::	TODO "mos_VDU_28"
 LC732_set_cursor_position::	TODO "LC732_set_cursor_position"
 ;
 ;		ldx	zp_vdu_top_scanline				; CHECK!
-;		jmp	x_set_cursor_position_X
+;		jmp	x_set_cursor_position_HL
 ;; ----------------------------------------------------------------------------
 ;; OSWORD 9    read a pixel; on entry &EF=A=9 ; &F0=X=low byte of parameter blockFDBess ; &F1=Y=high byte of parameter blockFDBess ; PARAMETER BLOCK ; bytes 0,1 X coordinate, bytes 2,3 Y coordinate ; EXIT with result in byte 4 =&FF if point was of screen
 ;mos_OSWORD_9:
@@ -1032,79 +1032,74 @@ x_adjust_screen_RAM_addresses_one_line_scroll::	TODO "x_adjust_screen_RAM_addres
 ;		suba	vduvar_SCREEN_SIZE_HIGH
 ;LC9B3:		std	vduvar_6845_SCREEN_START
 ;		tfr	D,X
-;		lda	#0x0C
-;		bra	x_set_6845_screenstart_from_X
+		ld	B,0xC
+;		bra	x_set_6845_screenstart_from_HL
 ;; VDU 26  set default windows		  0 parameters
-mos_VDU_26::	TODO "mos_VDU_26"
-;
-;		clra
-;		ldb	#0x2C
-;		ldx	#vduvar_GRA_WINDOW_LEFT
-;LC9C1:		sta	b,x
-;		decb					;	C9C4
-;		bpl	LC9C1				;	C9C5
-;		ldb	vduvar_MODE			;	C9C7
-;		clra
-;		tfr	D,X
-;		lda	mostbl_vdu_window_right,x	;	C9CA
-;		sta	vduvar_TXT_WINDOW_RIGHT		;	C9CD
-;		jsr	LCA88_newAPI			;	C9D0
-;		lda	mostbl_vdu_window_bottom+1,x	;	C9D3
-;		sta	vduvar_TXT_WINDOW_BOTTOM	;	C9D6
-;		ldb	#0x03				;	C9D9
-;		stb	vduvar_VDU_Q_END - 1			;	C9DB
-;		incb					;	C9DE
-;		stb	vduvar_VDU_Q_END - 3			;	C9DF
-;		dec	vduvar_VDU_Q_END - 2			;	C9E2
-;		dec	vduvar_VDU_Q_END - 4			;	C9E5
-;		jsr	mos_VDU_24			;	C9E8
-;		lda	#0xF7				;	C9EB
-;		jsr	mos_VDU_and_A_vdustatus		;	C9ED
-;		ldx	vduvar_6845_SCREEN_START	;	C9F0
-mos_set_cursor_X::	TODO "mos_set_cursor_X"
-;
-;		stx	vduvar_6845_CURSOR_ADDR		;	C9F6
-;		cmpx	#0x8000
-;		blo	x_set_cursor_position_X
-;		lda	vduvar_SCREEN_SIZE_HIGH
-;		nega
-;		clrb
-;		leax	D,X
-;; set cursor position
-x_set_cursor_position_X::	TODO "x_set_cursor_position_X"
-;
-;		stx	zp_vdu_top_scanline
-;		ldx	vduvar_6845_CURSOR_ADDR
-;		lda	#0x0E
-x_set_6845_screenstart_from_X::	TODO "x_set_6845_screenstart_from_X"
-;	; LCA0E
-;		ldb	vduvar_MODE
-;		cmpb	#0x07
-;		bhs	LCA27
-;		exg	X,D
-;		lsra
-;		rorb
-;		lsra
-;		rorb
-;		lsra
-;		rorb
-;		exg	X,D
-;		bra	mos_stx_6845rA			;	CA24
+mos_VDU_26::
+		ld	A,0
+		ld	B,vduIX_TEMP_8+5
+		ld	HL,vduvar_GRA_WINDOW
+LC9C1:		ld	(HL),A
+		inc	HL
+		djnz	LC9C1
+		ld	D,0
+		ld	E,(IX+vduIX_MODE)		;	C9C7
+		ld	HL,mostbl_vdu_window_right
+		add	HL,DE
+		ld	A,(HL)				;	C9CA
+		ld	(vduvar_TXT_WINDOW_RIGHT),A	;	C9CD
+		call	LCA88_newAPI			;	C9D0
+		ld	HL,mostbl_vdu_window_bottom+1	;	C9D3
+		add	HL,DE
+		ld	A,(HL)
+		ld	(vduvar_TXT_WINDOW_BOTTOM),A	;	C9D6
+		ld	B,3				;	C9D9
+		ld	(IX+vduIX_VDU_Q_END - 1),B	;	C9DB
+		inc	B				;	C9DE
+		ld	(IX+vduIX_VDU_Q_END - 3),B	;	C9DF
+		dec	(IX+vduIX_VDU_Q_END - 2)	;	set to FF
+		dec	(IX+vduIX_VDU_Q_END - 4)	;	set to FF
+		call	mos_VDU_24			;	C9E8
+		ld	A, 0xF7				;	C9EB
+		call	mos_VDU_and_A_vdustatus		;	C9ED
+		ld	HL,(vduvar_6845_SCREEN_START)	;	C9F0
+mos_set_cursor_HL:
+		ld	(vduvar_6845_CURSOR_ADDR),HL	;	C9F6
+		ld	a,0x7F
+		cp	a,l
+		jr	NC,x_set_cursor_position_HL	; > 8000
+		ld	A,H				; if so normalize by subtracting screen size
+		sub	A,(IX+vduIX_SCREEN_SIZE_HIGH)
+		ld	H,A
+x_set_cursor_position_HL:
+		ld	(zp_vdu_top_scanline),HL
+		ld	HL,(vduvar_6845_CURSOR_ADDR)	; get back unadjusted value
+		ld	B,0xE
+x_set_6845_screenstart_from_HL:				; LCA0E
+		ld	A,(vduvar_MODE)
+		cp	A,7
+		jr	NC,LCA27
+		sra	H
+		rr	L
+		sra	H
+		rr	L
+		sra	H
+		rr	L
+		jr	mos_stHL_6845rB			;	CA24
 ;; ----------------------------------------------------------------------------
-;LCA27:		
-;		exg	X,D
-;		suba	#0x74				;	CA27
-;		eora	#0x20				;	CA29
-;		exg	D,X
-mos_stx_6845rA::	TODO "mos_stx_6845rA"
-;
-;		pshs	X
-;		ldb	,S+
-;		std	sheila_CRTC_reg
-;		inca
-;		ldb	,S+
-;		std	sheila_CRTC_reg
-;		rts					;	CA38
+LCA27:		
+		; convert normal address to teletext crtc address
+		ld	A,0x8C				; -0x74
+		add	A,H
+		xor	A,0x20				
+		ld	H,A
+mos_stHL_6845rB:
+		ld	A,B
+		ld	E,H
+		call	mos_set_6845_regAtoE
+		inc	A
+		ld	E,L
+		jp	mos_set_6845_regAtoE		; EXIT
 
 db_endian_vdu_q_swap::	TODO "db_endian_vdu_q_swap"
 ;
@@ -1128,7 +1123,9 @@ db_endian_vdu_q_swap::	TODO "db_endian_vdu_q_swap"
 
 ;; ----------------------------------------------------------------------------
 ;; VDU 24 Define graphics window		  8 parameters; &31C/D Left margin ; &31E/F Bottom margin ; &320/1 Right margin ; &322/3 Top margin 
-mos_VDU_24::	TODO "mos_VDU_24"
+mos_VDU_24::
+		ret				; TODO: GRAPHICS
+		TODO "mos_VDU_24"
 ;
 ;		ldy	#4
 ;		jsr	db_endian_vdu_q_swap
@@ -1181,15 +1178,22 @@ x_exchange_310_with_328::	TODO "x_exchange_310_with_328"
 ;		jmp	x_exchange_4atY_with_4atX
 
 ;; ----------------------------------------------------------------------------
-LCA88_newAPI::	TODO "LCA88_newAPI"
-;
-;		; old API (y == window width in chars - 1)
-;		; new API (a == window width in chars - 1)
-;		inca
-;		ldb	vduvar_BYTES_PER_CHAR
-;		mul
-;		std	vduvar_TXT_WINDOW_WIDTH_BYTES
-;LCAA1:		rts					;	CAA1
+LCA88_newAPI:
+
+		; old API (y == window width in chars - 1)
+		; new API (a == window width in chars - 1)
+		inc	A
+		ld	L,A
+		ld	H,0
+		ld	A,(vduvar_BYTES_PER_CHAR)
+		srl	A
+		jr	Z,LCAA1
+10$:		sla	L
+		rl	H
+		srl	A
+		jr	NC,10$
+		ld	(vduvar_BYTES_PER_ROW),HL
+LCAA1:		ret					;	CAA1
 ;; ----------------------------------------------------------------------------
 ;; VDU 29  Set graphics origin			  4 parameters;	 
 mos_VDU_29::	TODO "mos_VDU_29"
@@ -1409,47 +1413,31 @@ mos_send6845lp:						; LCBB0
 
 
 		call	mos_VDU_20			; default logical colours
-		TODO	"HERE"
-;		jsr	mos_VDU_26			; default windows
-LCBC1_clear_whole_screen::	TODO "LCBC1_clear_whole_screen"
-;
-;		lda	vduvar_SCREEN_BOTTOM_HIGH
-;		clrb
-;		tfr	D,X
-;		stx	vduvar_6845_SCREEN_START
-;		jsr	mos_set_cursor_X		;	CBCC
-;		lda	#0x0C				;	CBCF
-;		jsr	mos_stx_6845rA			;	CBD1
-;;	lda	vduvar_TXT_BACK			;	CBD4
-;		ldb	vduvar_MODE_SIZE		;	CBD7
-;;;	aslb
-;		clr	sysvar_SCREENLINES_SINCE_PAGE	;	CBE7
-;		clr	vduvar_TXT_CUR_X		;	CBEA
-;		clr	vduvar_TXT_CUR_Y		;	CBED
-;		ldx	#mostbl_VDU_screensize_h
-;	IF CPU_6809
-;		; TODO: make this quicker?
-;		lda	B,X				; get # bytes to clear (high in A)
-;		clrb
-;		tfr	D,Y
-;		lda	vduvar_TXT_BACK
-;		ldx	vduvar_6845_SCREEN_START
-;10x:		sta	,X+
-;		leay	-1,Y
-;		bne	1B
-;	ELSE
-;		pshsw
-;		lde	B,X				; get # bytes to clear (high in E)
-;		clrf
-;		;decw
-;		ldx	vduvar_6845_SCREEN_START
-;		ldy	#vduvar_TXT_BACK
-;		tfm	Y,X+
-;		pulsw
-;	ENDIF
-;		rts
-;;;	ldx	#mostbl_VDU_cls_vecjmp
-;;;	jmp	[b,x]
+		call	mos_VDU_26			; default windows
+LCBC1_clear_whole_screen::
+		ld	H,(IX+vduIX_SCREEN_BOTTOM_HIGH)
+		ld	L,0
+		ld	(vduvar_6845_SCREEN_START),HL
+		call	mos_set_cursor_HL		;	CBCC
+		ld	B,0x0C				;	CBCF
+		call	mos_stHL_6845rB			;	CBD1
+		ld	A,(vduvar_TXT_BACK)		;	CBD4
+
+		ld	HL,(vduvar_6845_SCREEN_START)
+		ld	(HL),A
+		ld	B,(IX+vduIX_SCREEN_SIZE_HIGH)	;	CBD7
+		ld	A,0
+		ld	C,A
+		ld	(sysvar_SCREENLINES_SINCE_PAGE),A	;	CBE7
+		ld	(vduvar_TXT_CUR_X),A		;	CBEA
+		ld	(vduvar_TXT_CUR_Y),A		;	CBED
+
+		dec	BC
+		ld	D,H
+		ld	E,1
+		ldir
+		ret
+
 ;; ----------------------------------------------------------------------------
 ;; OSWORD 10	  Read character definition; &EF=A:&F0=X:&F1=Y, on entry YX contains number of byte to be read	; (&DE) points toFDBess ; on exit byte YX+1 to YX+8 contain definition 
 ;mos_OSWORD_10:
