@@ -11,6 +11,7 @@
 
 		.area	MOS_CODE (REL, CON)
 
+
 ; ----------------------------------------------------------------------------
 mostbl_byte_mask_4col::
 		.db	0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77 ;	C31F
@@ -55,6 +56,73 @@ mostbl_vdu_entry_points::
 		.dw	mos_VDU_31
 
 		.dw	mos_VDU_127
+
+;****** 320 MULTIPLICATION TABLE  40COL, 80COL MODES  HIBYTE, LOBYTE ******
+; note: this is *640 on the 6502 but we have add HL,HL etc
+
+_MUL320_TABLE:	.dw	320 *  0
+		.dw	320 *  1
+		.dw	320 *  2
+		.dw	320 *  3
+		.dw	320 *  4
+		.dw	320 *  5
+		.dw	320 *  6
+		.dw	320 *  7
+		.dw	320 *  8
+		.dw	320 *  9
+		.dw	320 * 10
+		.dw	320 * 11
+		.dw	320 * 12
+		.dw	320 * 13
+		.dw	320 * 14
+		.dw	320 * 15
+		.dw	320 * 16
+		.dw	320 * 17
+		.dw	320 * 18
+		.dw	320 * 19
+		.dw	320 * 20
+		.dw	320 * 21
+		.dw	320 * 22
+		.dw	320 * 23
+		.dw	320 * 24
+		.dw	320 * 25
+		.dw	320 * 26
+		.dw	320 * 27
+		.dw	320 * 28
+		.dw	320 * 29
+		.dw	320 * 30
+		.dw	320 * 31
+
+;****** *40 MULTIPLICATION TABLE  TELETEXT  MODE   HIBYTE, LOBYTE  ******
+
+_MUL40_TABLE:	.dw	40 *  0
+		.dw	40 *  1
+		.dw	40 *  2
+		.dw	40 *  3
+		.dw	40 *  4
+		.dw	40 *  5
+		.dw	40 *  6
+		.dw	40 *  7
+		.dw	40 *  8
+		.dw	40 *  9
+		.dw	40 * 10
+		.dw	40 * 11
+		.dw	40 * 12
+		.dw	40 * 13
+		.dw	40 * 14
+		.dw	40 * 15
+		.dw	40 * 16
+		.dw	40 * 17
+		.dw	40 * 18
+		.dw	40 * 19
+		.dw	40 * 20
+		.dw	40 * 21
+		.dw	40 * 22
+		.dw	40 * 23
+		.dw	40 * 24
+
+
+
 
 mostbl_vdu_q_lengths::	; 2's complement
 		.db	0x00,0xFF,0x00,0x00,0x00,0x00,0x00,0x00	; 0-7
@@ -361,9 +429,7 @@ mos_VDU_21::	TODO "mos_VDU_21"
 ;
 ;		lda	#0x80
 x_ORA_with_vdu_status:
-		push	HL
-		ld	HL,zp_vdu_status
-		or	A,(HL)				
+		or	A,(IY+zpIY_vdu_status)				
 		jr	LC5AA				;	C59F
 ;; No parameters
 mos_VDU_3::	call	LE1A2				;	C5A1
@@ -372,11 +438,8 @@ mos_VDU_3::	call	LE1A2				;	C5A1
 mos_VDU_15:
 		ld	A,~0x04
 mos_VDU_and_A_vdustatus:
-		push	HL
-		ld	HL,zp_vdu_status
-		and	A,(HL)				;	C5A8
-LC5AA:		ld	(zp_vdu_status),A		;	C5AA
-		pop	HL
+		and	A,(IY+zpIY_vdu_status)		;	C5A8
+LC5AA:		ld	(zp_vdu_status),A		;	C5AA		
 LC5ACrts:	ret					;	C5AC
 ;; ----------------------------------------------------------------------------
 ;; VDU 4 select Text Cursor  No parameters;  
@@ -768,7 +831,7 @@ mos_VDU_18::	TODO "mos_VDU_18"
 mos_VDU_20::	
 		; zero all colours
 		ld	B, 6				;	C839
-		ld	A, 00				;	C83B
+		xor	A,A				;	C83B
 		ld	HL, vduvar_TXT_FORE
 LC83D:		ld	(HL),A				;	C83D
 		djnz	LC83D				;	C841
@@ -815,7 +878,7 @@ LC879:		call	mos_VDU_19			;	C879
 ; ----------------------------------------------------------------------------
 x_2colour_mode:	ld	A, 7				;	White
 		call	LC88F				;	C887
-		ld	A, 0				;	Black
+		xor	A,A				;	Black
 		ld	(IX+vduIX_VDU_Q_END-5),A	;	C88C
 LC88F:		ld	(IX+vduIX_VDU_Q_END-4),A	;	C88F
 ; VDU 19   define logical colours		  5 parameters; &31F=first parameter logical colour ; &320=second physical colour 
@@ -994,9 +1057,8 @@ LC972:		cp	A,10				;	C972
 		jr	NZ, LC985			;	C974
 		ld	A,E
 		ld	(vduvar_CUR_START_PREV),A	;	C976
-		ld	A,(zp_vdu_status)
-		bit	5,A				;	C97A
 		ld	A,10
+		bit	5,(IY+zpIY_vdu_status)		;	C97A
 		jr	NZ, LC98B			;	C983
 LC985:		push	AF
 		push	BC
@@ -1036,7 +1098,7 @@ x_adjust_screen_RAM_addresses_one_line_scroll::	TODO "x_adjust_screen_RAM_addres
 ;		bra	x_set_6845_screenstart_from_HL
 ;; VDU 26  set default windows		  0 parameters
 mos_VDU_26::
-		ld	A,0
+		xor	A,A
 		ld	B,vduIX_TEMP_8+5
 		ld	HL,vduvar_GRA_WINDOW
 LC9C1:		ld	(HL),A
@@ -1268,20 +1330,21 @@ mos_VDU_init::						; LCB1D
 
 		push	AF				; Save MODE in A ;TODOZ80 - use regs for save
 		ld	BC,0x7F-1			; Prepare B=&7F-1 for reset loop
-		ld	A,0				; A=0 set first to 0 then clear reset by copying
+		xor	A,A				; A=0 set first to 0 then clear reset by copying
 		ld	(zp_vdu_status),A		; Clear VDU status byte to set default conditions
 		ld	HL,vduvars_start
 		ld	(HL),A				; zero the first vdu var
 		ld	DE,vduvars_start+1
 ; clear vdu vars block
 		ldir					; clear the whole vdu vars block
-		ld	(zp_mos_OSBW_X),a
+		ld	(zp_mos_OSBW_X),A
 		call	mos_OSBYTE_20			; Implode character definitions
 		ld	A, 0x7F				; X=&7F
 		ld	(vduvar_MO7_CUR_CHAR),A		; MODE 7 copy cursor character (could have set this at CB1E)
 		pop	AF				; Get initial MODE back to A
 
 		ld	IX,vduvars_start		; this is used in all mos_VDU_x functions
+		ld	IY,zp_base			; phone zero page vars
 
 ;; ??? Set mode ???
 mos_VDU_set_mode::	
@@ -1426,7 +1489,7 @@ LCBC1_clear_whole_screen::
 		ld	HL,(vduvar_6845_SCREEN_START)
 		ld	(HL),A
 		ld	B,(IX+vduIX_SCREEN_SIZE_HIGH)	;	CBD7
-		ld	A,0
+		xor	A,A
 		ld	C,A
 		ld	(sysvar_SCREENLINES_SINCE_PAGE),A	;	CBE7
 		ld	(vduvar_TXT_CUR_X),A		;	CBEA

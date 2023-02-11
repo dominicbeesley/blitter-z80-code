@@ -33,6 +33,7 @@
 
 
 		.globl	mos_VDU_init
+		.globl   mos_VDU_WRCH
 
 
 mos_handle_res::	
@@ -74,6 +75,9 @@ mos_handle_res::
 		ld	a,4
 		call	mos_VDU_init
 
+		ld	A,65
+		call	OSWRCH
+		
 
 		TODO	"VDU_INIT_DONE"
 
@@ -204,4 +208,26 @@ write_pallette_reg::
 		out	(C), A
 		call	popIFF
 		pop	BC
+		ret
+
+
+OSWRCH_ENTER::	;TODO: this needs to do all the vectoring bullshit
+		push	AF
+		push	BC
+		push	DE
+		push	HL
+		push	IX
+		push	IY
+
+		ld	IX,vduvars_start
+		ld	IY,zp_base
+
+		call	mos_VDU_WRCH
+
+		pop	IY
+		pop	IX
+		pop	HL
+		pop	DE
+		pop	BC
+		pop	AF
 		ret

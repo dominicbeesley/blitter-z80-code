@@ -4,10 +4,10 @@ LD=aslink
 LDFLAGS=-m1 -j -u
 BUILD=./build/
 TARGETS=mos-z180.bin
-OBJS=mos-z180.rel noice-z180.rel font_data.rel hw_z180_init.rel z180_boot.rel vdu.rel debug.rel
+OBJS=mos-z180.rel noice-z180.rel font_data.rel hw_z180_init.rel z180_boot.rel vdu.rel debug.rel mos_calls.rel
 OBJS2=$(addprefix $(BUILD),$(OBJS))
 
-DEPS=../../includes/hardware.inc ../includes/hardware-z180.inc config.inc debug.inc ../../includes/mosrom.inc
+DEPS=../../includes/hardware.inc ../includes/hardware-z180.inc config.inc debug.inc ../../includes/mosrom.inc ./oscalls.inc
 
 X:=$(shell mkdir -p $(BUILD))
 
