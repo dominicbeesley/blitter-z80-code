@@ -1228,16 +1228,25 @@ LCA88_newAPI:
 
 		; old API (y == window width in chars - 1)
 		; new API (a == window width in chars - 1)
-		inc	A
-		ld	L,A
-		ld	H,0
+		inc	A	; 1M	4T	1
+		ld	L,A	; 1M	4T	1
+		ld	H,0	; 2M	7T	2
+
+;		ld	L,A	; 1M	4T	1
+;		xor	A	; 1M	4T	1
+;		ld	H,A	; 1M	4T	1
+;		inc	L	; 1M	4T	1
+
+;		or	A,A	; 1M	4T	1
+;		sbc	HL,HL	; 4M	15T	2
+;		ld	L,A	; 1M	4T	1
+
 		ld	A,(vduvar_BYTES_PER_CHAR)
 		srl	A
-		jr	Z,LCAA1
-10$:		sla	L
-		rl	H
-		srl	A
-		jr	NC,10$
+		jr	Z,LCAA1				; if BYTES_PER_CHAR > 2 then Mode 7 POH
+10$:		add	HL,HL				; double it
+		srl	A				; keep shifting right
+		jr	NC,10$				; while bits left in BPC
 		ld	(vduvar_BYTES_PER_ROW),HL
 LCAA1:		ret					;	CAA1
 ;; ----------------------------------------------------------------------------
