@@ -8,6 +8,7 @@
 		.globl	popIFF
 		.globl	mos_VIDPROC_set_CTL
 		.globl	write_pallette_reg		
+		.globl	font_data
 
 		.area	MOS_CODE (REL, CON)
 
@@ -233,45 +234,37 @@ mostbl_SOFT_CHARACTER_RAM_ALLOCATION::
 
 
 ;; ----------------------------------------------------------------------------
-mos_VDU_WRCH::	TODO "mos_VDU_WRCH"
-;
-;		ldb	sysvar_VDU_Q_LEN		;	C4C0
-;		bne	mos_VDU_WRCH_add_to_Q		;	C4C3
-;	IF CPU_6809
-;		ldb	zp_vdu_status
-;		andb	#0x40
-;	ELSE
-;		tim	#0x40, zp_vdu_status
-;	ENDIF
-;;	ldb	#0x40
-;;	bitb	zp_vdu_status				;	C4C5
-;		beq	mos_VDU_WRCH_sk_nocurs
-;		jsr	x_start_curs_edit		;	C4C9
-;		jsr	x_setup_write_cursor		;	C4CC
-;		bmi	mos_VDU_WRCH_sk_nocurs		;	C4CF
-;		cmpa	#0x0D				;	C4D1
-;		bne	mos_VDU_WRCH_sk_nocurs		;	C4D3
-;		jsr	x_cancel_cursor_edit		;	C4D5
-mos_VDU_WRCH_sk_nocurs::	TODO "mos_VDU_WRCH_sk_nocurs"
-;
-;		cmpa	#0x7F				;	C4D8
-;		beq	x_read_linkaddresses_and_number_of_parameters1;	C4DA
-;		cmpa	#0x20				;	C4DC
-;		blo	x_read_linkaddresses_and_number_of_parameters2;	C4DE
-;		tst	zp_vdu_status			;	C4E0
-;		bmi	mos_VDU_WRCH_sk_novdu				;	C4E2
-;		jsr	render_char				;	C4E4
-;		jsr	mos_VDU_9			;	C4E7
-mos_VDU_WRCH_sk_novdu::	TODO "mos_VDU_WRCH_sk_novdu"
-;
-;		jmp	x_main_exit_routine		;	LC4EA
+mos_VDU_WRCH::	ld	E,A				; put A into E!
+		ld	A,(sysvar_VDU_Q_LEN)
+		or	A,A
+		jr	NZ, mos_VDU_WRCH_add_to_Q	;	C4C3
+		bit	6,(IY+zpIY_vdu_status)
+		jr	Z,mos_VDU_WRCH_sk_nocurs
+		call	x_start_curs_edit		;	C4C9
+		call	x_setup_write_cursor		;	C4CC
+		jp	M, mos_VDU_WRCH_sk_nocurs	;	C4CF
+		ld	A,0x0D
+		xor	A,E
+		jr	NZ,mos_VDU_WRCH_sk_nocurs	;	C4D3
+		call	x_cancel_cursor_edit		;	C4D5
+mos_VDU_WRCH_sk_nocurs:
+		ld	A,E
+		cp	A,0x7F				;	C4D8
+		jr	Z, vdu_jumptable_20		;	C4DA
+		cp	A,0x20				;	C4DC
+		jr	C,vdu_jumptable_A		;	C4DE
+		bit	7,(IY+zpIY_vdu_status)		;	C4E0
+		jr	NZ,mos_VDU_WRCH_sk_novdu	;	C4E2
+		call	render_char				;	C4E4
+		call	mos_VDU_9			;	C4E7
+mos_VDU_WRCH_sk_novdu:
+		jp	x_main_exit_routine		;	LC4EA
 ;; ----------------------------------------------------------------------------
 ;; read linkFDBesses and number of parameters???
-x_read_linkaddresses_and_number_of_parameters1::	TODO "x_read_linkaddresses_and_number_of_parameters1"
-;
-;		lda	#0x20				;	C4ED
+vdu_jumptable_20:
+		ld	A,0x20				; treat 7F as 20 when doing lookup
 ;; read linkFDBesses and number of parameters???
-x_read_linkaddresses_and_number_of_parameters2::	TODO "x_read_linkaddresses_and_number_of_parameters2"
+vdu_jumptable_A::	TODO "vdu_jumptable_A"
 ;
 ;		tfr	A,B				;	C4EF
 ;		ldx	#mostbl_vdu_q_lengths
@@ -361,20 +354,12 @@ x_vdu_no_q::	TODO "x_vdu_no_q"
 ;		puls	CC				;	C55B
 ;		bcc	LC561				;	C55C
 ;; main exit routine
-x_main_exit_routine::	TODO "x_main_exit_routine"
-;
-;		lda	zp_vdu_status			;VDU status byte
-;		lsra					;Carry is set if printer is enabled
-;LC561:		
-;	IF CPU_6809
-;		pshs	B
-;		ldb	#0x40
-;		bitb	zp_vdu_status
-;		puls	B				; TODO : get rid of push/pull?
-;	ELSE
-;		tim	#0x40, zp_vdu_status
-;	ENDIF
-;		beq	LC511RTS			;if nmo cursor editing  C511 to exit
+x_main_exit_routine:
+		ld	A,(zp_vdu_status)		;VDU status byte
+		rla					;Carry is set if printer is enabled
+LC561:		
+		bit	6,(IY+zpIY_vdu_status)
+		ret	Z
 ;; cursor editing routines
 x_cursor_editing_routines::	TODO "x_cursor_editing_routines"
 ;
@@ -558,19 +543,18 @@ mos_VDU_11::	TODO "mos_VDU_11"
 ;LC660:		ldb	#0x02				;	C660
 ;		bra	x_graphic_cursor_up_Beq2	;	C662
 ;; VDU 9 Cursor right	No parameters
-mos_VDU_9::	TODO "mos_VDU_9"
-;
-;		lda	zp_vdu_status			;	C664
-;		anda	#0x20				;	C666
-;		bne	x_graphic_cursor_right		;	C668
-;		ldb	vduvar_TXT_CUR_X		;	C66A
-;		cmpb	vduvar_TXT_WINDOW_RIGHT		;	C66D
-;		bhs	x_text_cursor_down_and_right	;	C670
-;		inc	vduvar_TXT_CUR_X		;	C672
-;		ldx	vduvar_6845_CURSOR_ADDR
-;		ldb	vduvar_BYTES_PER_CHAR		;	C678
-;		abx
-;		jmp	mos_set_cursor_HL		;	C681
+mos_VDU_9:
+		bit	5,(IY+zpIY_vdu_status)
+		jp	NZ,x_graphic_cursor_right	;	C668
+		ld	A,(vduvar_TXT_CUR_X)		;	C66A
+		cp	A,(IX+vduIX_TXT_WINDOW_RIGHT)	;	C66D
+		jr	NC,x_text_cursor_down_and_right	;	C670
+		inc	(IX+vduIX_TXT_CUR_X)		;	C672
+		ld	HL,(vduvar_6845_CURSOR_ADDR)
+		ld	E,(IX+vduIX_BYTES_PER_CHAR)
+		ld	D,0
+		add	HL,DE
+		jp	mos_set_cursor_HL		;	C681
 ;; ----------------------------------------------------------------------------
 ;; : text cursor down and right
 x_text_cursor_down_and_right::	TODO "x_text_cursor_down_and_right"
@@ -1432,6 +1416,12 @@ mos_VDU_set_mode_bmsk1::
 
 		; mode size should already be in E
 		ld	A,E
+		ld	HL,_MUL320_TABLE
+		; TODO: think about putting this somewhere else?
+		or	A,A
+		jr	NZ, 1$
+		ld	HL,_MUL40_TABLE
+1$:		ld	(zp_vdu_row_mul),HL
 		add	A,2				;	CB83
 		xor	A,7				;	CB85
 		srl	A
@@ -1996,8 +1986,10 @@ x_set_up_displayaddress_mo7::	TODO "x_set_up_displayaddress_mo7"
 ;; ----------------------------------------------------------------------------
 ;; Graphics cursor display routine
 x_vdu5_render_char::	TODO "x_vdu5_render_char"
-;
-;		TODO "x_vdu5_render_char		"
+
+
+; check where pointer to character pattern is now was (zp_vdu_wksp+4) 
+
 ;	ldx	vduvar_GRA_FORE			;	CF5D
 ;	ldy	vduvar_GRA_PLOT_FORE		;	CF60
 x_plot_char_gra_mode::	TODO "x_plot_char_gra_mode"
@@ -2047,55 +2039,31 @@ x_set_graphics_cursor_to_left_hand_column::	TODO "x_set_graphics_cursor_to_left_
 ;		jsr	copy2fromXtoY
 ;		jmp	x_calculate_external_coordinates_from_internal_coordinates
 ;; ----------------------------------------------------------------------------
-render_char::	TODO "render_char"
-;
-;		ldb	vduvar_COL_COUNT_MINUS1
-;		beq	x_convert_teletext_characters
-;		jsr	x_calc_pattern_addr_for_given_char
-LCFBF_renderchar2::	TODO "LCFBF_renderchar2"
-;
-;		lda	zp_vdu_status			;	CFC2
-;		anda	#0x20				;	CFC4
-;		bne	x_vdu5_render_char		;	CFC6
-;		ldx	zp_vdu_wksp + 4
-render_logo2::	TODO "render_logo2"
-;
-;		ldb	#7
-;		ldy	zp_vdu_top_scanline
-;		lda	vduvar_COL_COUNT_MINUS1		;	CFBF
-;		cmpa	#0x03				;	CFCA
-;		beq	render_char_4colour		;	CFCC
-;		lbhi	render_char_16colour		;	CFCE
+render_char::	bit	0,(IX+vduIX_COL_COUNT_MINUS1)	; mode 7 == 0, all others == odd number!?
+		jr	Z,x_convert_teletext_characters
+		call	x_calc_pattern_addr_for_given_char
+LCFBF_renderchar2:
+		bit	5,(IY+zpIY_vdu_status)		;	CFC2
+		jp	NZ,x_vdu5_render_char		;	CFC6
+render_logo2::
 
-;		ldd	,X++						;5+1		2
-;		ora	zp_vdu_txtcolourOR				;4		2
-;		eora	zp_vdu_txtcolourEOR				;4		2
-;		orb	zp_vdu_txtcolourOR				;4		2
-;		eorb	zp_vdu_txtcolourEOR				;4		2
-;		std	,Y++						;5+1		2
+		ld	B,8				; row counter
+		ld	DE,(zp_vdu_top_scanline)
+		ld	A,(vduvar_COL_COUNT_MINUS1)	;	CFBF
+		cp	A,3				;	CFCA
+		jp	Z,render_char_4colour		;	CFCC
+		jp	NC,render_char_16colour		;	CFCE
 
-;		ldd	,X++						;5+1		2
-;		ora	zp_vdu_txtcolourOR				;4		2
-;		eora	zp_vdu_txtcolourEOR				;4		2
-;		orb	zp_vdu_txtcolourOR				;4		2
-;		eorb	zp_vdu_txtcolourEOR				;4		2
-;		std	,Y++						;5+1		2
+		ld	C,(IY+zpIY_vdu_txtcolourOR)
+1$:		ld	A,(HL)
+		or	A,C
+		xor	A,(IY+zpIY_vdu_txtcolourEOR)
+		ld	(DE),A
+		inc	HL
+		inc	DE
+		djnz	1$
+		ret
 
-;		ldd	,X++						;5+1		2
-;		ora	zp_vdu_txtcolourOR				;4		2
-;		eora	zp_vdu_txtcolourEOR				;4		2
-;		orb	zp_vdu_txtcolourOR				;4		2
-;		eorb	zp_vdu_txtcolourEOR				;4		2
-;		std	,Y++						;5+1		2
-
-;		ldd	,X++						;5+1		2
-;		ora	zp_vdu_txtcolourOR				;4		2
-;		eora	zp_vdu_txtcolourEOR				;4		2
-;		orb	zp_vdu_txtcolourOR				;4		2
-;		eorb	zp_vdu_txtcolourEOR				;4		2
-;		std	,Y++						;5+1		2
-
-;		rts					;	CFDB
 render_logox4::	TODO "render_logox4"
 ;
 ;		jsr	render_logox2
@@ -2183,45 +2151,37 @@ rc16csk1::	TODO "rc16csk1"
 ;		addb	#0x08
 ;		bra	LD023
 
-x_calc_pattern_addr_for_given_char::	TODO "x_calc_pattern_addr_for_given_char"
-;
-;		pshs	D,X
-;		ldb	#8				; 2	2
-;		mul					; 1	11
-;		stb	zp_vdu_wksp + 5			; 2	4		a contains "char defs page offset"
-;		ldx	#mostbl_VDU_pix_mask_2colour	; 3	3		convert to a bit mask
-;		ldb	a,x				; 2	5
-;		bitb	vduvar_EXPLODE_FLAGS		; 3	5		check if that bit is set in explosion bitmask
-;		bne	x_cpa_sk_exploded		; 2	3		if it is use that address
-;		adda	#(mostbl_chardefs/256) - 1	; 2	2		space is at 32 remember!
-;10x:		sta	zp_vdu_wksp + 4			; 2	6		store whole address
-;						; 19	41
-;		puls	D,X,PC
-x_cpa_sk_exploded::	TODO "x_cpa_sk_exploded"
-;
-;		ldx	#vduvar_EXPLODE_FLAGS
-;		lda	a,x				;	get explode address from table
-;		bra	1B
+x_calc_pattern_addr_for_given_char:
+		ld	H,0
+		ld	L,A
+		add	HL,HL		
+		add	HL,HL		
+		add	HL,HL		
 
-;	asl	a				;	D03E	1	2
-;	rol	a				;	D03F	1	2
-;	rol	a				;	D040	1	2
-;	sta	zp_vdu_wksp+4			;	D041	2	3
-;	and	#0x03				;	D043	2	2
-;	rol	a				;	D045	1	2
-;	tax					;	D046	1	2
-;	and	#0x03				;	D047	2	2
-;	adc	#0xBF				;	D049	2	2
-;	tay					;	D04B	1	2
-;	lda	mostbl_VDU_pix_mask_2colour,x	;	D04C	3	4
-;	bit	vduvar_EXPLODE_FLAGS		;	D04F	3	4
-;	beq	LD057				;	D052	2	3
-;	ldy	vduvar_EXPLODE_FLAGS,x		;	D054
-;LD057::	sty	zp_vdu_wksp+5			;	D057	2	3
-;	lda	zp_vdu_wksp+4			;	D059	2	3
-;	and	#0xF8				;	D05B	2	2
-;	sta	zp_vdu_wksp+4			;	D05D	2	3
-;	rts					;	D05F	30	43
+		; now check to see if the page worth of char defs is "exploded"
+		ld	B,H
+		ld	A,0
+		scf
+1$:		rr	A
+		djnz	1$
+		; A now contains a bitmask 0x80..0x01
+		and	A,(IX+vduIX_EXPLODE_FLAGS)
+		jr	NZ,x_cpa_sk_exploded	
+		; it's not exploded page add the address from the mos rom table
+		ld	BC,font_data-256	; we start at char 0x20 so subtract 256	
+		add	HL,BC
+		ret
+x_cpa_sk_exploded:
+		ld	B,L
+		ld	E,H
+		ld	D,0
+		ld	HL,vduvar_EXPLODE_FLAGS
+		add	HL,DE
+		ld	A,(HL)
+		ld	H,A
+		ld	B,L
+		ret
+
 ;; ----------------------------------------------------------------------------
 ;; PLOT ROUTINES ENTER HERE; 
 ; **************************************************************************

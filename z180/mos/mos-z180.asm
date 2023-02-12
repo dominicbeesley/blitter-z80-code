@@ -52,6 +52,7 @@ mos_handle_res::
 		ld	A,0
 		ld	(oswksp_VDU_VERTADJ),A
 		ld	(oswksp_VDU_INTERLACE),A
+		ld	(sysvar_VDU_Q_LEN),A
 
 
 		rst 8
@@ -75,14 +76,20 @@ mos_handle_res::
 		ld	a,4
 		call	mos_VDU_init
 
-		ld	A,65
+		ld	HL,str_hellow
+1$:		ld	A,(HL)	
+		inc	HL	
 		call	OSWRCH
+		or	A,A
+		jr	NZ,1$
 		
 
 		TODO	"VDU_INIT_DONE"
 
 HERE:		jp	HERE
 
+
+str_hellow:	.asciz	"Blitter z180 VDU driver test"
 
 ;;DUMMY ROUTINES....
 
