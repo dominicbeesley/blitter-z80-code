@@ -89,7 +89,7 @@ mos_handle_res::
 HERE:		jp	HERE
 
 
-str_hellow:	.asciz	"Blitter z180 VDU driver test"
+str_hellow:	.asciz	"012345678ABCDEFGHIJKLMNOPQRS"
 
 ;;DUMMY ROUTINES....
 

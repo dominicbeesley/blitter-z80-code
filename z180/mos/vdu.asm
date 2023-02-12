@@ -1111,8 +1111,8 @@ LC9C1:		ld	(HL),A
 		ld	HL,(vduvar_6845_SCREEN_START)	;	C9F0
 mos_set_cursor_HL:
 		ld	(vduvar_6845_CURSOR_ADDR),HL	;	C9F6
-		ld	a,0x7F
-		cp	a,l
+		ld	A,0x7F
+		cp	A,H
 		jr	NC,x_set_cursor_position_HL	; > 8000
 		ld	A,H				; if so normalize by subtracting screen size
 		sub	A,(IX+vduIX_SCREEN_SIZE_HIGH)
