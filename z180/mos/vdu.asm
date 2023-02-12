@@ -14,9 +14,9 @@
 
 
 ; ----------------------------------------------------------------------------
-mostbl_byte_mask_4col::
-		.db	0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77 ;	C31F
-		.db	0x88,0x99,0xAA,0xBB,0xCC,0xDD,0xEE,0xFF ;	C327
+;mostbl_byte_mask_4col::
+;		.db	0x00,0x11,0x22,0x33,0x44,0x55,0x66,0x77 ;	C31F
+;		.db	0x88,0x99,0xAA,0xBB,0xCC,0xDD,0xEE,0xFF ;	C327
 mostbl_byte_mask_16col::
 		.db	0x00,0x55,0xAA,0xFF			;	C32F
 mostbl_vdu_entry_points::
@@ -2106,29 +2106,41 @@ x_convert_teletext_characters::	TODO "x_convert_teletext_characters"
 ;		;;decb					
 ;		bra	LCFE6
 ;; four colour modes
-render_char_4colour::	TODO "render_char_4colour"
-;
-;		pshs	U
-;		ldu	#mostbl_byte_mask_4col
-;10x:
-;		lda	b,x
-;		lsra
-;		lsra
-;		lsra
-;		lsra
-;		lda	a,U
-;		ora	zp_vdu_txtcolourOR
-;		eora	zp_vdu_txtcolourEOR
-;		sta	b,y
-;		lda	b,x
-;		addb	#8
-;		anda	#0x0F
-;		lda	a,U
-;		ora	zp_vdu_txtcolourOR
-;		eora	zp_vdu_txtcolourEOR
-;		sta	b,y
-;		subb	#9
-;		bpl	1B
+render_char_4colour::	
+		;1st column
+1$:		ld	A,(HL)
+		and	A,0xF0
+		ld	C,A
+		srl	C
+		srl	C
+		srl	C
+		srl	C
+		or	A,C
+		or	A,(IY+zpIY_vdu_txtcolourOR)
+		xor	A,(IY+zpIY_vdu_txtcolourEOR)
+		ld	(DE),A
+		inc	HL
+		inc	DE
+		djnz	1$
+		; 2nd column
+		ld	BC,-8
+		add	HL,BC
+		ld	B,8
+2$:		ld	A,(HL)
+		and	A,0x0F
+		ld	C,A
+		sla	C
+		sla	C
+		sla	C
+		sla	C
+		or	A,C
+		or	A,(IY+zpIY_vdu_txtcolourOR)
+		xor	A,(IY+zpIY_vdu_txtcolourEOR)
+		ld	(DE),A
+		inc	HL
+		inc	DE
+		djnz	2$		
+		ret
 LD017rts::	TODO "LD017rts"
 ;
 ;		puls	U
