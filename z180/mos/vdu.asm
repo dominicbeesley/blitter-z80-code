@@ -2111,10 +2111,10 @@ render_char_4colour::
 1$:		ld	A,(HL)
 		and	A,0xF0
 		ld	C,A
-		srl	C
-		srl	C
-		srl	C
-		srl	C
+		rra
+		rra
+		rra
+		rra
 		or	A,C
 		or	A,(IY+zpIY_vdu_txtcolourOR)
 		xor	A,(IY+zpIY_vdu_txtcolourEOR)
@@ -2129,10 +2129,10 @@ render_char_4colour::
 2$:		ld	A,(HL)
 		and	A,0x0F
 		ld	C,A
-		sla	C
-		sla	C
-		sla	C
-		sla	C
+		rla
+		rla
+		rla
+		rla
 		or	A,C
 		or	A,(IY+zpIY_vdu_txtcolourOR)
 		xor	A,(IY+zpIY_vdu_txtcolourEOR)
@@ -2150,7 +2150,7 @@ LD017rts::	TODO "LD017rts"
 ;		bmi	LD017rts				;	D01B
 ;		bra	rc16csk1
 ;; 16 COLOUR MODES
-render_char_16colour::	TODO "render_char_16colour"
+;;render_char_16colour::	TODO "render_char_16colour"
 ;
 ;		pshs	U
 ;		ldu	#mostbl_byte_mask_16col
@@ -2171,6 +2171,46 @@ rc16csk1::	TODO "rc16csk1"
 ;		sta	B,y
 ;		addb	#0x08
 ;		bra	LD023
+
+		; new Algorithm for z80
+		; first copy the character def to wksp as 
+render_char_16colour::
+		push	DE
+		ld	DE,zp_vdu_wksp
+		ld	C,B
+		ld	B,0
+		ldir
+		pop	DE
+		ld	A,4				; column counter
+		ld	(zp_vdu_wksp+8),A
+10$:		ld	B,8				; row counter
+		ld	HL,zp_vdu_wksp
+20$:		xor	A,A
+		rl	(HL)
+		rla
+		rl	(HL)
+		rla
+		ld	C,A
+		rla
+		rla
+		or	A,C
+		ld	C,A
+		rla
+		rla
+		rla
+		rla
+		or	A,C
+		or	A,(IY+zpIY_vdu_txtcolourOR)
+		xor	A,(IY+zpIY_vdu_txtcolourEOR)
+		ld	(DE),A
+		inc	HL
+		inc	DE
+		djnz	20$
+		dec	(IY+zpIY_vdu_wksp+8)
+		jr	NZ,10$
+		ret
+
+
 
 x_calc_pattern_addr_for_given_char:
 		ld	H,0

@@ -73,7 +73,7 @@ mos_handle_res::
 ;;		out	(C),A
 
 
-		ld	a,1
+		ld	a,2
 		call	mos_VDU_init
 
 		ld	HL,str_hellow
