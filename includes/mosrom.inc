@@ -13,6 +13,16 @@ zpIY_A9				= 	0x19
 zpIY_fs_s			= 	0x20
 zpIY_fs_w			= 	0x30
 zpIY_vdu_status			= 	0x30	; VDU Status as read by OSBYTE &75
+
+VDUSTAT0_printen		= 	0	;printer enable
+VDUSTAT1_scrolldis		= 	1	;scrolling disabled
+VDUSTAT2_paged			= 	2	;paged scrolling selected
+VDUSTAT3_softscroll		= 	3	;software scrolling (text window)
+VDUSTAT4_uk			= 	4	;not used
+VDUSTAT5_vdu5			= 	5	;graphics cursor enabled (VDU 5)
+VDUSTAT6_cursor_edit		= 	6	;separated cursors
+VDUSTAT7_vdudis			= 	7	;VDU disabled
+
 zpIY_vdu_grpixmask		= 	0x31	; Graphics pixel mask
 zpIY_vdu_txtcolourOR		= 	0x32	; Text colour OR mask
 zpIY_vdu_txtcolourEOR		= 	0x33	; Text colour EOR mask

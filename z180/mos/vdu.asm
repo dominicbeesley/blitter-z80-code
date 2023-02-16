@@ -9,6 +9,7 @@
 		.globl	mos_VIDPROC_set_CTL
 		.globl	write_pallette_reg		
 		.globl	font_data
+		.globl	mos_OSBYTE_118
 
 		.area	MOS_CODE (REL, CON)
 
@@ -234,11 +235,11 @@ mostbl_SOFT_CHARACTER_RAM_ALLOCATION::
 
 
 ;; ----------------------------------------------------------------------------
-mos_VDU_WRCH::	ld	E,A				; put A into E!
+mos_VDU_WRCH::	ld	E,A
 		ld	A,(sysvar_VDU_Q_LEN)
 		or	A,A
-		jr	NZ, mos_VDU_WRCH_add_to_Q	;	C4C3
-		bit	6,(IY+zpIY_vdu_status)
+		jr	NZ, mos_VDU_WRCH_add_to_Q	;	C4C3		
+		bit	VDUSTAT6_cursor_edit,(IY+zpIY_vdu_status)
 		jr	Z,mos_VDU_WRCH_sk_nocurs
 		call	x_start_curs_edit		;	C4C9
 		call	x_setup_write_cursor		;	C4CC
@@ -253,7 +254,7 @@ mos_VDU_WRCH_sk_nocurs:
 		jr	Z, vdu_jumptable_20		;	C4DA
 		cp	A,0x20				;	C4DC
 		jr	C,vdu_jumptable_A		;	C4DE
-		bit	7,(IY+zpIY_vdu_status)		;	C4E0
+		bit	VDUSTAT7_vdudis,(IY+zpIY_vdu_status)		;	C4E0
 		jr	NZ,mos_VDU_WRCH_sk_novdu	;	C4E2
 		call	render_char				;	C4E4
 		call	mos_VDU_9			;	C4E7
@@ -262,61 +263,60 @@ mos_VDU_WRCH_sk_novdu:
 ;; ----------------------------------------------------------------------------
 ;; read linkFDBesses and number of parameters???
 vdu_jumptable_20:
-		ld	A,0x20				; treat 7F as 20 when doing lookup
+		ld	E,0x20				; treat 7F as 20 when doing lookup
 ;; read linkFDBesses and number of parameters???
-vdu_jumptable_A::	TODO "vdu_jumptable_A"
-;
-;		tfr	A,B				;	C4EF
-;		ldx	#mostbl_vdu_q_lengths
-;		lda	B,X
-;		aslb
-;		ldx	#mostbl_vdu_entry_points
-;		ldx	B,X
-;		tsta
-;		beq	x_vdu_no_q
-;		sta	sysvar_VDU_Q_LEN
-;		stx	vduvar_VDU_VEC_JMP
-;	IF CPU_6809
-;		ldb	#0x40
-;		bitb	zp_vdu_status
-;	ELSE
-;		tim	#0x40, zp_vdu_status
-;	ENDIF
-;		bne	LC52F				; cursor editing in force
-;		;TODO - check if this is needed!
-;		CLC
-LC511RTS::	TODO "LC511RTS"
-;
-;		rts
+vdu_jumptable_A::	; TODO: merge Q lengths and entry points tables
+		ld	E,A
+		ld	D,0
+		ld	HL,mostbl_vdu_q_lengths
+		add	HL,DE
+		ld	A,(HL)				; A contains Q start
+		ld	HL,mostbl_vdu_entry_points
+		add	HL,DE
+		add	HL,DE
+		ld	C,(HL)				; entry point
+		inc	HL
+		ld	H,(HL)
+		ld	L,C
+		or	A,A
+		jr	Z,x_vdu_no_q
+		ld	(sysvar_VDU_Q_LEN),A
+		ld	(vduvar_VDU_VEC_JMP),HL
+		bit	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)
+		jr	NZ,LC52F				; cursor editing in force
+		;TODO - check if this is needed!
+		or	A,A					;clear carry
+LC511RTS::	ret
 ;; ----------------------------------------------------------------------------
 ;; B, sysvar_VDU_Q_LEN are 2's complement of number of parameters. **{NETV=>vduvar_Q+5-0x100}
-mos_VDU_WRCH_add_to_Q::	TODO "mos_VDU_WRCH_add_to_Q"
-;
-;		ldx	#vduvar_VDU_Q_END
-;		sta	B,X				;	C512
-;		incb					;	C515
-;		stb	sysvar_VDU_Q_LEN		;	C516
-;		bne	LC532				;	C519
-;	IF CPU_6809
-;		pshs	B
-;		ldb	zp_vdu_status			;	C51B
-;		bitb	#0xC0
-;		puls	B				; TODO get rid of push/pop?
-;	ELSE
-;		tim	#0xC0, zp_vdu_status
-;	ENDIF
-;		bmi	mos_exec_vdu1			; bit 7 set - VDU disabled
-;		bne	LC526				; bit 6 set - cursor editing in force
-;		jsr	[vduvar_VDU_VEC_JMP]
-;		CLC					;	C524
-;		rts					;	C525
+mos_VDU_WRCH_add_to_Q:		
+		ld	HL,#vduvar_VDU_Q_END
+		ld	B,0xFF
+		ld	C,A
+		add	HL,BC
+		ld	(HL),E
+		inc	A
+		ld	(sysvar_VDU_Q_LEN),A
+		jr	NZ,LC532			;	C519
+		ld	A,#(1<<VDUSTAT7_vdudis)|(1<<VDUSTAT6_cursor_edit)
+		and	A,(IY+zpIY_vdu_status)
+		jp	M,mos_exec_vdu1			; bit 7 set - VDU disabled
+		jr	NZ,LC526			; bit 6 set - cursor editing in force
+		call	jp_VDU_VEC_JMP
+		or	A,A				; clear carry
+		ret
+		; TODO: share this?
+jp_VDU_VEC_JMP:
+		ld	HL,(vduvar_VDU_VEC_JMP)
+JP_HL:		jp	(HL)
+
 ; ----------------------------------------------------------------------------
-;LC526:		jsr	x_start_curs_edit		;	C526
-;		jsr	x_setup_write_cursor		;	C529
-;		jsr	[vduvar_VDU_VEC_JMP]
-;LC52F:		jsr	x_cursor_editing_routines	;	C52F
-;LC532:		CLC					;	C532
-;		rts					;	C533
+LC526:		call	x_start_curs_edit		;	C526
+		call	x_setup_write_cursor		;	C529
+		call	jp_VDU_VEC_JMP
+LC52F:		call	x_cursor_editing_routines	;	C52F
+LC532:		or	A,A				;	clear carry
+		ret					;	C533
 ;; ----------------------------------------------------------------------------
 ;; 1 parameter required;	 
 mos_exec_vdu1::	TODO "mos_exec_vdu1"
@@ -375,7 +375,7 @@ x_start_curs_edit::	TODO "x_start_curs_edit"
 ;		ldx	zp_vdu_top_scanline
 ;		jsr	x_set_cursor_position_HL		;	C574
 ;		lda	zp_vdu_status			;	C577
-;		eora	#0x02				; toggle scrolling disabled
+;		eora	#1<<vdu_status_bit_1_scrolldis	; toggle scrolling disabled
 ;		sta	zp_vdu_status			;	C57B
 ;		puls	A,CC,PC
 
@@ -384,48 +384,38 @@ x_reenable_vdu_if_vdu6::	TODO "x_reenable_vdu_if_vdu6"
 ;
 ;		eorb	#0x06
 ;		bne	LC58Crts
-;		lda	#0x7F
-;		bra	mos_VDU_and_A_vdustatus
+		res	VDUSTAT7_vdudis,(IY+zpIY_vdu_status)
+		ret
 
 ;; check text cursor in use
-x_check_text_cursor_in_use::	TODO "x_check_text_cursor_in_use"
-;
-;		lda	zp_vdu_status
-;		anda	#0x20
-LC58Crts::	TODO "LC58Crts"
-;
-;		rts					;	C58C
+check_vdu5::	bit	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)
+		ret					;	C58C
 ;; ----------------------------------------------------------------------------
 ;; SET PAGED MODE  VDU 14;  
-mos_VDU_14::	TODO "mos_VDU_14"
-;
-;		clr	sysvar_SCREENLINES_SINCE_PAGE	;	C58F
-;		lda	#0x04				;	C592
-;		bra	x_ORA_with_vdu_status				;	C594
+mos_VDU_14::	xor	A,A
+		ld	(sysvar_SCREENLINES_SINCE_PAGE),A	;	C58F
+		set	VDUSTAT2_paged,(IY+zpIY_vdu_status)		;	C592
+		ret
 ;; VDU 2 PRINTER ON
 mos_VDU_2::	TODO "mos_VDU_2"
-;
-;		TODOSKIP "VDU 2"
-;		rts
-;	jsr	LE1A2				;	C596
-;	lda	#0x94				;	C599
+	;;	jsr	LE1A2				;	C596
+		set	VDUSTAT1_scrolldis,(IY+zpIY_vdu_status)
+		ret
 ;; no parameters
-mos_VDU_21::	TODO "mos_VDU_21"
-;
-;		lda	#0x80
-x_ORA_with_vdu_status:
-		or	A,(IY+zpIY_vdu_status)				
-		jr	LC5AA				;	C59F
+mos_VDU_21::	set	VDUSTAT7_vdudis,(IY+zpIY_vdu_status)
+		ret
 ;; No parameters
 mos_VDU_3::	call	LE1A2				;	C5A1
-		ld	A,0x0A				;	C5A4
+		res	VDUSTAT1_scrolldis,(IY+zpIY_vdu_status)
 ;; VDU 15 paged mode off	  No parameters
-mos_VDU_15:
-		ld	A,~0x04
-mos_VDU_and_A_vdustatus:
-		and	A,(IY+zpIY_vdu_status)		;	C5A8
-LC5AA:		ld	(zp_vdu_status),A		;	C5AA		
-LC5ACrts:	ret					;	C5AC
+mos_VDU_15:	res	VDUSTAT2_paged,(IY+zpIY_vdu_status)
+		ret
+
+mos_VDU_and_A_vdustatus::
+		and	A,(IY+zpIY_vdu_status)			;	C5A8
+		ld	(IY+zpIY_vdu_status),A
+		ret
+
 ;; ----------------------------------------------------------------------------
 ;; VDU 4 select Text Cursor  No parameters;  
 mos_VDU_4::	TODO "mos_VDU_4"
@@ -433,20 +423,21 @@ mos_VDU_4::	TODO "mos_VDU_4"
 ;		lda	vduvar_PIXELS_PER_BYTE_MINUS1
 ;		beq	LC5ACrts
 ;		jsr	x_crtc_reset_cursor
-;		lda	#0xDF
-;		bra	mos_VDU_and_A_vdustatus
+		res	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)
+		ret
 ;; VDU 5 set graphics cursor
 mos_VDU_5::	TODO "mos_VDU_5"
 ;
 ;		lda	vduvar_PIXELS_PER_BYTE_MINUS1
 ;		beq	LC5ACrts
-;		lda	#0x20
-;		jsr	x_crtc_set_cursor
-;		bra	x_ORA_with_vdu_status
+		ld	E,#1<<VDUSTAT5_vdu5
+		call	x_crtc_set_cursorE
+		set	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)
+		ret
 ;; VDU 8	 CURSOR LEFT	 NO PARAMETERS
 mos_VDU_8::	TODO "mos_VDU_8"
 ;
-;		jsr	x_check_text_cursor_in_use	;	C5C5
+;		jsr	check_vdu5	;	C5C5
 ;		bne	x_cursor_left_and_down_with_graphics_cursor_in_use;	C5C8
 ;		dec	vduvar_TXT_CUR_X		;	C5CA
 ;		ldb	vduvar_TXT_CUR_X		;	C5CD
@@ -484,12 +475,8 @@ x_cursor_at_top_of_window::	TODO "x_cursor_at_top_of_window"
 ;
 ;		CLC
 ;		jsr	x_move_text_cursor_to_next_line ;	C60B
-;	IF CPU_6809
-;		lda	#0x08				;	C60E
-;		bita	zp_vdu_status			;	C610
-;	ELSE
-;		tim	#0x08, zp_vdu_status
-;	ENDIF
+		
+		bit	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
 ;		bne	LC619				;	C612
 ;		jsr	x_adjust_screen_RAM_addresses	;	C614
 ;		bne	LC61C				;	C617
@@ -538,17 +525,17 @@ jmp_cal_ext_coors::	TODO "jmp_cal_ext_coors"
 ;; VDU 11 Cursor Up    No Parameters
 mos_VDU_11::	TODO "mos_VDU_11"
 ;
-;		jsr	x_check_text_cursor_in_use	;	C65B
+;		jsr	check_vdu5	;	C65B
 ;		lbeq	x_cursor_up			;	C65E
 ;LC660:		ldb	#0x02				;	C660
 ;		bra	x_graphic_cursor_up_Beq2	;	C662
 ;; VDU 9 Cursor right	No parameters
 mos_VDU_9:
-		bit	5,(IY+zpIY_vdu_status)
+		bit	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)
 		jp	NZ,x_graphic_cursor_right	;	C668
 		ld	A,(vduvar_TXT_CUR_X)		;	C66A
 		cp	A,(IX+vduIX_TXT_WINDOW_RIGHT)	;	C66D
-		jr	NC,x_text_cursor_down_and_right	;	C670
+		jr	NC,mos_vdu_cursor_CRLF	;	C670
 		inc	(IX+vduIX_TXT_CUR_X)		;	C672
 		ld	HL,(vduvar_6845_CURSOR_ADDR)
 		ld	E,(IX+vduIX_BYTES_PER_CHAR)
@@ -557,40 +544,32 @@ mos_VDU_9:
 		jp	mos_set_cursor_HL		;	C681
 ;; ----------------------------------------------------------------------------
 ;; : text cursor down and right
-x_text_cursor_down_and_right::	TODO "x_text_cursor_down_and_right"
-;
-;		lda	vduvar_TXT_WINDOW_LEFT
-;		sta	vduvar_TXT_CUR_X
-;; : text cursor down
-x_text_cursor_down::	TODO "x_text_cursor_down"
-;
-;		CLC
-;		jsr	x_control_scrolling_in_paged_mode_2
-;		ldb	vduvar_TXT_CUR_Y
-;		cmpb	vduvar_TXT_WINDOW_BOTTOM
-;		bhs	LC69B
-;		inc	vduvar_TXT_CUR_Y
-;		bra	x_setup_displayaddress_and_cursor_position
-;LC69B:		jsr	x_move_text_cursor_to_next_line
-;	IF CPU_6809
-;		lda	#0x08
-;		bita	zp_vdu_status
-;	ELSE
-;		tim	#0x08, zp_vdu_status
-;	ENDIF
-;		bne	LC6A9
-;		jsr	x_adjust_screen_RAM_addresses_one_line_scroll
-;		bra	x_clear_a_line_then_setup_displayaddress_and_cursor_position
-;LC6A9:		jsr	x_execute_upward_scroll
-x_clear_a_line_then_setup_displayaddress_and_cursor_position::	TODO "x_clear_a_line_then_setup_displayaddress_and_cursor_position"
-;
-;		jsr	x_clear_a_line
-x_setup_displayaddress_and_cursor_position::	TODO "x_setup_displayaddress_and_cursor_position"
-;
-;		jsr	x_set_up_displayaddress
-;		ldx	zp_vdu_top_scanline
-;		jmp	x_set_cursor_position_HL
+mos_vdu_cursor_CRLF::
 
+		ld	A,(vduvar_TXT_WINDOW_LEFT)
+		ld	(vduvar_TXT_CUR_X),A
+;; : text cursor down
+x_text_cursor_down::
+
+		or	A,A				; clear carry
+		call	x_control_scrolling_in_paged_mode_2
+		ld	A,(vduvar_TXT_CUR_Y)
+		cp	A,(IX+vduIX_TXT_WINDOW_BOTTOM)
+		jr	NC,LC69B			; off bottom of screen
+		inc	(IX+vduIX_TXT_CUR_Y)
+		jr	x_setup_displayaddress_and_cursor_position
+LC69B:		call	x_move_text_cursor_to_next_line
+		bit	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
+		jr	NZ,LC6A9
+		call	x_adjust_screen_RAM_addresses_one_line_scroll
+		jr	x_clear_a_line_then_setup_displayaddress_and_cursor_position
+LC6A9:		call	x_execute_upward_scroll
+x_clear_a_line_then_setup_displayaddress_and_cursor_position::
+		call	x_clear_a_line
+x_setup_displayaddress_and_cursor_position::
+		call	x_set_up_displayaddress
+		ld	HL,(zp_vdu_top_scanline)
+		jp	x_set_cursor_position_HL
 ;; graphic cursor right
 x_graphic_cursor_right::	TODO "x_graphic_cursor_right"
 ;
@@ -631,7 +610,7 @@ x_graphic_cursor_up_Beq2::	TODO "x_graphic_cursor_up_Beq2"
 ;; VDU 10  Cursor down	  No parameters
 mos_VDU_10::	TODO "mos_VDU_10"
 ;
-;		jsr	x_check_text_cursor_in_use	;	C6F0
+;		jsr	check_vdu5	;	C6F0
 ;		lbeq	x_text_cursor_down		;	C6F3
 ;LC6F5:		ldb	#0x02				;	C6F5
 ;		jmp	x_cursor_down_with_graphics_in_use;	C6F7
@@ -653,8 +632,7 @@ mos_VDU_28::	TODO "mos_VDU_28"
 ;		suba	vduvar_VDU_Q_END - 4
 ;		bmi	LC758rts
 ;		jsr	LCA88_newAPI
-;		lda	#0x08
-;		jsr	x_ORA_with_vdu_status
+		set	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
 ;		ldx	#vduvar_VDU_Q_END - 4
 ;		ldy	#vduvar_TXT_WINDOW_LEFT
 ;		jsr	copy4fromXtoY
@@ -693,10 +671,9 @@ LC758rts::	TODO "LC758rts"
 ;; VDU 12  Clear text Screen		  0 parameters;	 
 mos_VDU_12::	TODO "mos_VDU_12"
 ;
-;		jsr	x_check_text_cursor_in_use
+;		jsr	check_vdu5
 ;		bne	x_mos_home_CLG
-;		lda	zp_vdu_status
-;		anda	#0x08
+		bit	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
 ;		lbeq	LCBC1_clear_whole_screen
 ;LC767:		ldb	vduvar_TXT_WINDOW_TOP
 ;LC76A:		stb	vduvar_TXT_CUR_Y
@@ -708,7 +685,7 @@ mos_VDU_12::	TODO "mos_VDU_12"
 ;; VDU 30  Home cursor			  0  parameters
 mos_VDU_30::	TODO "mos_VDU_30"
 ;
-;		jsr	x_check_text_cursor_in_use
+;		jsr	check_vdu5
 ;		beq	LC781
 ;		jmp	x_home_graphics_cursor
 ;; ----------------------------------------------------------------------------
@@ -717,7 +694,7 @@ mos_VDU_30::	TODO "mos_VDU_30"
 ;; VDU 31  Position text cursor		  2  parameters; 0322 = X coordinate ; 0323 = Y coordinate 
 mos_VDU_31::	TODO "mos_VDU_31"
 ;
-;		jsr	x_check_text_cursor_in_use
+;		jsr	check_vdu5
 ;		bne	LC758rts
 ;		jsr	LC7A8
 ;		lda	vduvar_VDU_Q_END - 2
@@ -735,7 +712,7 @@ mos_VDU_31::	TODO "mos_VDU_31"
 ;; VDU  13	  Carriage  Return	  0 parameters
 mos_VDU_13::	TODO "mos_VDU_13"
 ;
-;		jsr	x_check_text_cursor_in_use	;	C7AF
+;		jsr	check_vdu5	;	C7AF
 ;		beq	LC7B7				;	C7B2
 ;		jmp	x_set_graphics_cursor_to_left_hand_column;	C7B4
 ;LC7B7:		jsr	x_cursor_to_window_left				;	C7B7
@@ -773,43 +750,54 @@ mos_VDU_16::	TODO "mos_VDU_16"
 ;LC7F8rts:	rts					; exit
 ;; ----------------------------------------------------------------------------
 ;; COLOUR; parameter in &0323 
-mos_VDU_17::	TODO "mos_VDU_17"
-;	; COLOUR
-;		ldb	#0x00				;	C7F9
-;		bra	LC7FF				;	C7FB
+mos_VDU_17::
+		ld	C,#0x00				;	C7F9
+		jr	LC7FF				;	C7FB
 ;; GCOL; parameters in 323,322 
-mos_VDU_18::	TODO "mos_VDU_18"
-;	; GCOL
-;		ldb	#0x02
-;LC7FF:		lda	vduvar_VDU_Q_END - 1
-;		bpl	LC805
-;		incb
-;LC805:		anda	vduvar_COL_COUNT_MINUS1
-;		sta	zp_vdu_wksp
-;		lda	vduvar_COL_COUNT_MINUS1
-;		beq	LC82B
-;		anda	#0x07
-;		adda	zp_vdu_wksp
-;		ldx	#mostbl_2_colour_pixmasks-1
-;		lda	a,x
-;		ldy	#vduvar_TXT_FORE
-;		sta	b,y
-;		cmpb	#0x02
-;		bhs	LC82C
-;		lda	vduvar_TXT_FORE
-;		coma
-;		sta	zp_vdu_txtcolourEOR
-;		eora	vduvar_TXT_BACK
-;		sta	zp_vdu_txtcolourOR
-;LC82B:		rts
-;LC82C:		lda	vduvar_VDU_Q_END - 2
-;		ldy	#vduvar_GRA_FORE
-;		sta	b,y
-;		rts
+mos_VDU_18::
+	; GCOL
+		ld	C,#0x02
+LC7FF:		ld	A,(vduvar_VDU_Q_END - 1)
+		or	A,A
+		jp	P,LC805				; positive = foreground
+		inc	C
+LC805:		and	A,(IX+vduIX_COL_COUNT_MINUS1)
+		ld	B,A				; normalized colour
+		ld	A,(vduvar_COL_COUNT_MINUS1)
+		or	A,A			
+		jr	Z,LC82B				; not a gfx mode
+		and	A,#0x07				; normalize to colours - 1 and 7
+		add	A,B				; add colour number
+		ld	E,A
+		ld	D,0
+		ld	HL,mostbl_2_colour_pixmasks-1	; get colour mask from table
+		add	HL,DE
+		ld	A,(HL)
+
+		ld	HL,vduvar_TXT_FORE
+		ld	E,C
+		add	HL,DE
+		ld	(HL),A				; store in one of the FORE/BACK TXt/GFX slots
+
+		ld	A,2
+		cp	A,E		
+		jr	C,LC82C				; if GFX colour
+		ld	A,(vduvar_TXT_FORE)
+		cpl
+		ld	(zp_vdu_txtcolourEOR),A
+		xor	A,(IX+vduIX_TXT_BACK)
+		ld	(zp_vdu_txtcolourOR),A
+LC82B:		ret
+		; THIS LOOKS WRONG!
+LC82C:		ld	A,(vduvar_VDU_Q_END - 2)
+		ld	HL,vduvar_GRA_FORE
+		ld	E,C
+		ld	(HL),A
+		ret
 ;; ----------------------------------------------------------------------------
-;LC833:		lda	#0x20				;	C833
-;		sta	vduvar_TXT_BACK			;	C835
-;		rts					;	C838
+LC833:		ld	A,0x20				;	C833
+		ld	(vduvar_TXT_BACK),A		;	C835
+		ret					;	C838
 ;; ----------------------------------------------------------------------------
 ;; VDU 20	  Restore default colours	  0 parameters;	 
 mos_VDU_20::	
@@ -822,7 +810,7 @@ LC83D:		ld	(HL),A				;	C83D
 		LD	E,A				; = 0
 		ld	A,(vduvar_COL_COUNT_MINUS1)	;	C843
 		or	A,A
-		jr	Z,x_2colour_mode		; It's mode 7 leave as 0
+		jr	Z,LC833				; It's mode 7 leave as 0
 		ld	E, 0xFF				; All white
 		cp	A, 15				; Check for 16 colour mode
 		jr	NZ, LC850			; Jump if not
@@ -1002,49 +990,49 @@ x_set_CRT_controller::	TODO "x_set_CRT_controller"
 ;		blo	LC958				; VDU 23,0,R,X - set (R)eg to (X) in CRTC
 ;		bne	jmp_VDUV			;	C943
 ;		ASSERT "Unexpected in x_set_CRT_controller"
-;	jsr	x_check_text_cursor_in_use	;	C945
+;	jsr	check_vdu5	;	C945
 ;	bne	LC937				;	C948
-;	lda	#0x20				;	C94A
-;	ldy	vduvar_VDU_Q_END - 8		;	C94C
-;	beq	x_crtc_set_cursor		;	C94F
-x_crtc_reset_cursor::	TODO "x_crtc_reset_cursor"
-;	; LC951
-;		lda	vduvar_CUR_START_PREV		;	C951
-x_crtc_set_cursor::	TODO "x_crtc_set_cursor"
-;
-;		ldb	#0x0A				;	C954
-;		bra	LC985				;	C956
-;LC958:
-;		lda	vduvar_VDU_Q_END - 7		;	C958
-;		ldb	vduvar_VDU_Q_END - 8		;	C95B
+		ld	E,0x20				;	C94A
+		ld	A,(vduvar_VDU_Q_END - 8)		;	C94C
+		or	A,A
+		jr	Z,x_crtc_set_cursorE		;	C94F
+x_crtc_reset_cursor::
+		ld	E,(IX+vduIX_CUR_START_PREV)	;	C951
+x_crtc_set_cursorE::
+		ld	A,0x0A				;	C954
+		jr	mos_set_6845_regAtoE				;	C956
+LC958:
+		ld	E,vduvar_VDU_Q_END - 7		;	C958
+		ld	A,vduvar_VDU_Q_END - 8		;	C95B
 
 	; API CHANGE Z80: was set reg B to A
-mos_set_6845_regAtoE:
+mos_set_6845_regAtoE_adj:
 		cp	A,7
 		jr	NZ, 10$
 		ld	A,(oswksp_VDU_VERTADJ)
 		add	A,E
 		ld	E,A
 		ld	A,7
-		jr	LC985
-10$:		jr	NC, LC985
+		jr	mos_set_6845_regAtoE
+10$:		jr	NC, mos_set_6845_regAtoE
 		cp	A,8				;	C967
-		jr	NZ, LC972			;	C969
+		jr	NZ, 20$			;	C969
 		; if interlaced then keep interlaced else eor with flag
 		bit	7,E
-		jp	NZ, LC972
+		jp	NZ, 20$
 		ld	A,(oswksp_VDU_INTERLACE)	;	C96F
 		xor	A,E
 		ld	E,A
 		ld	A,8
-LC972:		cp	A,10				;	C972
-		jr	NZ, LC985			;	C974
+20$:		cp	A,10				;	C972
+		jr	NZ, mos_set_6845_regAtoE			;	C974
 		ld	A,E
 		ld	(vduvar_CUR_START_PREV),A	;	C976
 		ld	A,10
-		bit	5,(IY+zpIY_vdu_status)		;	C97A
+		bit	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)		;	C97A
 		jr	NZ, LC98B			;	C983
-LC985:		push	AF
+mos_set_6845_regAtoE::		
+		push	AF
 		push	BC
 		ld	BC,sheila_CRTC_reg
 		out	(C),A
@@ -1106,8 +1094,7 @@ LC9C1:		ld	(HL),A
 		dec	(IX+vduIX_VDU_Q_END - 2)	;	set to FF
 		dec	(IX+vduIX_VDU_Q_END - 4)	;	set to FF
 		call	mos_VDU_24			;	C9E8
-		ld	A, 0xF7				;	C9EB
-		call	mos_VDU_and_A_vdustatus		;	C9ED
+		res	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
 		ld	HL,(vduvar_6845_SCREEN_START)	;	C9F0
 mos_set_cursor_HL:
 		ld	(vduvar_6845_CURSOR_ADDR),HL	;	C9F6
@@ -1142,10 +1129,10 @@ LCA27:
 mos_stHL_6845rB:
 		ld	A,B
 		ld	E,H
-		call	mos_set_6845_regAtoE
+		call	mos_set_6845_regAtoE_adj
 		inc	A
 		ld	E,L
-		jp	mos_set_6845_regAtoE		; EXIT
+		jp	mos_set_6845_regAtoE_adj		; EXIT
 
 db_endian_vdu_q_swap::	TODO "db_endian_vdu_q_swap"
 ;
@@ -1262,7 +1249,7 @@ mos_VDU_29::	TODO "mos_VDU_29"
 mos_VDU_127::	TODO "mos_VDU_127"
 ;	; LCAAC
 ;		jsr	mos_VDU_8			;cursor left
-;		jsr	x_check_text_cursor_in_use	;A=0 if text cursor A=&20 if graphics cursor
+;		jsr	check_vdu5	;A=0 if text cursor A=&20 if graphics cursor
 ;		bne	LCAC7				;if graphics then CAC7
 ;		ldb	vduvar_COL_COUNT_MINUS1		;number of logical colours less 1
 ;		beq	LCAC2				;if mode 7 CAC2
@@ -1280,43 +1267,41 @@ mos_VDU_127::	TODO "mos_VDU_127"
 ;		jmp	x_plot_char_gra_mode				;invert pattern data (to background colour)
 ;; ----------------------------------------------------------------------------
 ;; control scrolling in paged mode
-x_control_scrolling_in_paged_mode::	TODO "x_control_scrolling_in_paged_mode"
-;	; LCAE0
-;		jsr	x_zero_paged_mode_counter
-x_control_scrolling_in_paged_mode_2::	TODO "x_control_scrolling_in_paged_mode_2"
-;
-;		jsr	mos_OSBYTE_118
-;		bcc	LCAEA
-;		bmi	x_control_scrolling_in_paged_mode
-;LCAEA:		lda	zp_vdu_status
-;		eora	#0x04
-;		anda	#0x46
-;		bne	LCB1Crts
-;		lda	sysvar_SCREENLINES_SINCE_PAGE
-;		bmi	LCB19
-;		lda	vduvar_TXT_CUR_Y
-;		cmpa	vduvar_TXT_WINDOW_BOTTOM
-;		blo	LCB19
-;		lsra
-;		lsra
-;		SEC
-;		adca	sysvar_SCREENLINES_SINCE_PAGE
-;		adca	vduvar_TXT_WINDOW_TOP
-;		cmpa	vduvar_TXT_WINDOW_BOTTOM
-;		blo	LCB19
-;		CLC
-;LCB0E:		jsr	mos_OSBYTE_118
-;		SEC
-;		bpl	LCB0E
+x_control_scrolling_in_paged_mode::			; LCAE0
+		call	x_zero_paged_mode_counter
+x_control_scrolling_in_paged_mode_2::
+		call	mos_OSBYTE_118
+		jr	NC,LCAEA
+		jp	M,x_control_scrolling_in_paged_mode	; spin
+LCAEA:		ld	A,zp_vdu_status
+		xor	A,1<<VDUSTAT2_paged
+		and	A,#(1<<VDUSTAT5_vdu5)|(1<<VDUSTAT2_paged)|(1<<VDUSTAT1_scrolldis)
+		jr	NZ,LCB1Crts
+		ld	HL,sysvar_SCREENLINES_SINCE_PAGE
+		ld	A,(HL)
+		or	A,A
+		jp	M,LCB19
+		ld	A,(vduvar_TXT_CUR_Y)
+		cp	A,(IX+vduIX_TXT_WINDOW_BOTTOM)
+		jr	C,LCB19
+		srl	A
+		srl	A
+		scf
+		adc	A,(HL)
+		adc	A,(IX+vduIX_TXT_WINDOW_TOP)
+		cp	A,(IX+vduIX_TXT_WINDOW_BOTTOM)
+		jr	C,LCB19
+;;		CLC
+LCB0E:		call	mos_OSBYTE_118
+		scf
+		jp	P,LCB0E
 ;; zero paged mode  counter
-x_zero_paged_mode_counter::	TODO "x_zero_paged_mode_counter"
-;
-;		lda	#0xFF				;	CB14
-;		sta	sysvar_SCREENLINES_SINCE_PAGE	;	CB16
-;LCB19:		inc	sysvar_SCREENLINES_SINCE_PAGE	;	CB19
-LCB1Crts::	TODO "LCB1Crts"
-;
-;		rts					;	CB1C
+x_zero_paged_mode_counter::
+		ld	HL,sysvar_SCREENLINES_SINCE_PAGE
+		ld	A,0xFF				;	CB14
+		ld	(HL),A
+LCB19:		inc	(HL)				;	CB19
+LCB1Crts:	ret
 ; ----------------------------------------------------------------------------
 ; Set vdu vars to 0, called with mode in A
 mos_VDU_init::						; LCB1D
@@ -1442,7 +1427,7 @@ mos_VDU_set_mode_bmsk1::
 		ld	(vduvar_BYTES_PER_ROW + 1),A
 
 
-		ld	A, 0x43				;	CB9B
+		ld	A, #(1<<VDUSTAT6_cursor_edit)|(1<<VDUSTAT1_scrolldis)|(1<<VDUSTAT0_printen)
 		call	mos_VDU_and_A_vdustatus		;	CB9D
 		ld	A,(vduvar_MODE)			;	CBA0
 		ld	E,A
@@ -1466,7 +1451,7 @@ mos_VDU_set_mode_bmsk1::
 mos_send6845lp:						; LCBB0
 		dec	HL
 		ld	E,(HL)				;	CBB0
-		call	mos_set_6845_regAtoE		;	CBB3
+		call	mos_set_6845_regAtoE_adj		;	CBB3
 		dec	A
 		jp	P,mos_send6845lp			;	CBB8
 		call	popIFF				; interrupts back
@@ -1599,8 +1584,7 @@ mos_OSBYTE_20::
 ;; :move text cursor to next line (direction up/down depends on CC_C)
 x_move_text_cursor_to_next_line::	TODO "x_move_text_cursor_to_next_line"
 ;
-;		lda	zp_vdu_status
-;		bita	#0x02
+		bit	VDUSTAT1_scrolldis,(IY+zpIY_vdu_status)
 ;		bne	LCD47				; scrolling disabled
 ;		bita	#0x40
 ;		beq	LCD65rts			; curor editing
@@ -1895,103 +1879,53 @@ x_check_text_cursor_in_window_setup_display_addr::	TODO "x_check_text_cursor_in_
  ;if the result is greater than &7FFF the hi byte of screen RAM size is
  ;subtracted to wraparound the screen. X/A, D8/9 are then set from this
 
-x_set_up_displayaddress::	TODO "x_set_up_displayaddress"
-;
-;		lda	vduvar_TXT_CUR_Y
-;		ldb	vduvar_MODE_SIZE
-;		cmpb	#4
-;		beq	x_set_up_displayaddress_mo7
-;		cmpb	#2
-;		bhs	x_set_up_displayaddress_320
-;		ldb	#160
-;		mul
-;		aslb
-;		rola
-x_set_up_displayaddress_sk1::	TODO "x_set_up_displayaddress_sk1"
-;
-;		aslb
-;		rola
-x_set_up_displayaddress_sk2::	TODO "x_set_up_displayaddress_sk2"
-;
-;		addd	vduvar_6845_SCREEN_START
-;		std	zp_vdu_top_scanline
-;		lda	vduvar_TXT_CUR_X
-;		ldb	vduvar_BYTES_PER_CHAR
-;		mul
-;		addd	zp_vdu_top_scanline
-;		std	vduvar_6845_CURSOR_ADDR
-;		bpl	x_set_up_displayaddress_nowrap
-;		suba	vduvar_SCREEN_SIZE_HIGH
-x_set_up_displayaddress_nowrap::	TODO "x_set_up_displayaddress_nowrap"
-;
-;		std	zp_vdu_top_scanline
-
-;		rts
-x_set_up_displayaddress_320::	TODO "x_set_up_displayaddress_320"
-;
-;		ldb	#160
-;		mul
-;		bra	x_set_up_displayaddress_sk1
-x_set_up_displayaddress_mo7::	TODO "x_set_up_displayaddress_mo7"
-;
-;		ldb	#40
-;		mul
-;		bra	x_set_up_displayaddress_sk2
-
-
-
-;;;	lda	vduvar_TXT_CUR_Y		;	CF06
-;;;	asl	a				;	CF09
-;;;	tay					;	CF0A
-;;;	lda	(zp_rom_mul),y			;	CF0B
-;;;	sta	zp_vdu_top_scanline+1		;	CF0D
-;;;	iny					;	CF0F
-;;;	lda	#0x02				;	CF10
-;;;	and	vduvar_MODE_SIZE		;	CF12
-;;;	php					;	CF15
-;;;	lda	(zp_rom_mul),y			;	CF16
-;;;	plp					;	CF18
-;;;	beq	LCF1E				;	CF19
-;;;	lsr	zp_vdu_top_scanline+1		;	CF1B
-;;;	ror	a				;	CF1D;;
-;;
-
-;;;LCF1E:	adc	vduvar_6845_SCREEN_START	;	CF1E
-;;;	sta	zp_vdu_top_scanline		;	CF21
-;;;	lda	zp_vdu_top_scanline+1		;	CF23
-;;;	adc	vduvar_6845_SCREEN_START+1	;	CF25
-;;;	tay					;	CF28
-;;;	lda	vduvar_TXT_CUR_X		;	CF29
-;;;	ldx	vduvar_BYTES_PER_CHAR		;	CF2C
-;;;	dex					;	CF2F
-;;;	beq	LCF44				;	CF30
-;;;	cpx	#0x0F				;	CF32
-;;;	beq	LCF39				;	CF34
-;;;	bcc	LCF3A				;	CF36
-;;;	asl	a				;	CF38
-;;;LCF39:	asl	a				;	CF39
-;;;LCF3A:	asl	a				;	CF3A
-;;;	asl	a				;	CF3B
-;;;	bcc	LCF40				;	CF3C
-;;;	iny					;	CF3E
-;;;	iny					;	CF3F
-;;;LCF40:	asl	a				;	CF40
-;;;	bcc	LCF45				;	CF41
-;;;	iny					;	CF43
-;;;LCF44:	clc					;	CF44
-;;;LCF45:	adc	zp_vdu_top_scanline		;	CF45
-;;;	sta	zp_vdu_top_scanline		;	CF47
-;;;	sta	vduvar_6845_CURSOR_ADDR		;	CF49
-;;;	tax					;	CF4C
-;;;	tya					;	CF4D
-;;;	adc	#0x00				;	CF4E
-;;;	sta	vduvar_6845_CURSOR_ADDR+1	;	CF50
-;;;	bpl	LCF59				;	CF53
-;;;	sec					;	CF55
-;;;	sbc	vduvar_SCREEN_SIZE_HIGH		;	CF56
-;;;LCF59:	sta	zp_vdu_top_scanline+1		;	CF59
-;;;	clc					;	CF5B
-;;;	rts					;	CF5C
+x_set_up_displayaddress::
+		ld	D,0
+		ld	E,(IX+vduIX_TXT_CUR_Y)
+		sla	E
+		ld	A,(vduvar_MODE_SIZE)
+		ld	HL,_MUL320_TABLE		; multiply table for *320
+		cp	A,4
+		jr	NZ,10$
+		ld	HL,_MUL40_TABLE			; mode 7 *40
+10$:		add	HL,DE
+		ld	E,(HL)
+		inc	HL
+		ld	D,(HL)	
+		ld	HL,(vduvar_6845_SCREEN_START)
+		cp	A,1
+		jr	NC,20$				; mode size >=2 leave it *40 or * 320
+		add	HL,DE				;
+20$:		add	HL,DE
+		ld	(zp_vdu_top_scanline),HL
+	
+		; now calc DE to contain X * bytes per char
+		ld	E,(IX+vduIX_TXT_CUR_X)
+		ld	D,0
+		ld	A,(vduvar_BYTES_PER_CHAR)
+		dec	A
+		jr	Z,_BCF44
+		cp	A,15
+		jr	Z,_BCF39
+		jr	NZ,_BCF3A
+		sla	E				; A=A*32 if entered here (mode 2)
+_BCF39:		sla	E				; A=A*16 if entered here
+_BCF3A:		sla	E				; A=A*8 if entered here
+		rl	D
+		sla	E				; 
+		rl	D
+		sla	E
+		rl	D
+_BCF44:		add	HL,DE
+		ld	(vduvar_6845_CURSOR_ADDR),HL
+		xor	A,A
+		or	A,H
+		jp	P,x_set_up_displayaddress_nowrap
+		sub	A,(IX+vduIX_SCREEN_SIZE_HIGH)
+		ld	H,A
+x_set_up_displayaddress_nowrap:
+		ld	(zp_vdu_top_scanline),HL
+		ret
 ;; ----------------------------------------------------------------------------
 ;; Graphics cursor display routine
 x_vdu5_render_char::	TODO "x_vdu5_render_char"
@@ -2052,7 +1986,7 @@ render_char::	bit	0,(IX+vduIX_COL_COUNT_MINUS1)	; mode 7 == 0, all others == odd
 		jr	Z,x_convert_teletext_characters
 		call	x_calc_pattern_addr_for_given_char
 LCFBF_renderchar2:
-		bit	5,(IY+zpIY_vdu_status)		;	CFC2
+		bit	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)		;	CFC2
 		jp	NZ,x_vdu5_render_char		;	CFC6
 render_logo2::
 
@@ -3698,60 +3632,38 @@ x_cursor_start::	TODO "x_cursor_start"
 ;		pshs	A				; Push A
 ;		ldb	sysvar_VDU_Q_LEN		; X=number of items in VDU queque
 ;		bne	LD916pulsArts			; if not 0 D916
-;	IF CPU_6809
-;		lda	#0xA0				; A=&A0
-;		bita	zp_vdu_status			; else check VDU status byte
-;	ELSE
-;		tim	#0xA0, zp_vdu_status
-;	ENDIF
-;		bne	LD916pulsArts			; if either VDU is disabled or plot to graphics
-;						; cursor enabled then D916
-;	IF CPU_6809
-;		lda	#0x40
-;		bita	zp_vdu_status
-;	ELSE
-;		tim	#0x40, zp_vdu_status
-;	ENDIF
+
+		ld	A,#(1<<VDUSTAT5_vdu5)|(1<<VDUSTAT7_vdudis)
+		and	A,(IY+zpIY_vdu_status)			; else check VDU status byte
+
 ;		bne	1F				; if cursor editing enabled D8F5
-;		lda	vduvar_CUR_START_PREV		; else get 6845 register start setting
-;		anda	#0x9F				; clear bits 5 and 6
-;		ora	#0x40				; set bit 6 to modify last cursor size setting
-;		jsr	x_crtc_set_cursor		; change write cursor format
+		ld	A,(vduvar_CUR_START_PREV)		; else get 6845 register start setting
+		and	A,0x9F				; clear bits 5 and 6
+		or	A,0x40				; set bit 6 to modify last cursor size setting
+		ld	E,A
+		call	x_crtc_set_cursorE		; change write cursor format
 ;		ldx	#vduvar_TXT_CUR_X		; X=&18
 ;		ldy	#vduvar_TEXT_IN_CUR_X		; Y=&64
 ;		jsr	copy2fromXtoY			; set text input cursor from text output cursor
 ;		jsr	x_setup_read_cursor		; modify character at cursor poistion
-;		lda	#0x02				; A=2
-;		jsr	x_ORA_with_vdu_status		; bit 1 of VDU status is set to bar scrolling
+		set	VDUSTAT1_scrolldis,(IY+zpIY_vdu_status)
 ;10x:
 ;		lda	#0xBF				;A=&BF
 ;		jsr	mos_VDU_and_A_vdustatus		;bit 6 of VDU status =0 
 ;		puls	A				;Pull A
 ;		anda	#0x7F				;clear hi bit (7)
 ;		jsr	mos_VDU_WRCH			; exec up down left or right?
-;		lda	#0x40				;A=&40
-;		jmp	x_ORA_with_vdu_status		;exit 
+		set	VDUSTAT6_cursor_edit,(IY+zpIY_vdu_status)
+		ret
 ;; ----------------------------------------------------------------------------
 x_cursor_COPY::	TODO "x_cursor_COPY"
 ;	; LD905
-;;	lda	#0x20				;A=&20
-;;	bita	zp_vdu_status			
-;;	bvc	LD8CBclrArts			;if bit 6 cursor editing is set
-;;	bne	LD8CBclrArts			;or bit 5 is set exit &D8CB
-;	IF CPU_6809
-;		lda	#0x40
-;		bita	zp_vdu_status
-;	ELSE
-;		tim	#0x40, zp_vdu_status
-;	ENDIF
-;		beq	LD8CBclrArts			; not cursor editing
-;	IF CPU_6809
-;		lda	#0x20
-;		bita	zp_vdu_status
-;	ELSE
-;		tim	#0x20, zp_vdu_status
-;	ENDIF
-;		bne	LD8CBclrArts			; VDU5
+	
+		bit	VDUSTAT6_cursor_edit,(IY+zpIY_vdu_status)
+		jr	Z,LD8CBclrArts
+		bit	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)
+		jr	Z,LD8CBclrArts
+
 ;		pshs	B,X,Y
 ;		lda	#135
 ;		jsr	OSBYTE				;read a character from the screen - note changed this to use

@@ -89,7 +89,12 @@ mos_handle_res::
 HERE:		jp	HERE
 
 
-str_hellow:	.asciz	"012345678ABCDEFGHIJKLMNOPQRS"
+str_hellow:	.db	17,1,17,128+5
+		.ascii	"01"
+		.db	17,2,17,128+6
+		.ascii	"23"
+		.db	17,3,17,128+4
+		.asciz	"45678ABCDEFGHIJKLMNOPQRS"
 
 ;;DUMMY ROUTINES....
 
@@ -237,4 +242,20 @@ OSWRCH_ENTER::	;TODO: this needs to do all the vectoring bullshit
 		pop	DE
 		pop	BC
 		pop	AF
+		ret
+
+
+;; ----------------------------------------------------------------------------
+;; *************************************************************************
+;; *                                                                       *
+;; *        OSBYTE &76 (118) SET LEDs to Keyboard Status                   *
+;; *                                                                       *
+;; *************************************************************************
+                          ;osbyte entry with carry set
+                         ;called from &CB0E, &CAE3, &DB8B
+
+mos_OSBYTE_118::
+
+		;; mock version - returns 0, Cy = 0
+		or	A,A
 		ret
