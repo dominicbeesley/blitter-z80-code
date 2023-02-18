@@ -76,6 +76,24 @@ mos_handle_res::
 		ld	a,2
 		call	mos_VDU_init
 
+		ld	B,7
+		ld	C,1
+
+2$:
+		ld	A,17
+		call	OSWRCH
+		ld	A,B
+		and	A,0xF
+		call	OSWRCH
+
+		ld	A,17
+		call	OSWRCH
+		ld	A,C
+		and	A,0xF
+		or	A,0x80
+		call	OSWRCH
+
+
 		ld	HL,str_hellow
 1$:		ld	A,(HL)	
 		inc	HL	
@@ -83,18 +101,18 @@ mos_handle_res::
 		or	A,A
 		jr	NZ,1$
 		
+		inc	B
+		jr	NZ,2$
+		inc	C
+		jp	2$
 
-		TODO	"VDU_INIT_DONE"
+		
+
 
 HERE:		jp	HERE
 
 
-str_hellow:	.db	17,1,17,128+5
-		.ascii	"01"
-		.db	17,2,17,128+6
-		.ascii	"23"
-		.db	17,3,17,128+4
-		.asciz	"45678ABCDEFGHIJKLMNOPQRS"
+str_hellow:	.asciz	"Ishbel "
 
 ;;DUMMY ROUTINES....
 

@@ -331,29 +331,22 @@ mos_VDU_1::	TODO "mos_VDU_1"
 ;		lsrb
 ;		bcc	LC511RTS
 ;		jmp	LE11E				; send to printer
-;; ----------------------------------------------------------------------------
-;; if explicit linkFDBess found, no parameters
-;x_if_explicit_linkFDBess_found_no_parameters:
-x_vdu_no_q::	TODO "x_vdu_no_q"
-;
-;		stx	vduvar_VDU_VEC_JMP		;	C545
 
-;		lsrb					; this was asl'd above, set back
-;		; set C if char > 8 and < 13
+x_vdu_no_q::	; character still in E
 
-;		eorb	#0xFF
-;		cmpb	#0xF7
-;		eorb	#0xFF
-;		bcc	LC553
-;		cmpb	#0x13
+		ld	A,E
 
-;LC553:		tst	zp_vdu_status			;	C553
-;		bmi	x_reenable_vdu_if_vdu6		;	vdu disabled
-;		pshs	CC
-;		jsr	[vduvar_VDU_VEC_JMP]
-;		puls	CC				;	C55B
-;		bcc	LC561				;	C55C
-;; main exit routine
+;		; set Cy if char > 8 and < =13
+		cp	A,13
+		jr	NC,LC553
+		cp	A,8
+		ccf
+LC553:		bit	VDUSTAT7_vdudis,(IY+zpIY_vdu_status)
+		jr	NZ,x_reenable_vdu_if_vdu6	; vdu disabled
+		push	AF
+		call	JP_HL				; jump to vector in HL
+		pop	AF				;	C55B
+		jr	NC,LC561			;	C55C
 x_main_exit_routine:
 		ld	A,(zp_vdu_status)		;VDU status byte
 		rla					;Carry is set if printer is enabled
