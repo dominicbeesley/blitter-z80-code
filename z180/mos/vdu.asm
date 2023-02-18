@@ -1768,10 +1768,9 @@ x_exchange_TXTCUR_wksp_doublertsifwindowempty::	TODO "x_exchange_TXTCUR_wksp_dou
 ;		leas	2,S
 ;		jmp	x_exchange_TXT_CUR_with_BITMAP_READ	; if no text window pull return address, put back cursor and exit parent subroutine
 ;; ----------------------------------------------------------------------------
-x_cursor_to_window_left::	TODO "x_cursor_to_window_left"
-;
-;		lda	vduvar_TXT_WINDOW_LEFT		
-;		bra	LCEE3_sta_TXT_CUR_X_setC_rts
+x_cursor_to_window_left::
+		ld	A,(vduvar_TXT_WINDOW_LEFT)
+		jr	LCEE3_sta_TXT_CUR_X_setC_rts
 
 x_copy_text_line_window_LCE73::	TODO "x_copy_text_line_window_LCE73"
 ;
@@ -1809,39 +1808,37 @@ x_copy_text_line_window_LCE73::	TODO "x_copy_text_line_window_LCE73"
 ;	rts					;	CEAB
 ;; ----------------------------------------------------------------------------
 ;; clear a line
-x_clear_a_line::	TODO "x_clear_a_line"
-;
-;		lda	vduvar_TXT_CUR_X
-;		pshs	A
-;		jsr	x_cursor_to_window_left
-;		jsr	x_set_up_displayaddress
-;		lda	vduvar_TXT_WINDOW_RIGHT
-;		suba	vduvar_TXT_WINDOW_LEFT
-;		sta	zp_vdu_wksp+2
-;		ldx	zp_vdu_top_scanline
-;		lda	vduvar_TXT_BACK	
-;LCEBF:		ldb	vduvar_BYTES_PER_CHAR
-;LCEC5:		sta	,X+
-;		decb
-;		bne	LCEC5
-;		cmpx	#0x8000
-;		blo	LCEDA
-;		lda	vduvar_SCREEN_SIZE_HIGH
-;		nega
-;		clrb
-;		leax	D,X
-;		lda	vduvar_TXT_BACK
-;LCEDA:		dec	zp_vdu_wksp+2
-;		bpl	LCEBF
-;		stx	zp_vdu_top_scanline
-;		puls	A
-LCEE3_sta_TXT_CUR_X_setC_rts::	TODO "LCEE3_sta_TXT_CUR_X_setC_rts"
-;
-;		sta	vduvar_TXT_CUR_X
-LCEE6_setC_rts::	TODO "LCEE6_setC_rts"
-;
-;		SEC
-;		rts
+x_clear_a_line::
+
+		ld	A,(vduvar_TXT_CUR_X)
+		push	AF
+		call	x_cursor_to_window_left
+		call	x_set_up_displayaddress
+		ld	A,(vduvar_TXT_WINDOW_RIGHT)
+		sub	A,(IX+vduIX_TXT_WINDOW_LEFT)
+		ld	C,A
+		ld	D,(IX+vduIX_BYTES_PER_CHAR)
+		ld	HL,(zp_vdu_top_scanline)
+		ld	A,(vduvar_TXT_BACK)
+LCEBF:		ld	B,D
+LCEC5:		ld	(HL),A
+		inc	HL
+		djnz	LCEC5
+		bit	7,H
+		jr	Z,LCEDA
+		ld	A,H
+		sub	A,(IX+vduIX_SCREEN_SIZE_HIGH)
+		ld	H,A
+		ld	A,(vduvar_TXT_BACK)
+LCEDA:		dec	(IY+zpIY_vdu_wksp+2)
+		jp	P,LCEBF
+		ld	(zp_vdu_top_scanline),HL
+		pop	AF
+LCEE3_sta_TXT_CUR_X_setC_rts::
+		ld	(vduvar_TXT_CUR_X),A
+LCEE6_setC_rts::
+		scf
+		ret
 ;; ----------------------------------------------------------------------------
 x_check_text_cursor_in_window_setup_display_addr::	TODO "x_check_text_cursor_in_window_setup_display_addr"
 ;
