@@ -464,17 +464,15 @@ x_cursor_up::	TODO "x_cursor_up"
 ;		jmp	x_setup_displayaddress_and_cursor_position
 ;; ----------------------------------------------------------------------------
 ;; cursor at top of window
-x_cursor_at_top_of_window::	TODO "x_cursor_at_top_of_window"
-;
-;		CLC
-;		jsr	x_move_text_cursor_to_next_line ;	C60B
-		
+x_cursor_at_top_of_window::
+		scf
+		call	x_move_text_cursor_to_next_line ;	C60B		
 		bit	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
-;		bne	LC619				;	C612
-;		jsr	x_adjust_screen_RAM_addresses	;	C614
-;		bne	LC61C				;	C617
-;LC619:		jsr	x_soft_scroll1line		;	C619
-;LC61C:		jmp	x_clear_a_line_then_setup_displayaddress_and_cursor_position				;	C61C
+		jr	NZ,1$
+		call	x_adjust_screen_RAM_addresses	;	C614
+		jr	2$
+1$:		call	x_soft_scroll1line		;	C619
+2$:		jp	x_clear_a_line_then_setup_displayaddress_and_cursor_position				;	C61C
 ;; ----------------------------------------------------------------------------
 ;; cursor left and down with graphics cursor in use
 x_cursor_left_and_down_with_graphics_cursor_in_use::	TODO "x_cursor_left_and_down_with_graphics_cursor_in_use"
@@ -551,6 +549,7 @@ x_text_cursor_down::
 		jr	NC,LC69B			; off bottom of screen
 		inc	(IX+vduIX_TXT_CUR_Y)
 		jr	x_setup_displayaddress_and_cursor_position
+;; ----------------------------------------------------------------------------
 LC69B:		call	x_move_text_cursor_to_next_line
 		bit	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
 		jr	NZ,LC6A9
@@ -1023,7 +1022,8 @@ mos_set_6845_regAtoE_adj:
 		ld	(vduvar_CUR_START_PREV),A	;	C976
 		ld	A,10
 		bit	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)		;	C97A
-		jr	NZ, LC98B			;	C983
+		ret	NZ
+		; note now trashes A,BC
 mos_set_6845_regAtoE::		
 		push	AF
 		push	BC
@@ -1034,7 +1034,7 @@ mos_set_6845_regAtoE::
 		out	(C),A
 		pop	BC
 		pop	AF
-LC98B:		ret					;	C98B
+		ret					;	C98B
 ;; ----------------------------------------------------------------------------
 ;; VDU 25	  PLOT			  5 parameters;	 
 mos_VDU_25::	TODO "mos_VDU_25"
@@ -1051,16 +1051,20 @@ x_adjust_screen_RAM_addresses::	TODO "x_adjust_screen_RAM_addresses"
 ;		bcc	LC9B3
 ;		adda	vduvar_SCREEN_SIZE_HIGH
 ;		bcc	LC9B3
-x_adjust_screen_RAM_addresses_one_line_scroll::	TODO "x_adjust_screen_RAM_addresses_one_line_scroll"
-;
-;		ldd	vduvar_BYTES_PER_ROW
-;		addd	vduvar_6845_SCREEN_START
-;		bpl	LC9B3
-;		suba	vduvar_SCREEN_SIZE_HIGH
-;LC9B3:		std	vduvar_6845_SCREEN_START
-;		tfr	D,X
+x_adjust_screen_RAM_addresses_one_line_scroll:
+
+		ld	HL,(vduvar_BYTES_PER_ROW)
+		ld	A,(IX+vduIX_6845_SCREEN_START)
+		add	A,L
+		ld	L,A
+		ld	A,(IX+vduIX_6845_SCREEN_START+1)
+		adc	A,H		
+		jp	P,LC9B3
+		sub	A,(IX+vduIX_SCREEN_SIZE_HIGH)
+LC9B3:		ld	H,A
+		ld	(vduvar_6845_SCREEN_START),HL
 		ld	B,0xC
-;		bra	x_set_6845_screenstart_from_HL
+		jp	x_set_6845_screenstart_from_HL
 ;; VDU 26  set default windows		  0 parameters
 mos_VDU_26::
 		xor	A,A
@@ -1269,7 +1273,7 @@ x_control_scrolling_in_paged_mode_2::
 LCAEA:		ld	A,zp_vdu_status
 		xor	A,1<<VDUSTAT2_paged
 		and	A,#(1<<VDUSTAT5_vdu5)|(1<<VDUSTAT2_paged)|(1<<VDUSTAT1_scrolldis)
-		jr	NZ,LCB1Crts
+		ret	NZ
 		ld	HL,sysvar_SCREENLINES_SINCE_PAGE
 		ld	A,(HL)
 		or	A,A
@@ -1574,35 +1578,33 @@ mos_OSBYTE_20::
 ;		jmp	mos_OSBYTE_143_b_cmd_x_param
 ;						;	CD3C
 ;; ----------------------------------------------------------------------------
-;; :move text cursor to next line (direction up/down depends on CC_C)
-x_move_text_cursor_to_next_line::	TODO "x_move_text_cursor_to_next_line"
-;
+;; :move text cursor to next line (direction up/down depends on CC_C) - note sense changed
+x_move_text_cursor_to_next_line::
 		bit	VDUSTAT1_scrolldis,(IY+zpIY_vdu_status)
-;		bne	LCD47				; scrolling disabled
-;		bita	#0x40
-;		beq	LCD65rts			; curor editing
-;LCD47:		ldb	vduvar_TXT_WINDOW_BOTTOM	; if carry set on entry get TOP else get BOTTOM
-;		bcc	LCD4F				
-;		ldb	vduvar_TXT_WINDOW_TOP		
-;LCD4F:		bita	#0x40
-;		bne	LCD59				; if cursor editing
-;		stb	vduvar_TXT_CUR_Y		
-;		leas	2,S				; skip return and setup address and cursor
-;		jmp	x_setup_displayaddress_and_cursor_position
+		jr	NZ,LCD47			; scrolling disabled
+		bit	VDUSTAT6_cursor_edit,(IY+zpIY_vdu_status)
+		ret	Z				; curor editing
+LCD47:		ld	A,(vduvar_TXT_WINDOW_BOTTOM)	; if carry set on entry get TOP else get BOTTOM
+		jr	C,LCD4F				
+		ld	A,(vduvar_TXT_WINDOW_TOP)
+LCD4F:		bit	VDUSTAT6_cursor_edit,(IY+zpIY_vdu_status)
+		jr	NZ,LCD59			; if cursor editing
+		ld	(vduvar_TXT_CUR_Y),A
+		pop	AF				; skip return and setup address and cursor
+		jp	x_setup_displayaddress_and_cursor_position
 ;; ----------------------------------------------------------------------------
-;LCD59:		pshs	CC				;	CD59
-;		cmpb	vduvar_TEXT_IN_CUR_Y		;	CD5A
-;		beq	1F				;	CD5D
-;		puls	CC				;	CD5F
-;		bcc	LCD66				;	CD60
-;		dec	vduvar_TEXT_IN_CUR_Y		;	CD62
-LCD65rts::	TODO "LCD65rts"
-;
-;		rts
-;10x:		puls	CC,PC
+LCD59:		push	AF				;	CD59
+		cp	A,(IX+vduIX_TEXT_IN_CUR_Y)	;	CD5A
+		jr	Z,1$				;	CD5D
+		pop	AF				;	CD5F
+		jr	NC,LCD66			;	CD60
+		dec	(IX+vduIX_TEXT_IN_CUR_Y)	;	CD62
+		ret
+1$:		pop	AF
+		ret
 ;; ----------------------------------------------------------------------------
-;LCD66:		inc	vduvar_TEXT_IN_CUR_Y		;	CD66
-;		rts					;	CD69
+LCD66:		inc	(IX+vduIX_TEXT_IN_CUR_Y)	;	CD66
+		ret					;	CD69
 ;; ----------------------------------------------------------------------------
 ;; set up write cursor
 x_setup_write_cursor::	TODO "x_setup_write_cursor"
