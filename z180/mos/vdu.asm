@@ -1227,12 +1227,12 @@ LCA88_newAPI:
 
 		ld	A,(vduvar_BYTES_PER_CHAR)
 		srl	A
-		jr	Z,LCAA1				; if BYTES_PER_CHAR > 2 then Mode 7 POH
+		jr	Z,20$				; if BYTES_PER_CHAR > 2 then Mode 7 POH
 10$:		add	HL,HL				; double it
 		srl	A				; keep shifting right
 		jr	NC,10$				; while bits left in BPC
-		ld	(vduvar_BYTES_PER_ROW),HL
-LCAA1:		ret					;	CAA1
+20$:		ld	(vduvar_BYTES_PER_ROW),HL
+		ret					;	CAA1
 ;; ----------------------------------------------------------------------------
 ;; VDU 29  Set graphics origin			  4 parameters;	 
 mos_VDU_29::	TODO "mos_VDU_29"
@@ -2015,22 +2015,21 @@ render_logo::	TODO "render_logo"
 ;		rts
 ;; ----------------------------------------------------------------------------
 ;; convert teletext characters; mode 7 
-x_convert_teletext_characters::	TODO "x_convert_teletext_characters"
-;
-;		ldb	#0x02
-;		ldx	#mostbl_TTX_CHAR_CONV
-;LCFDE:		cmpa	B,X
-;		beq	LCFE9				;	CFE1
-;		decb					;	CFE3
-;		bpl	LCFDE				;	CFE4
-;LCFE6:		sta	[zp_vdu_top_scanline]
-;		rts					;	CFE8
+x_convert_teletext_characters::
+
+		ld	B,3
+		ld	HL,mostbl_TTX_CHAR_CONV+2
+LCFDE:		cp	A,(HL)
+		jr	Z,LCFE9				;	CFE1
+		dec	HL
+		djnz	LCFDE				;	CFE4
+LCFE6:		ld	HL,(zp_vdu_top_scanline)
+		ld	(HL),A
+		ret					;	CFE8
 ;; ----------------------------------------------------------------------------
-;LCFE9:		incb
-;		lda	B,X
-;;		TODO check 
-;		;;decb					
-;		bra	LCFE6
+LCFE9:		inc	HL
+		ld	A,(HL)			
+		jr	LCFE6
 ;; four colour modes
 render_char_4colour::	
 		;1st column

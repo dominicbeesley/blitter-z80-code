@@ -76,9 +76,19 @@ mos_handle_res::
 		ld	a,2
 		call	mos_VDU_init
 
-		ld	B,7
-		ld	C,1
+5$:
+		ld	D,7			; Mode counter
+4$:		
 
+		ld	A,22
+		call	OSWRCH
+		ld	A,D
+		call	OSWRCH
+		ld	E,20			; reps counter
+7$:
+		ld	C,15			; background colour counter
+3$:
+		ld	B,15			; foreground colour counter
 2$:
 		ld	A,17
 		call	OSWRCH
@@ -101,10 +111,26 @@ mos_handle_res::
 		or	A,A
 		jr	NZ,1$
 		
-		inc	B
-		jr	NZ,2$
-		inc	C
-		jp	2$
+		dec	B
+		jp	P,2$
+		dec	C
+		jp	P,3$
+		dec	E
+		jp	P,7$
+
+		; delay
+		ld	B,50
+		ld	HL,0
+99$:		inc	H
+		jr	NZ,99$
+		inc	L
+		jr	NZ,99$
+		djnz	99$
+
+
+		dec	D
+		jp	P,4$
+		jp	5$
 
 		
 
