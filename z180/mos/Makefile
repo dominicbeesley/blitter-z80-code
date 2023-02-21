@@ -24,11 +24,16 @@ $(BUILD)%.rel: %.asm $(DEPS)
 $(BUILD)mos-z180.ihx: $(OBJS2) mos-z180.lnk
 	$(LD) $(LDFLAGS) -f $(basename mos-z180)
 
+	#fix up the bad lines in the .noi file made by aslink
+	sed -i.bak -e 's/^.*\._.*//' -e 's/^LOAD.*//' $(BUILD)/mos-z180.noi
+
+
 $(BUILD)mos-z180.bin: $(BUILD)mos-z180.ihx
 	hex2bin 0xC000 $< $@
 	/bin/echo -e -n "M.MOSZ180 FFC000 FFC000\\r" > $@.inf
 	/bin/echo -e -n "$.!BOOT 000000 000000\\r" > $(BUILD)/_21BOOT.txt.inf
 	/bin/echo -e -n "OSCLI(\"EXEC\"):OSCLI(\"BLLOAD M.MOSZ180 #D1 7D0000\"):PRINT \"PRESS BREAK\"\\r" > $(BUILD)/_21BOOT.txt
+
 
 clean:
 	-rm $(BUILD)*.s19
