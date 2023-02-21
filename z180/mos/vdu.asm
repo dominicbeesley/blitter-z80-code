@@ -466,7 +466,7 @@ x_cursor_up::	TODO "x_cursor_up"
 ;; cursor at top of window
 x_cursor_at_top_of_window::
 		scf
-		call	x_move_text_cursor_to_next_line ;	C60B		
+		call	x_text_cursor_off_screen ;	C60B		
 		bit	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
 		jr	NZ,1$
 		call	x_adjust_screen_RAM_addresses	;	C614
@@ -550,7 +550,7 @@ x_text_cursor_down::
 		inc	(IX+vduIX_TXT_CUR_Y)
 		jr	x_setup_displayaddress_and_cursor_position
 ;; ----------------------------------------------------------------------------
-LC69B:		call	x_move_text_cursor_to_next_line
+LC69B::		call	x_text_cursor_off_screen
 		bit	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
 		jr	NZ,LC6A9
 		call	x_adjust_screen_RAM_addresses_one_line_scroll
@@ -1579,7 +1579,7 @@ mos_OSBYTE_20::
 ;						;	CD3C
 ;; ----------------------------------------------------------------------------
 ;; :move text cursor to next line (direction up/down depends on CC_C) - note sense changed
-x_move_text_cursor_to_next_line::
+x_text_cursor_off_screen::
 		bit	VDUSTAT1_scrolldis,(IY+zpIY_vdu_status)
 		jr	NZ,LCD47			; scrolling disabled
 		bit	VDUSTAT6_cursor_edit,(IY+zpIY_vdu_status)
