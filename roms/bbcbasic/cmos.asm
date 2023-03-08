@@ -599,7 +599,7 @@ FIND1:  LD      A,E
 ; 12     CURRENT EXTENT, SET TO ZERO
 ; 32-35  CLEARED TO ZERO
 ;
-SETUP0: LD      A,' '
+SETUP0: LD      A," "
 SETUP:  PUSH    DE
         PUSH    HL
         LD      DE,FCB+9
@@ -668,7 +668,7 @@ COPYF:  LD      A,(HL)
         LD      C,'?'
         CP      "*"
         JR      Z,COPYF1
-        LD      C,' '
+        LD      C," "
         INC     HL
         CP      "|"
         JR      NZ,COPYF2
@@ -684,7 +684,7 @@ COPYF3: LD      A,(HL)
         CP      "*"
         JR      Z,COPYF3
         CP      "."
-        LD      BC,3*256+' '
+        LD      BC,3*256+" "
         LD      DE,FCB+9
         JR      Z,COPYF
         DEC     HL
@@ -892,13 +892,13 @@ DIR1:   CALL    LTRAP
         ADD     A,'A'
         CALL    OSWRCH
         LD      B,8
-        LD      A,' '           ;**
+        LD      A," "           ;**
         BIT     7,E             ;** READ ONLY?
         JR      Z,DIR3          ;**
         LD      A,'*'           ;**
 DIR3:   CALL    CPTEXT
         LD      B,3
-        LD      A,' '           ;**
+        LD      A," "           ;**
         CALL    SPTEXT
         POP     BC
         DJNZ    DIR2
@@ -907,7 +907,7 @@ DIR3:   CALL    CPTEXT
 ;
 DIR2:   PUSH    BC
         LD      B,5
-PAD:    LD      A,' '
+PAD:    LD      A," "
         CALL    OSWRCH
         DJNZ    PAD
         POP     BC
@@ -1292,7 +1292,7 @@ UPD1:   LD      A,(HL)
         POP     HL
         POP     AF
         JR      NZ,UPD1
-        LD      A,' '
+        LD      A," "
         CALL    OSWRCH
         LD      E,BS
 UPD2:   PUSH    HL
@@ -1419,7 +1419,7 @@ INS1:   INC     DE
         DEC     DE
         LD      A,(DE)
         JR      NZ,INS1
-        LD      (HL),' '
+        LD      (HL)," "
         JR      DEL2
 ;
 RIGHT:  LD      A,(HL)          ;CURSOR RIGHT

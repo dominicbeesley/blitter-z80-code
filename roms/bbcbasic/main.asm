@@ -1237,7 +1237,7 @@ LISTIT: PUSH    HL
         CP      UNTIL
         CALL    Z,INDENT
         EXX
-        LD      A,' '
+        LD      A," "
         BIT     0,(IX)
         CALL    NZ,OUTCHR
         LD      A,B
@@ -1430,7 +1430,7 @@ PBCDL:  LD      C,0
 ;  Outputs: Carry = 1
 ; Destroys: A,B,C,D,E,H,L,F
 ;
-PBCD:   LD      C,' '
+PBCD:   LD      C," "
 PBCD0:  LD      B,5
         LD      DE,10000
 PBCD1:  XOR     A

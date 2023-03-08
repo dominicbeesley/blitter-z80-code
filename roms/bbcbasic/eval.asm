@@ -1343,7 +1343,7 @@ STR1:   LD      A,0x80           ;STRING MARKER
 STR2:   CP      E
         JR      Z,STR1
         EX      DE,HL
-        LD      (HL),' '        ;TRAILING SPACE
+        LD      (HL)," "        ;TRAILING SPACE
         INC     HL
         EX      DE,HL
         JR      STR2

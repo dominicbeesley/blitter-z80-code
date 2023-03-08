@@ -278,7 +278,7 @@ NEWLIN: LD      A,(IY+0)        ;A=LINE LENGTH
         CALL    PBCDL
         LD      A,']'
         CALL    OUTCHR
-        LD      A,' '
+        LD      A," "
         JP      OUTCHR
 ;
 ;ROUTINES FOR 0xEAC STATEMENT:
@@ -1137,7 +1137,7 @@ REFILL: BIT     0,C
         JR      NZ,REFIL0       ;NO PROMPT
         LD      A,'?'
         CALL    OUTCHR          ;PROMPT
-        LD      A,' '
+        LD      A," "
         CALL    OUTCHR
 REFIL0: LD      HL,BUFFER
         PUSH    BC
@@ -1805,7 +1805,7 @@ FILL:   OR      A
         RET     Z
         PUSH    BC
         LD      B,A
-FILL1:  LD      A,' '
+FILL1:  LD      A," "
         CALL    OUTCHR
         DJNZ    FILL1
         POP     BC
@@ -1996,7 +1996,7 @@ ASSEM4: LD      A,(BC)
         JP      ASSEM
 ;
 HEXSP:  CALL    HEX
-        LD      A,' '
+        LD      A," "
         JR      OUTCH1
 HEX:    PUSH    AF
         RRCA
