@@ -246,18 +246,18 @@ CRTCD   =     0x85
 ;
         ORG     0x1F4
 ;
-        DEFB    80              ;WIDTH
-        DEFB    "K" AND 0x1F     ;CURSOR UP
-        DEFB    "J" AND 0x1F     ;CURSOR DOWN
-        DEFB    "L" AND 0x1F     ;START OF LINE
-        DEFB    "B" AND 0x1F     ;END OF LINE
-        DEFB    "C" AND 0x1F     ;DELETE TO END OF LINE
-        DEFB    0x7F             ;BACKSPACE & DELETE
-        DEFB    "X" AND 0x1F     ;CANCEL LINE
-        DEFB    "H" AND 0x1F     ;CURSOR LEFT
-        DEFB    "I" AND 0x1F     ;CURSOR RIGHT
-        DEFB    "E" AND 0x1F     ;DELETE CHARACTER
-        DEFB    "A" AND 0x1F     ;INSERT CHARACTER
+        .db    80              ;WIDTH
+        .db    "K" AND 0x1F     ;CURSOR UP
+        .db    "J" AND 0x1F     ;CURSOR DOWN
+        .db    "L" AND 0x1F     ;START OF LINE
+        .db    "B" AND 0x1F     ;END OF LINE
+        .db    "C" AND 0x1F     ;DELETE TO END OF LINE
+        .db    0x7F             ;BACKSPACE & DELETE
+        .db    "X" AND 0x1F     ;CANCEL LINE
+        .db    "H" AND 0x1F     ;CURSOR LEFT
+        .db    "I" AND 0x1F     ;CURSOR RIGHT
+        .db    "E" AND 0x1F     ;DELETE CHARACTER
+        .db    "A" AND 0x1F     ;INSERT CHARACTER
 ;
 FIN:    END
 

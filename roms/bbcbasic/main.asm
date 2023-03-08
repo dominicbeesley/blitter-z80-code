@@ -165,14 +165,14 @@ PURGE:  LD      (HL),A          ;CLEAR SCRATCHPAD
         CALL    NEWIT
         JP      NZ,CHAIN0       ;AUTO-RUN
         CALL    TELL
-        DEFM    'BBC BASIC (Z80) Version 3.00+1  '
-        DEFB    CR
-        DEFB    LF
-NOTICE: DEFM    '(C) Copyright R.T.Russell 1987'
-        DEFB    CR
-        DEFB    LF
-        DEFB    0
-WARM:   DEFB    0x0F6
+        .ascii    'BBC BASIC (Z80) Version 3.00+1  '
+        .db    CR
+        .db    LF
+NOTICE: .ascii    '(C) Copyright R.T.Russell 1987'
+        .db    CR
+        .db    LF
+        .db    0
+WARM:   .db    0x0F6
 CLOOP:  SCF
         LD      SP,(HIMEM)
         CALL    PROMPT          ;PROMPT USER
@@ -284,423 +284,423 @@ ATEND:  POP     BC              ;LINE LENGTH
 ; ONLY MATCH WITH THE WORD FOLLOWED IMMEDIATELY
 ; BY A DELIMITER.
 ;
-KEYWDS: DEFB    0x80
-        DEFM    'AND'
-        DEFB    0x94
-        DEFM    'ABS'
-        DEFB    0x95
-        DEFM    'ACS'
-        DEFB    0x96
-        DEFM    'ADVAL'
-        DEFB    0x97
-        DEFM    'ASC'
-        DEFB    0x98
-        DEFM    'ASN'
-        DEFB    0x99
-        DEFM    'ATN'
-        DEFB    0x0C6
-        DEFM    'AUTO'
-        DEFB    0x9A
-        DEFM    'BGET'
-        DEFB    0
-        DEFB    0x0D5
-        DEFM    'BPUT'
-        DEFB    0
-        DEFB    0x0FB
-        DEFM    'COLOUR'
-        DEFB    0x0FB
-        DEFM    'COLOR'
-        DEFB    0x0D6
-        DEFM    'CALL'
-        DEFB    0x0D7
-        DEFM    'CHAIN'
-        DEFB    0x0BD
-        DEFM    'CHR$'
-        DEFB    0x0D8
-        DEFM    'CLEAR'
-        DEFB    0
-        DEFB    0x0D9
-        DEFM    'CLOSE'
-        DEFB    0
-        DEFB    0x0DA
-        DEFM    'CLG'
-        DEFB    0
-        DEFB    0x0DB
-        DEFM    'CLS'
-        DEFB    0
-        DEFB    0x9B
-        DEFM    'COS'
-        DEFB    0x9C
-        DEFM    'COUNT'
-        DEFB    0
-        DEFB    0x0DC
-        DEFM    'DATA'
-        DEFB    0x9D
-        DEFM    'DEG'
-        DEFB    0x0DD
-        DEFM    'DEF'
-        DEFB    0x0C7
-        DEFM    'DELETE'
-        DEFB    0x81
-        DEFM    'DIV'
-        DEFB    0x0DE
-        DEFM    'DIM'
-        DEFB    0x0DF
-        DEFM    'DRAW'
-        DEFB    0x0E1
-        DEFM    'ENDPROC'
-        DEFB    0
-        DEFB    0x0E0
-        DEFM    'END'
-        DEFB    0
-        DEFB    0x0E2
-        DEFM    'ENVELOPE'
-        DEFB    0x8B
-        DEFM    'ELSE'
-        DEFB    0x0A0
-        DEFM    'EVAL'
-        DEFB    0x9E
-        DEFM    'ERL'
-        DEFB    0
-        DEFB    0x85
-        DEFM    'ERROR'
-        DEFB    0x0C5
-        DEFM    'EOF'
-        DEFB    0
-        DEFB    0x82
-        DEFM    'EOR'
-        DEFB    0x9F
-        DEFM    'ERR'
-        DEFB    0
-        DEFB    0x0A1
-        DEFM    'EXP'
-        DEFB    0x0A2
-        DEFM    'EXT'
-        DEFB    0
-        DEFB    0x0E3
-        DEFM    'FOR'
-        DEFB    0x0A3
-        DEFM    'FALSE'
-        DEFB    0
-        DEFB    0x0A4
-        DEFM    'FN'
-        DEFB    0x0E5
-        DEFM    'GOTO'
-        DEFB    0x0BE
-        DEFM    'GET$'
-        DEFB    0x0A5
-        DEFM    'GET'
-        DEFB    0x0E4
-        DEFM    'GOSUB'
-        DEFB    0x0E6
-        DEFM    'GCOL'
-        DEFB    0x93
-        DEFM    'HIMEM'
-        DEFB    0
-        DEFB    0x0E8
-        DEFM    'INPUT'
-        DEFB    0x0E7
-        DEFM    'IF'
-        DEFB    0x0BF
-        DEFM    'INKEY$'
-        DEFB    0x0A6
-        DEFM    'INKEY'
-        DEFB    0x0A8
-        DEFM    'INT'
-        DEFB    0x0A7
-        DEFM    'INSTR('
-        DEFB    0x0C9
-        DEFM    'LIST'
-        DEFB    0x86
-        DEFM    'LINE'
-        DEFB    0x0C8
-        DEFM    'LOAD'
-        DEFB    0x92
-        DEFM    'LOMEM'
-        DEFB    0
-        DEFB    0x0EA
-        DEFM    'LOCAL'
-        DEFB    0x0C0
-        DEFM    'LEFT$('
-        DEFB    0x0A9
-        DEFM    'LEN'
-        DEFB    0x0E9
-        DEFM    'LET'
-        DEFB    0x0AB
-        DEFM    'LOG'
-        DEFB    0x0AA
-        DEFM    'LN'
-        DEFB    0x0C1
-        DEFM    'MID$('
-        DEFB    0x0EB
-        DEFM    'MODE'
-        DEFB    0x83
-        DEFM    'MOD'
-        DEFB    0x0EC
-        DEFM    'MOVE'
-        DEFB    0x0ED
-        DEFM    'NEXT'
-        DEFB    0x0CA
-        DEFM    'NEW'
-        DEFB    0
-        DEFB    0x0AC
-        DEFM    'NOT'
-        DEFB    0x0CB
-        DEFM    'OLD'
-        DEFB    0
-        DEFB    0x0EE
-        DEFM    'ON'
-        DEFB    0x87
-        DEFM    'OFF'
-        DEFB    0x84
-        DEFM    'OR'
-        DEFB    0x8E
-        DEFM    'OPENIN'
-        DEFB    0x0AE
-        DEFM    'OPENOUT'
-        DEFB    0x0AD
-        DEFM    'OPENUP'
-        DEFB    0x0FF
-        DEFM    'OSCLI'
-        DEFB    0x0F1
-        DEFM    'PRINT'
-        DEFB    0x90
-        DEFM    'PAGE'
-        DEFB    0
-        DEFB    0x8F
-        DEFM    'PTR'
-        DEFB    0
-        DEFB    0x0AF
-        DEFM    'PI'
-        DEFB    0
-        DEFB    0x0F0
-        DEFM    'PLOT'
-        DEFB    0x0B0
-        DEFM    'POINT('
-        DEFB    0x0F2
-        DEFM    'PROC'
-        DEFB    0x0B1
-        DEFM    'POS'
-        DEFB    0
-        DEFB    0x0CE
-        DEFM    'PUT'
-        DEFB    0x0F8
-        DEFM    'RETURN'
-        DEFB    0
-        DEFB    0x0F5
-        DEFM    'REPEAT'
-        DEFB    0x0F6
-        DEFM    'REPORT'
-        DEFB    0
-        DEFB    0x0F3
-        DEFM    'READ'
-        DEFB    0x0F4
-        DEFM    'REM'
-        DEFB    0x0F9
-        DEFM    'RUN'
-        DEFB    0
-        DEFB    0x0B2
-        DEFM    'RAD'
-        DEFB    0x0F7
-        DEFM    'RESTORE'
-        DEFB    0x0C2
-        DEFM    'RIGHT$('
-        DEFB    0x0B3
-        DEFM    'RND'
-        DEFB    0
-        DEFB    0x0CC
-        DEFM    'RENUMBER'
-        DEFB    0x88
-        DEFM    'STEP'
-        DEFB    0x0CD
-        DEFM    'SAVE'
-        DEFB    0x0B4
-        DEFM    'SGN'
-        DEFB    0x0B5
-        DEFM    'SIN'
-        DEFB    0x0B6
-        DEFM    'SQR'
-        DEFB    0x89
-        DEFM    'SPC'
-        DEFB    0x0C3
-        DEFM    'STR$'
-        DEFB    0x0C4
-        DEFM    'STRING$('
-        DEFB    0x0D4
-        DEFM    'SOUND'
-        DEFB    0x0FA
-        DEFM    'STOP'
-        DEFB    0
-        DEFB    0x0B7
-        DEFM    'TAN'
-        DEFB    0x8C
-        DEFM    'THEN'
-        DEFB    0x0B8
-        DEFM    'TO'
-        DEFB    0x8A
-        DEFM    'TAB('
-        DEFB    0x0FC
-        DEFM    'TRACE'
-        DEFB    0x91
-        DEFM    'TIME'
-        DEFB    0
-        DEFB    0x0B9
-        DEFM    'TRUE'
-        DEFB    0
-        DEFB    0x0FD
-        DEFM    'UNTIL'
-        DEFB    0x0BA
-        DEFM    'USR'
-        DEFB    0x0EF
-        DEFM    'VDU'
-        DEFB    0x0BB
-        DEFM    'VAL'
-        DEFB    0x0BC
-        DEFM    'VPOS'
-        DEFB    0
-        DEFB    0x0FE
-        DEFM    'WIDTH'
-        DEFB    0x0D3
-        DEFM    'HIMEM'
-        DEFB    0x0D2
-        DEFM    'LOMEM'
-        DEFB    0x0D0
-        DEFM    'PAGE'
-        DEFB    0x0CF
-        DEFM    'PTR'
-        DEFB    0x0D1
-        DEFM    'TIME'
-        DEFB    1
-        DEFM    'Missing '
-        DEFB    2
-        DEFM    'No such '
-        DEFB    3
-        DEFM    'Bad '
-        DEFB    4
-        DEFM    ' range'
-        DEFB    5
-        DEFM    'variable'
-        DEFB    6
-        DEFM    'Out of'
-        DEFB    7
-        DEFM    'No '
-        DEFB    8
-        DEFM    ' space'
+KEYWDS: .db    0x80
+        .ascii    'AND'
+        .db    0x94
+        .ascii    'ABS'
+        .db    0x95
+        .ascii    'ACS'
+        .db    0x96
+        .ascii    'ADVAL'
+        .db    0x97
+        .ascii    'ASC'
+        .db    0x98
+        .ascii    'ASN'
+        .db    0x99
+        .ascii    'ATN'
+        .db    0x0C6
+        .ascii    'AUTO'
+        .db    0x9A
+        .ascii    'BGET'
+        .db    0
+        .db    0x0D5
+        .ascii    'BPUT'
+        .db    0
+        .db    0x0FB
+        .ascii    'COLOUR'
+        .db    0x0FB
+        .ascii    'COLOR'
+        .db    0x0D6
+        .ascii    'CALL'
+        .db    0x0D7
+        .ascii    'CHAIN'
+        .db    0x0BD
+        .ascii    'CHR$'
+        .db    0x0D8
+        .ascii    'CLEAR'
+        .db    0
+        .db    0x0D9
+        .ascii    'CLOSE'
+        .db    0
+        .db    0x0DA
+        .ascii    'CLG'
+        .db    0
+        .db    0x0DB
+        .ascii    'CLS'
+        .db    0
+        .db    0x9B
+        .ascii    'COS'
+        .db    0x9C
+        .ascii    'COUNT'
+        .db    0
+        .db    0x0DC
+        .ascii    'DATA'
+        .db    0x9D
+        .ascii    'DEG'
+        .db    0x0DD
+        .ascii    'DEF'
+        .db    0x0C7
+        .ascii    'DELETE'
+        .db    0x81
+        .ascii    'DIV'
+        .db    0x0DE
+        .ascii    'DIM'
+        .db    0x0DF
+        .ascii    'DRAW'
+        .db    0x0E1
+        .ascii    'ENDPROC'
+        .db    0
+        .db    0x0E0
+        .ascii    'END'
+        .db    0
+        .db    0x0E2
+        .ascii    'ENVELOPE'
+        .db    0x8B
+        .ascii    'ELSE'
+        .db    0x0A0
+        .ascii    'EVAL'
+        .db    0x9E
+        .ascii    'ERL'
+        .db    0
+        .db    0x85
+        .ascii    'ERROR'
+        .db    0x0C5
+        .ascii    'EOF'
+        .db    0
+        .db    0x82
+        .ascii    'EOR'
+        .db    0x9F
+        .ascii    'ERR'
+        .db    0
+        .db    0x0A1
+        .ascii    'EXP'
+        .db    0x0A2
+        .ascii    'EXT'
+        .db    0
+        .db    0x0E3
+        .ascii    'FOR'
+        .db    0x0A3
+        .ascii    'FALSE'
+        .db    0
+        .db    0x0A4
+        .ascii    'FN'
+        .db    0x0E5
+        .ascii    'GOTO'
+        .db    0x0BE
+        .ascii    'GET$'
+        .db    0x0A5
+        .ascii    'GET'
+        .db    0x0E4
+        .ascii    'GOSUB'
+        .db    0x0E6
+        .ascii    'GCOL'
+        .db    0x93
+        .ascii    'HIMEM'
+        .db    0
+        .db    0x0E8
+        .ascii    'INPUT'
+        .db    0x0E7
+        .ascii    'IF'
+        .db    0x0BF
+        .ascii    'INKEY$'
+        .db    0x0A6
+        .ascii    'INKEY'
+        .db    0x0A8
+        .ascii    'INT'
+        .db    0x0A7
+        .ascii    'INSTR('
+        .db    0x0C9
+        .ascii    'LIST'
+        .db    0x86
+        .ascii    'LINE'
+        .db    0x0C8
+        .ascii    'LOAD'
+        .db    0x92
+        .ascii    'LOMEM'
+        .db    0
+        .db    0x0EA
+        .ascii    'LOCAL'
+        .db    0x0C0
+        .ascii    'LEFT$('
+        .db    0x0A9
+        .ascii    'LEN'
+        .db    0x0E9
+        .ascii    'LET'
+        .db    0x0AB
+        .ascii    'LOG'
+        .db    0x0AA
+        .ascii    'LN'
+        .db    0x0C1
+        .ascii    'MID$('
+        .db    0x0EB
+        .ascii    'MODE'
+        .db    0x83
+        .ascii    'MOD'
+        .db    0x0EC
+        .ascii    'MOVE'
+        .db    0x0ED
+        .ascii    'NEXT'
+        .db    0x0CA
+        .ascii    'NEW'
+        .db    0
+        .db    0x0AC
+        .ascii    'NOT'
+        .db    0x0CB
+        .ascii    'OLD'
+        .db    0
+        .db    0x0EE
+        .ascii    'ON'
+        .db    0x87
+        .ascii    'OFF'
+        .db    0x84
+        .ascii    'OR'
+        .db    0x8E
+        .ascii    'OPENIN'
+        .db    0x0AE
+        .ascii    'OPENOUT'
+        .db    0x0AD
+        .ascii    'OPENUP'
+        .db    0x0FF
+        .ascii    'OSCLI'
+        .db    0x0F1
+        .ascii    'PRINT'
+        .db    0x90
+        .ascii    'PAGE'
+        .db    0
+        .db    0x8F
+        .ascii    'PTR'
+        .db    0
+        .db    0x0AF
+        .ascii    'PI'
+        .db    0
+        .db    0x0F0
+        .ascii    'PLOT'
+        .db    0x0B0
+        .ascii    'POINT('
+        .db    0x0F2
+        .ascii    'PROC'
+        .db    0x0B1
+        .ascii    'POS'
+        .db    0
+        .db    0x0CE
+        .ascii    'PUT'
+        .db    0x0F8
+        .ascii    'RETURN'
+        .db    0
+        .db    0x0F5
+        .ascii    'REPEAT'
+        .db    0x0F6
+        .ascii    'REPORT'
+        .db    0
+        .db    0x0F3
+        .ascii    'READ'
+        .db    0x0F4
+        .ascii    'REM'
+        .db    0x0F9
+        .ascii    'RUN'
+        .db    0
+        .db    0x0B2
+        .ascii    'RAD'
+        .db    0x0F7
+        .ascii    'RESTORE'
+        .db    0x0C2
+        .ascii    'RIGHT$('
+        .db    0x0B3
+        .ascii    'RND'
+        .db    0
+        .db    0x0CC
+        .ascii    'RENUMBER'
+        .db    0x88
+        .ascii    'STEP'
+        .db    0x0CD
+        .ascii    'SAVE'
+        .db    0x0B4
+        .ascii    'SGN'
+        .db    0x0B5
+        .ascii    'SIN'
+        .db    0x0B6
+        .ascii    'SQR'
+        .db    0x89
+        .ascii    'SPC'
+        .db    0x0C3
+        .ascii    'STR$'
+        .db    0x0C4
+        .ascii    'STRING$('
+        .db    0x0D4
+        .ascii    'SOUND'
+        .db    0x0FA
+        .ascii    'STOP'
+        .db    0
+        .db    0x0B7
+        .ascii    'TAN'
+        .db    0x8C
+        .ascii    'THEN'
+        .db    0x0B8
+        .ascii    'TO'
+        .db    0x8A
+        .ascii    'TAB('
+        .db    0x0FC
+        .ascii    'TRACE'
+        .db    0x91
+        .ascii    'TIME'
+        .db    0
+        .db    0x0B9
+        .ascii    'TRUE'
+        .db    0
+        .db    0x0FD
+        .ascii    'UNTIL'
+        .db    0x0BA
+        .ascii    'USR'
+        .db    0x0EF
+        .ascii    'VDU'
+        .db    0x0BB
+        .ascii    'VAL'
+        .db    0x0BC
+        .ascii    'VPOS'
+        .db    0
+        .db    0x0FE
+        .ascii    'WIDTH'
+        .db    0x0D3
+        .ascii    'HIMEM'
+        .db    0x0D2
+        .ascii    'LOMEM'
+        .db    0x0D0
+        .ascii    'PAGE'
+        .db    0x0CF
+        .ascii    'PTR'
+        .db    0x0D1
+        .ascii    'TIME'
+        .db    1
+        .ascii    'Missing '
+        .db    2
+        .ascii    'No such '
+        .db    3
+        .ascii    'Bad '
+        .db    4
+        .ascii    ' range'
+        .db    5
+        .ascii    'variable'
+        .db    6
+        .ascii    'Out of'
+        .db    7
+        .ascii    'No '
+        .db    8
+        .ascii    ' space'
 KEYWDL  =     $-KEYWDS
         DEFW    -1
 ;
 ;ERROR MESSAGES:
 ;
-ERRWDS: DEFB    7
-        DEFM    'room'
-        DEFB    0
-        DEFB    6
-        DEFB    4
-        DEFB    0
+ERRWDS: .db    7
+        .ascii    'room'
+        .db    0
+        .db    6
+        .db    4
+        .db    0
         DEFW    0
-        DEFM    'Mistake'
-        DEFB    0
-        DEFB    1
-        DEFM    ","
-        DEFB    0
-        DEFM    'Type mismatch'
-        DEFB    0
-        DEFB    7
-        DEFB    FN
+        .ascii    'Mistake'
+        .db    0
+        .db    1
+        .ascii    ","
+        .db    0
+        .ascii    'Type mismatch'
+        .db    0
+        .db    7
+        .db    FN
         DEFW    0
-        DEFB    1
-        DEFM    """
-        DEFB    0
-        DEFB    3
-        DEFB    DIM
-        DEFB    0
-        DEFB    DIM
-        DEFB    8
-        DEFB    0
-        DEFM    'Not '
-        DEFB    LOCAL
-        DEFB    0
-        DEFB    7
-        DEFB    PROC
-        DEFB    0
-        DEFM    'Array'
-        DEFB    0
-        DEFM    'Subscript'
-        DEFB    0
-        DEFM    'Syntax error'
-        DEFB    0
-        DEFM    'Escape'
-        DEFB    0
-        DEFM    'Division by zero'
-        DEFB    0
-        DEFM    'String too long'
-        DEFB    0
-        DEFM    'Too big'
-        DEFB    0
-        DEFM    '-ve root'
-        DEFB    0
-        DEFM    'Log'
-        DEFB    4
-        DEFB    0
-        DEFM    'Accuracy lost'
-        DEFB    0
-        DEFM    'Exp'
-        DEFB    4
+        .db    1
+        .ascii    """
+        .db    0
+        .db    3
+        .db    DIM
+        .db    0
+        .db    DIM
+        .db    8
+        .db    0
+        .ascii    'Not '
+        .db    LOCAL
+        .db    0
+        .db    7
+        .db    PROC
+        .db    0
+        .ascii    'Array'
+        .db    0
+        .ascii    'Subscript'
+        .db    0
+        .ascii    'Syntax error'
+        .db    0
+        .ascii    'Escape'
+        .db    0
+        .ascii    'Division by zero'
+        .db    0
+        .ascii    'String too long'
+        .db    0
+        .ascii    'Too big'
+        .db    0
+        .ascii    '-ve root'
+        .db    0
+        .ascii    'Log'
+        .db    4
+        .db    0
+        .ascii    'Accuracy lost'
+        .db    0
+        .ascii    'Exp'
+        .db    4
         DEFW    0
-        DEFB    2
-        DEFB    5
-        DEFB    0
-        DEFB    1
-        DEFM    ")"
-        DEFB    0
-        DEFB    3
-        DEFM    'HEX'
-        DEFB    0
-        DEFB    2
-        DEFB    FN
-        DEFM    "/"
-        DEFB    PROC
-        DEFB    0
-        DEFB    3
-        DEFM    'call'
-        DEFB    0
-        DEFM    'Arguments'
-        DEFB    0
-        DEFB    7
-        DEFB    FOR
-        DEFB    0
-        DEFM    'Can''t match '
-        DEFB    FOR
-        DEFB    0
-        DEFB    FOR
-        DEFM    " "
-        DEFB    5
+        .db    2
+        .db    5
+        .db    0
+        .db    1
+        .ascii    ")"
+        .db    0
+        .db    3
+        .ascii    'HEX'
+        .db    0
+        .db    2
+        .db    FN
+        .ascii    "/"
+        .db    PROC
+        .db    0
+        .db    3
+        .ascii    'call'
+        .db    0
+        .ascii    'Arguments'
+        .db    0
+        .db    7
+        .db    FOR
+        .db    0
+        .ascii    'Can''t match '
+        .db    FOR
+        .db    0
+        .db    FOR
+        .ascii    " "
+        .db    5
         DEFW    0
-        DEFB    7
-        DEFB    TO
+        .db    7
+        .db    TO
         DEFW    0
-        DEFB    7
-        DEFB    GOSUB
-        DEFB    0
-        DEFB    ON
-        DEFM    ' syntax'
-        DEFB    0
-        DEFB    ON
-        DEFB    4
-        DEFB    0
-        DEFB    2
-        DEFM    'line'
-        DEFB    0
-        DEFB    6
-        DEFM    " "
-        DEFB    DATA
-        DEFB    0
-        DEFB    7
-        DEFB    REPEAT
+        .db    7
+        .db    GOSUB
+        .db    0
+        .db    ON
+        .ascii    ' syntax'
+        .db    0
+        .db    ON
+        .db    4
+        .db    0
+        .db    2
+        .ascii    'line'
+        .db    0
+        .db    6
+        .ascii    " "
+        .db    DATA
+        .db    0
+        .db    7
+        .db    REPEAT
         DEFW    0
-        DEFB    1
-        DEFM    "#"
-        DEFB    0
+        .db    1
+        .ascii    "#"
+        .db    0
         PAGE
 ;
 ;COMMANDS:
@@ -893,9 +893,9 @@ RENUM1: LD      A,(HL)          ;BUILD TABLE
         EX      DE,HL
         JR      C,RENUM1        ;CONTINUE
         CALL    EXTERR          ;"RENUMBER space'
-        DEFB    REN
-        DEFB    8
-        DEFB    0
+        .db    REN
+        .db    8
+        .db    0
 ;
 RENUM2: EX      DE,HL
         LD      (HL),-1
@@ -959,8 +959,8 @@ RENUM4: LD      E,(HL)          ;CROSS-REFERENCE TABLE
         EX      DE,HL
         JR      Z,RENUM5        ;FOUND
         CALL    TELL
-        DEFM    'Failed at '
-        DEFB    0
+        .ascii    'Failed at '
+        .db    0
         LD      HL,(LINENO)
         CALL    PBCDL
         CALL    CRLF
@@ -988,11 +988,11 @@ AUTO:   CALL    PAIR
 ;NEW
 ;
 BAD:    CALL    TELL            ;"Bad program'
-        DEFB    3
-        DEFM    'program'
-        DEFB    CR
-        DEFB    LF
-        DEFB    0
+        .db    3
+        .ascii    'program'
+        .db    CR
+        .db    LF
+        .db    0
 NEW:    CALL    NEWIT
         JR      CLOOP0
 ;
@@ -1419,8 +1419,8 @@ SAYLN:  LD      HL,(LINENO)
         OR      L
         RET     Z
         CALL    TELL
-        DEFM    ' at line '
-        DEFB    0
+        .ascii    ' at line '
+        .db    0
 PBCDL:  LD      C,0
         JR      PBCD0
 ;
@@ -1801,8 +1801,8 @@ PAIR1:  CALL    TERM?
         OR      C
         RET     NZ
         CALL    EXTERR
-        DEFM    'Silly'
-        DEFB    0
+        .ascii    'Silly'
+        .db    0
 ;
 ;DLPAIR - GET PAIR OF LINE NUMBERS FOR DELETE/LIST.
 ;   Inputs: IY = text pointer
@@ -1855,9 +1855,9 @@ RANGE2: CP      "A"
 ;
 SPACE:  XOR     A
         CALL    EXTERR          ;"LINE space"
-        DEFB    LINE
-        DEFB    8
-        DEFB    0
+        .db    LINE
+        .db    8
+        .db    0
 ;
 ;LEXAN - LEXICAL ANALYSIS.
 ;  Bit 0,C: 1=left, 0=right
@@ -1959,16 +1959,16 @@ LEXANE: LD      HL,LIST2
         SET     0,C             ;ENTER LEFT MODE
 LEXANF: JP      LEXAN1
 ;
-LIST1:  DEFB    GOTO
-        DEFB    GOSUB
-        DEFB    RESTOR
-        DEFB    TRACE
-LIST2:  DEFB    THEN
-        DEFB    ELSE
+LIST1:  .db    GOTO
+        .db    GOSUB
+        .db    RESTOR
+        .db    TRACE
+LIST2:  .db    THEN
+        .db    ELSE
 LIST1L  =     $-LIST1
-        DEFB    REPEAT
-        DEFB    TERROR
-        DEFB    ":"
+        .db    REPEAT
+        .db    TERROR
+        .db    ":"
 LIST2L  =     $-LIST2
 ;
 ;ENCODE - ENCODE LINE NUMBER INTO PSEUDO-BINARY FORM.

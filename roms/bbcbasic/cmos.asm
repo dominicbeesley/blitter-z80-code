@@ -62,8 +62,8 @@ OSS1:   EX      DE,HL
         JR      NZ,SAVE
 DIRFUL: LD      A,190
         CALL    EXTERR
-        DEFM    'Directory full'
-        DEFB    0
+        .ascii    'Directory full'
+        .db    0
 SAVE:   CALL    WRITE
         ADD     HL,BC
         EX      (SP),HL
@@ -78,8 +78,8 @@ CLOSE:  LD      A,16
         RET     NZ
         LD      A,200
         CALL    EXTERR
-        DEFM    'Close error'
-        DEFB    0
+        .ascii    'Close error'
+        .db    0
 ;
 ;OSSHUT - Close disk file(s).
 ;   Inputs: E = file channel
@@ -157,8 +157,8 @@ OSL1:   EX      DE,HL
         JR      NZ,LOAD0
 NOTFND: LD      A,214
         CALL    EXTERR
-        DEFM    'File not found'
-        DEFB    0
+        .ascii    'File not found'
+        .db    0
 LOAD:   CALL    READ
         JR      NZ,LOAD1
         CALL    INCSEC
@@ -200,8 +200,8 @@ OPEN1:  LD      A,(HL)
         DJNZ    OPEN1
         LD      A,192
         CALL    EXTERR
-        DEFM    'Too many open files'
-        DEFB    0
+        .ascii    'Too many open files'
+        .db    0
 ;
 OPEN2:  LD      DE,(FREE)       ;FREE SPACE POINTER
         LD      (HL),E
@@ -442,8 +442,8 @@ BDOS1:  CALL    BDOS0           ;*
         RET                     ;*
 CPMERR: LD      A,255           ;* CP/M 3
         CALL    EXTERR          ;* BDOS ERROR
-        DEFM    'CP/M Error'    ;*
-        DEFB    0               ;*
+        .ascii    'CP/M Error'    ;*
+        .db    0               ;*
 ;
 BDOS0:  PUSH    BC
         PUSH    DE
@@ -472,8 +472,8 @@ WRITE:  CALL    SETDMA
         JR      Z,INCSEC
         LD      A,198
         CALL    EXTERR
-        DEFM    'Disk full'
-        DEFB    0
+        .ascii    'Disk full'
+        .db    0
 ;
 ;INCSEC - Increment random record number.
 ;   Inputs: DE addresses FCB.
@@ -532,8 +532,8 @@ CHKAM1: LD      A,(DE)
         RET
 AMBIG:  LD      A,204
         CALL    EXTERR
-        DEFM    'Bad name'
-        DEFB    0
+        .ascii    'Bad name'
+        .db    0
 ;
 ;SETDMA - Set "DMA" address.
 ;   Inputs: HL = address
@@ -557,8 +557,8 @@ FIND:   CALL    FIND1
         RET     NZ
         LD      A,222
         CALL    EXTERR
-        DEFM    'Channel'
-        DEFB    0
+        .ascii    'Channel'
+        .db    0
 ;
 ;FIND1 - Look up file table.
 ;   Inputs: E = channel
@@ -627,8 +627,8 @@ SETUP1: LD      (HL),C
         JR      Z,SKIPSP
 BADSTR: LD      A,253
         CALL    EXTERR
-        DEFM    'Bad string'
-        DEFB    0
+        .ascii    'Bad string'
+        .db    0
 ;
 PARSE:  LD      A,(HL)
         INC     HL
@@ -696,7 +696,7 @@ SKIPSP: LD      A,(HL)
         INC     HL
         JR      SKIPSP
 ;
-BBC:    DEFM    'BBC'
+BBC:    .ascii    'BBC'
 ;
 ;HEX - Read a hex string and convert to binary.
 ;   Inputs: HL = text pointer
@@ -819,8 +819,8 @@ BDC:    LD      A,C
         RET     P
 HUH:    LD      A,254
         CALL    EXTERR
-        DEFM    'Bad command'
-        DEFB    0
+        .ascii    'Bad command'
+        .db    0
 ;
 EXISTS: LD      HL,DSKBUF
         CALL    SETDMA
@@ -831,8 +831,8 @@ EXISTS: LD      HL,DSKBUF
         RET     Z
         LD      A,196
         CALL    EXTERR
-        DEFM    'File exists'
-        DEFB    0
+        .ascii    'File exists'
+        .db    0
 ;
 SAVLOD: CALL    SETUP0          ;PART OF *SAVE, *LOAD
         CALL    HEX
@@ -923,7 +923,7 @@ RESET:  XOR     A
         JR      SETOPT
 ;
 EXEC:   LD      A,00000001B     ;*EXEC
-        DEFB    1               ;SKIP 2 BYTES (LD BC)
+        .db    1               ;SKIP 2 BYTES (LD BC)
 SPOOL:  LD      A,00000010B     ;*SPOOL
         PUSH    AF
         PUSH    HL
@@ -977,55 +977,55 @@ ESCC1:  CALL    HEX
         RET
 ;
 ;
-COMDS:  DEFM    'BY'
-        DEFB    'E'+0x80
+COMDS:  .ascii    'BY'
+        .db    'E'+0x80
         DEFW    BYE
-        DEFM    'CP'
-        DEFB    'M'+0x80
+        .ascii    'CP'
+        .db    'M'+0x80
         DEFW    BYE
-        DEFM    'DI'
-        DEFB    'R'+0x80
+        .ascii    'DI'
+        .db    'R'+0x80
         DEFW    DIR
-        DEFM    'DRIV'
-        DEFB    'E'+0x80
+        .ascii    'DRIV'
+        .db    'E'+0x80
         DEFW    DRV
-        DEFM    'ERAS'
-        DEFB    'E'+0x80
+        .ascii    'ERAS'
+        .db    'E'+0x80
         DEFW    ERA
-        DEFM    'ER'
-        DEFB    'A'+0x80
+        .ascii    'ER'
+        .db    'A'+0x80
         DEFW    ERA
-        DEFM    'ES'
-        DEFB    'C'+0x80
+        .ascii    'ES'
+        .db    'C'+0x80
         DEFW    ESCCTL
-        DEFM    'EXE'
-        DEFB    'C'+0x80
+        .ascii    'EXE'
+        .db    'C'+0x80
         DEFW    EXEC
-        DEFM    'LOA'
-        DEFB    'D'+0x80
+        .ascii    'LOA'
+        .db    'D'+0x80
         DEFW    STLOAD
-        DEFM    'OP'
-        DEFB    'T'+0x80
+        .ascii    'OP'
+        .db    'T'+0x80
         DEFW    OPT
-        DEFM    'RENAM'
-        DEFB    'E'+0x80
+        .ascii    'RENAM'
+        .db    'E'+0x80
         DEFW    REN
-        DEFM    'RE'
-        DEFB    'N'+0x80
+        .ascii    'RE'
+        .db    'N'+0x80
         DEFW    REN
-        DEFM    'RESE'
-        DEFB    'T'+0x80
+        .ascii    'RESE'
+        .db    'T'+0x80
         DEFW    RES
-        DEFM    'SAV'
-        DEFB    'E'+0x80
+        .ascii    'SAV'
+        .db    'E'+0x80
         DEFW    STSAVE
-        DEFM    'SPOO'
-        DEFB    'L'+0x80
+        .ascii    'SPOO'
+        .db    'L'+0x80
         DEFW    SPOOL
-        DEFM    'TYP'
-        DEFB    'E'+0x80
+        .ascii    'TYP'
+        .db    'E'+0x80
         DEFW    TYPE
-        DEFB    0x0FF
+        .db    0x0FF
 ;
 ;PTEXT - Print text
 ;   Inputs: HL = address of text
@@ -1045,8 +1045,8 @@ PTEXT:  LD      A,(HL)
         RET
 ;
 BADSUM: CALL    TELL
-        DEFM    'Bad sum'
-        DEFB    0
+        .ascii    'Bad sum'
+        .db    0
         JP      BYE
         PAGE
 ;
@@ -1444,8 +1444,8 @@ STOP:   LD      C,0             ;STOP REPEAT
         RET
 ;
 ;
-EDITST: DEFM    'EDIT'
-LISTST: DEFM    'LIST'
+EDITST: .ascii    'EDIT'
+LISTST: .ascii    'LIST'
 ;
 SUMFIX: DEFS    2
 ;
@@ -1465,12 +1465,12 @@ DSKBUF  =     0x80
 ;
 FCBSIZ  =     128+36+2
 ;
-TRPCNT: DEFB    10
+TRPCNT: .db    10
 TABLE:  DEFS    16              ;FILE BLOCK POINTERS
-FLAGS:  DEFB    0
-INKEY:  DEFB    0
+FLAGS:  .db    0
+INKEY:  .db    0
 EDPTR:  DEFW    0
-OPTVAL: DEFB    0
+OPTVAL: .db    0
 INILEN  =     $-TABLE
 ;
 FIN:    END

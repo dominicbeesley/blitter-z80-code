@@ -852,19 +852,19 @@ SIN1:   PUSH    AF              ;OCTANT
         CALL    POLY
         DEFW    0x0A8B7          ;a(8)
         DEFW    0x3611
-        DEFB    0x6D
+        .db    0x6D
         DEFW    0x0DE26          ;a(6)
         DEFW    0x0D005
-        DEFB    0x73
+        .db    0x73
         DEFW    0x80C0           ;a(4)
         DEFW    0x888
-        DEFB    0x79
+        .db    0x79
         DEFW    0x0AA9D          ;a(2)
         DEFW    0x0AAAA
-        DEFB    0x7D
+        .db    0x7D
         DEFW    0               ;a(0)
         DEFW    0
-        DEFB    0x80
+        .db    0x80
         CALL    POP5
         CALL    POP5
         CALL    FMUL
@@ -874,19 +874,19 @@ SIN2:   CALL    SQUARE          ;PUSH X*X
         CALL    POLY
         DEFW    0x0D571          ;b(8)
         DEFW    0x4C78
-        DEFB    0x70
+        .db    0x70
         DEFW    0x94AF           ;b(6)
         DEFW    0x0B603
-        DEFB    0x76
+        .db    0x76
         DEFW    0x9CC8           ;b(4)
         DEFW    0x2AAA
-        DEFB    0x7B
+        .db    0x7B
         DEFW    0x0FFDD          ;b(2)
         DEFW    0x0FFFF
-        DEFB    0x7E
+        .db    0x7E
         DEFW    0               ;b(0)
         DEFW    0
-        DEFB    0x80
+        .db    0x80
         CALL    POP5
 SIN3:   POP     AF
         AND     4
@@ -947,28 +947,28 @@ EXP1:   AND     0x80
         CALL    POLY
         DEFW    0x4072           ;a(7)
         DEFW    0x942E
-        DEFB    0x73
+        .db    0x73
         DEFW    0x6F65           ;a(6)
         DEFW    0x2E4F
-        DEFB    0x76
+        .db    0x76
         DEFW    0x6D37           ;a(5)
         DEFW    0x8802
-        DEFB    0x79
+        .db    0x79
         DEFW    0x0E512          ;a(4)
         DEFW    0x2AA0
-        DEFB    0x7B
+        .db    0x7B
         DEFW    0x4F14           ;a(3)
         DEFW    0x0AAAA
-        DEFB    0x7D
+        .db    0x7D
         DEFW    0x0FD56          ;a(2)
         DEFW    0x7FFF
-        DEFB    0x7E
+        .db    0x7E
         DEFW    0x0FFFE          ;a(1)
         DEFW    0x0FFFF
-        DEFB    0x7F
+        .db    0x7F
         DEFW    0               ;a(0)
         DEFW    0
-        DEFB    0x80
+        .db    0x80
         CALL    POP5
         POP     AF
         PUSH    AF
@@ -1027,19 +1027,19 @@ LN4:    PUSH    AF              ;SAVE EXPONENT
         CALL    POLY
         DEFW    0x0CC48          ;a(9)
         DEFW    0x74FB
-        DEFB    0x7D
+        .db    0x7D
         DEFW    0x0AEAF          ;a(7)
         DEFW    0x11FF
-        DEFB    0x7E
+        .db    0x7E
         DEFW    0x0D98C          ;a(5)
         DEFW    0x4CCD
-        DEFB    0x7E
+        .db    0x7E
         DEFW    0x0A9E3          ;a(3)
         DEFW    0x2AAA
-        DEFB    0x7F
+        .db    0x7F
         DEFW    0               ;a(1)
         DEFW    0
-        DEFB    0x81
+        .db    0x81
         CALL    POP5
         CALL    POP5
         CALL    FMUL
@@ -1134,25 +1134,25 @@ ATN2:   PUSH    BC              ;SAVE FLAG
         CALL    POLY
         DEFW    0x0F335          ;a(13)
         DEFW    0x37D8
-        DEFB    0x7B
+        .db    0x7B
         DEFW    0x6B91           ;a(11)
         DEFW    0x0AAB9
-        DEFB    0x7C
+        .db    0x7C
         DEFW    0x41DE           ;a(9)
         DEFW    0x6197
-        DEFB    0x7C
+        .db    0x7C
         DEFW    0x9D7B           ;a(7)
         DEFW    0x9237
-        DEFB    0x7D
+        .db    0x7D
         DEFW    0x2A5A           ;a(5)
         DEFW    0x4CCC
-        DEFB    0x7D
+        .db    0x7D
         DEFW    0x0A95C          ;a(3)
         DEFW    0x0AAAA
-        DEFB    0x7E
+        .db    0x7E
         DEFW    0               ;a(1)
         DEFW    0
-        DEFB    0x80
+        .db    0x80
         CALL    POP5
         CALL    POP5
         CALL    FMUL

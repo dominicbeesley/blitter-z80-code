@@ -676,9 +676,9 @@ COUNT1: EXX
 ;Result is integer channel number (0 if error)
 ;
 OPENOT: XOR     A
-        DEFB    0x21             ;SKIP NEXT 2 BYTES
+        .db    0x21             ;SKIP NEXT 2 BYTES
 OPENUP: LD      A,2
-        DEFB    0x21             ;SKIP NEXT 2 BYTES
+        .db    0x21             ;SKIP NEXT 2 BYTES
 OPENIN: LD      A,1
         PUSH    AF              ;SAVE OPEN TYPE
         CALL    ITEMS           ;FILENAME

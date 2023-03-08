@@ -30,8 +30,8 @@ GETIMS:
 PUTIMS:
         XOR     A
         CALL    EXTERR
-        DEFM    'Sorry'
-        DEFB    0
+        .ascii    'Sorry'
+        .db    0
 ;
         END
 
