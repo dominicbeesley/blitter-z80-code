@@ -587,7 +587,7 @@ KEYWDS: .db    0x80
         .ascii    'No '
         .db    8
         .ascii    ' space'
-KEYWDL  =     $-KEYWDS
+KEYWDL  =     .-KEYWDS
         .dw    -1
 ;
 ;ERROR MESSAGES:
@@ -1966,11 +1966,11 @@ LIST1:  .db    GOTO
         .db    TRACE
 LIST2:  .db    THEN
         .db    ELSE
-LIST1L  =     $-LIST1
+LIST1L  =     .-LIST1
         .db    REPEAT
         .db    TERROR
         .db    ":"
-LIST2L  =     $-LIST2
+LIST2L  =     .-LIST2
 ;
 ;ENCODE - ENCODE LINE NUMBER INTO PSEUDO-BINARY FORM.
 ;   Inputs: HL=line number, DE=string pointer

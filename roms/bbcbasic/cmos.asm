@@ -1471,7 +1471,7 @@ FLAGS:  .db    0
 INKEY:  .db    0
 EDPTR:  .dw    0
 OPTVAL: .db    0
-INILEN  =     $-TABLE
+INILEN  =     .-TABLE
 ;
 FIN:    END
 

@@ -150,7 +150,7 @@ FUNTBL: .dw    DECODE          ;Line number
         .dw    STRING          ;STRINGS(
         .dw    EOF             ;EOF
 ;
-TCMD    =     FUNTOK+($-FUNTBL)/2
+TCMD    =     FUNTOK+(.-FUNTBL)/2
 ;
 ANDK    =     0x80
 DIVK    =     0x81
