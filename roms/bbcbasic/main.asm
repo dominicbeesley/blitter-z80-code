@@ -1,4 +1,5 @@
         .title   BBC BASIC (C) R.T.RUSSELL 1987
+
 ;
 ;BBC BASIC INTERPRETER - Z80 VERSION
 ;COMMAND, ERROR AND LEXICAL ANALYSIS MODULE - "MAIN"
@@ -6,41 +7,41 @@
 ;VERSION 2.3, 07-05-1984
 ;VERSION 3.0, 01-03-1987
 ;
-        ;EXTRN   XEQ
-        ;EXTRN   RUN0
-        ;EXTRN   CHAIN0
-        ;EXTRN   TERM?
-        ;EXTRN   MUL16
-        ;EXTRN   X4OR5
-        ;EXTRN   FILL
-        ;EXTRN   ESCAPE
-        ;EXTRN   CHECK
-        ;EXTRN   SEARCH
+        .globl   XEQ
+        .globl   RUN0
+        .globl   CHAIN0
+        .globl   TERM?
+        .globl   MUL16
+        .globl   X4OR5
+        .globl   FILL
+        .globl   ESCAPE
+        .globl   CHECK
+        .globl   SEARCH
 ;
-        ;EXTRN   OSWRCH
-        ;EXTRN   OSLINE
-        ;EXTRN   OSINIT
-        ;EXTRN   OSLOAD
-        ;EXTRN   OSSAVE
-        ;EXTRN   OSBGET
-        ;EXTRN   OSBPUT
-        ;EXTRN   OSSHUT
-        ;EXTRN   OSSTAT
-        ;EXTRN   PROMPT
-        ;EXTRN   LTRAP
-        ;EXTRN   OSCLI
-        ;EXTRN   RESET
+        .globl   OSWRCH
+        .globl   OSLINE
+        .globl   OSINIT
+        .globl   OSLOAD
+        .globl   OSSAVE
+        .globl   OSBGET
+        .globl   OSBPUT
+        .globl   OSSHUT
+        .globl   OSSTAT
+        .globl   PROMPT
+        .globl   LTRAP
+        .globl   OSCLI
+        .globl   RESET
 ;
-        ;EXTRN   COMMA
-        ;EXTRN   BRAKET
-        ;EXTRN   NXT
-        ;EXTRN   ZERO
-        ;EXTRN   ITEMI
-        ;EXTRN   EXPRI
-        ;EXTRN   EXPRS
-        ;EXTRN   DECODE
-        ;EXTRN   LOADN
-        ;EXTRN   SFIX
+        .globl   COMMA
+        .globl   BRAKET
+        .globl    NXT
+        .globl   ZERO
+        .globl   ITEMI
+        .globl   EXPRI
+        .globl   EXPRS
+        .globl   DECODE
+        .globl   LOADN
+        .globl   SFIX
 ;
         .globl  START
         .globl  OUTCHR
@@ -73,29 +74,29 @@
         .globl  LEXAN2
         .globl  RANGE
 ;
-        ;EXTRN   PAGE
-        ;EXTRN   ACCS
-        ;EXTRN   BUFFER
-        ;EXTRN   LINENO
-        ;EXTRN   LOMEM
-        ;EXTRN   HIMEM
-        ;EXTRN   COUNT
-        ;EXTRN   WIDTH
-        ;EXTRN   TOP
-        ;EXTRN   FREE
-        ;EXTRN   STAVAR
-        ;EXTRN   DYNVAR
-        ;EXTRN   ERRTXT
-        ;EXTRN   ERR
-        ;EXTRN   ERL
-        ;EXTRN   ERRLIN
-        ;EXTRN   ERRTRP
-        ;EXTRN   FNPTR
-        ;EXTRN   PROPTR
-        ;EXTRN   AUTONO
-        ;EXTRN   INCREM
-        ;EXTRN   LISTON
-        ;EXTRN   TRACEN
+        .globl   PAGE
+        .globl   ACCS
+        .globl   BUFFER
+        .globl   LINENO
+        .globl   LOMEM
+        .globl   HIMEM
+        .globl   COUNT
+        .globl   WIDTH
+        .globl   TOP
+        .globl   FREE
+        .globl   STAVAR
+        .globl   DYNVAR
+        .globl   ERRTXT
+        .globl   ERR
+        .globl   ERL
+        .globl   ERRLIN
+        .globl   ERRTRP
+        .globl   FNPTR
+        .globl   PROPTR
+        .globl   AUTONO
+        .globl   INCREM
+        .globl   LISTON
+        .globl   TRACEN
 ;
 TERROR  EQU     85H
 LINE    EQU     86H
@@ -125,6 +126,11 @@ TOKLO   EQU     8FH
 TOKHI   EQU     93H
 OFFSET  EQU     0CFH-TOKLO
 ;
+
+        .area   CODE(REL,CON)
+
+
+
 START:  JP      COLD
         JP      WARM
         JP      ESCAPE

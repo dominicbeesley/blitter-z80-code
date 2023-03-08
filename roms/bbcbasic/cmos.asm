@@ -28,20 +28,20 @@
         .globl  OSKEY
         .globl  OSCALL
 ;
-        ;EXTRN   BYE
-        ;EXTRN   GETKEY
+        .globl   BYE
+        .globl   GETKEY
 ;
-        ;EXTRN   ESCAPE
-        ;EXTRN   EXTERR
-        ;EXTRN   CHECK
-        ;EXTRN   CRLF
-        ;EXTRN   TELL
+        .globl   ESCAPE
+        .globl   EXTERR
+        .globl   CHECK
+        .globl   CRLF
+        .globl   TELL
 ;
-        ;EXTRN   ACCS
-        ;EXTRN   FREE
-        ;EXTRN   HIMEM
-        ;EXTRN   ERRLIN
-        ;EXTRN   USER
+        .globl   ACCS
+        .globl   FREE
+        .globl   HIMEM
+        .globl   ERRLIN
+        .globl   USER
 ;
 ;
 ;OSSAVE - Save an area of memory to a file.

@@ -13,7 +13,7 @@
         .globl  GETIMS
         .globl  PUTIMS
 ;
-        ;EXTRN   EXTERR
+        .globl   EXTERR
 ;
 CLG:
 COLOUR:

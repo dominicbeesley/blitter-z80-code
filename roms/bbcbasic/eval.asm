@@ -4,7 +4,7 @@
 ;EXPRESSION EVALUATION & ARITHMETIC MODULE - "EVAL"
 ;(C) COPYRIGHT  R.T.RUSSELL  1984
 ;VERSION 2.3, 07-05-1984
-;Modified to use external FPP, 01-03-1987
+;Modified to use.globlal FPP, 01-03-1987
 ;VERSION 3.0, 08-03-1987
 ;INSTR bug fixed, 30-09-1992
 ;
@@ -46,47 +46,47 @@
         .globl  POPS
         .globl  SEARCH
 ;
-        ;EXTRN   ERROR
-        ;EXTRN   SYNTAX
-        ;EXTRN   CHANEL
-        ;EXTRN   STORE4
-        ;EXTRN   STORE5
-        ;EXTRN   CHECK
-        ;EXTRN   USR
-        ;EXTRN   FN
+        .globl   ERROR
+        .globl   SYNTAX
+        .globl   CHANEL
+        .globl   STORE4
+        .globl   STORE5
+        .globl   CHECK
+        .globl   USR
+        .globl   FN
 ;
-        ;EXTRN   GETVAR
-        ;EXTRN   LEXAN2
-        ;EXTRN   RANGE
+        .globl   GETVAR
+        .globl   LEXAN2
+        .globl   RANGE
 ;
-        ;EXTRN   STAVAR
-        ;EXTRN   PAGE
-        ;EXTRN   TOP
-        ;EXTRN   LOMEM
-        ;EXTRN   HIMEM
-        ;EXTRN   RANDOM
-        ;EXTRN   COUNT
-        ;EXTRN   LISTON
-        ;EXTRN   PC
-        ;EXTRN   ERL
-        ;EXTRN   ERR
-        ;EXTRN   ACCS
+        .globl   STAVAR
+        .globl   PAGE
+        .globl   TOP
+        .globl   LOMEM
+        .globl   HIMEM
+        .globl   RANDOM
+        .globl   COUNT
+        .globl   LISTON
+        .globl   PC
+        .globl   ERL
+        .globl   ERR
+        .globl   ACCS
 ;
-        ;EXTRN   OSRDCH
-        ;EXTRN   OSOPEN
-        ;EXTRN   OSBGET
-        ;EXTRN   OSSTAT
-        ;EXTRN   GETCSR
-        ;EXTRN   GETIME
-        ;EXTRN   GETIMS
-        ;EXTRN   GETEXT
-        ;EXTRN   GETPTR
-        ;EXTRN   OSKEY
+        .globl   OSRDCH
+        .globl   OSOPEN
+        .globl   OSBGET
+        .globl   OSSTAT
+        .globl   GETCSR
+        .globl   GETIME
+        .globl   GETIMS
+        .globl   GETEXT
+        .globl   GETPTR
+        .globl   OSKEY
 ;
-        ;EXTRN   POINT
-        ;EXTRN   ADVAL
+        .globl   POINT
+        .globl   ADVAL
 ;
-        ;EXTRN   FPP
+        .globl   FPP
 ;
 ;TABLE OF ADDRESSES FOR FUNCTIONS:
 ;
