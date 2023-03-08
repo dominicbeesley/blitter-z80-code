@@ -257,9 +257,9 @@ EXPR2S: EX      AF,AF'
         RET
 ;
 EXPR3:  CALL    EXPR4
-EXPR3A: CP      '-'
+EXPR3A: CP      "-"
         JR      Z,EXPR3B
-        CP      '+'
+        CP      "+"
         RET     NZ
         EX      AF,AF'
         JP      M,EXPR3S
@@ -270,7 +270,7 @@ EXPR3B: CALL    SAVE
         JR      EXPR3A
 ;
 EXPR3S: EX      AF,AF'
-        INC     IY              ;BUMP PAST '+'
+        INC     IY              ;BUMP PAST "+"
         CALL    PUSHS           ;SAVE STRING ON STACK
         CALL    EXPR4           ;SECOND STRING
         EX      AF,AF'
@@ -304,9 +304,9 @@ EXP3S3: EXX
         JR      EXPR3A
 ;
 EXPR4:  CALL    EXPR5
-EXPR4A: CP      '*'
+EXPR4A: CP      "*"
         JR      Z,EXPR4B
-        CP      '/'
+        CP      "/"
         JR      Z,EXPR4B
         CP      MODK
         JR      Z,EXPR4B
@@ -321,7 +321,7 @@ EXPR5:  CALL    ITEM
         OR      A               ;TEST TYPE
         EX      AF,AF'          ;SAVE TYPE
 EXPR5A: CALL    NXT
-        CP      '^'
+        CP      "^"
         RET     NZ
         CALL    SAVE
         CALL    ITEM
@@ -444,26 +444,26 @@ ADD1:   EXX
 ITEM:   CALL    CHECK
         CALL    NXT
         INC     IY
-        CP      '&'
+        CP      "&"
         JR      Z,HEX           ;HEX CONSTANT
-        CP      '-'
+        CP      "-"
         JR      Z,MINUS         ;UNARY MINUS
-        CP      '+'
+        CP      "+"
         JR      Z,ITEMN         ;UNARY PLUS
-        CP      '('
+        CP      "("
         JR      Z,ITEM1         ;EXPRESSION
-        CP      '"'
+        CP      """
         JR      Z,CONS          ;STRING CONSTANT
         CP      TCMD
         JP      NC,SYNTAX       ;SYNTAX ERROR
         CP      FUNTOK
         JP      NC,DISPAT       ;FUNCTION
         DEC     IY
-        CP      ':'
+        CP      ":"
         JR      NC,ITEM2        ;VARIABLE?
-        CP      '0'
+        CP      "0"
         JR      NC,CON          ;NUMERIC CONSTANT
-        CP      '.'
+        CP      "."
         JR      Z,CON           ;NUMERIC CONSTANT
 ITEM2:  CALL    GETVAR          ;VARIABLE
         JR      NZ,NOSUCH
@@ -514,7 +514,7 @@ NOS1:   INC     IY
 CONS:   LD      DE,ACCS
 CONS3:  LD      A,(IY)
         INC     IY
-        CP      '"'
+        CP      """
         JR      Z,CONS2
 CONS1:  LD      (DE),A
         INC     E
@@ -524,7 +524,7 @@ CONS1:  LD      (DE),A
 ERROR0: JP      ERROR           ;"Missing """
 ;
 CONS2:  LD      A,(IY)
-        CP      '"'
+        CP      """
         INC     IY
         JR      Z,CONS1
         DEC     IY
@@ -626,7 +626,7 @@ BGET:   CALL    CHANEL          ;CHANNEL NUMBER
 INKEY:  CALL    INKEYS
         JR      ASC0
 GET:    CALL    NXT
-        CP      '('
+        CP      "("
         JR      NZ,GET0
         CALL    ITEMI           ;PORT ADDRESS
         EXX
@@ -653,7 +653,7 @@ PAGEV:  LD      HL,(PAGE)
         JR      COUNT1
 TOPV:   LD      A,(IY)
         INC     IY              ;SKIP "P"
-        CP      'P'
+        CP      "P"
         JP      NZ,SYNTAX       ;"Syntax Error"
         LD      HL,(TOP)
         JR      COUNT1
@@ -707,7 +707,7 @@ PTR:    CALL    CHANEL
 ;Result is integer numeric.
 ;
 TIMEV:  LD      A,(IY)
-        CP      '$'
+        CP      "$"
         JR      Z,TIMEVS
         CALL    GETIME
 TIME0:  PUSH    DE
@@ -926,7 +926,7 @@ EVAL:   CALL    ITEMS
 ;
 RND:    LD      IX,RANDOM
         CALL    NXT
-        CP      '('
+        CP      "("
         JR      Z,RND5          ;ARGUMENT FOLLOWS
         CALL    LOAD5
 RND1:   RR      C
@@ -995,7 +995,7 @@ INSTR:  CALL    EXPRSC          ;STRING TO SEARCH
         PUSH    BC              ;C = MAIN STRING LENGTH
         LD      B,E             ;B = SUB-STRING LENGTH
         CALL    NXT
-        CP      ','
+        CP      ","
         LD      A,0
         JR      NZ,INSTR1
         INC     IY              ;SKIP COMMA
@@ -1130,7 +1130,7 @@ MIDS:   CALL    EXPRSC
         LD      C,A
         CALL    RIGHT1
 MIDS1:  CALL    NXT
-        CP      ','
+        CP      ","
         INC     IY
         JR      Z,LEFT1
         DEC     IY
@@ -1322,7 +1322,7 @@ HEXST3: ADD     A,0x90
 ;First normalise for decimal output:
 ;
 STRS:   CALL    NXT
-        CP      '~'
+        CP      "~"
         JR      Z,HEXSTS
         CALL    ITEMN
         LD      IX,STAVAR
@@ -1430,36 +1430,36 @@ POPS1:  LD      SP,HL
         JP      (IX)            ;"RETURN"
 ;
 HEXDIG: LD      A,(IY)
-        CP      '0'
+        CP      "0"
         RET     C
         CP      '9'+1
         CCF
         RET     NC
-        CP      'A'
+        CP      "A"
         RET     C
         SUB     'A'-10
         CP      16
         CCF
         RET
 ;
-RELOP?: CP      '>'
+RELOP?: CP      ">"
         RET     NC
-        CP      '='
+        CP      "="
         RET     NC
-        CP      '<'
+        CP      "<"
         RET
 ;
 EXPRSC: CALL    EXPRS
 COMMA:  CALL    NXT
         INC     IY
-        CP      ','
+        CP      ","
         RET     Z
         LD      A,5
         JR      ERROR1          ;"Missing ,"
 ;
 BRAKET: CALL    NXT
         INC     IY
-        CP      ')'
+        CP      ")"
         RET     Z
         LD      A,27
 ERROR1: JP      ERROR           ;"Missing )"
@@ -1503,7 +1503,7 @@ DOIT:   EX      AF,AF'
         RET
 ;
 NXT:    LD      A,(IY)
-        CP      ' '
+        CP      " "
         RET     NZ
         INC     IY
         JP      NXT

@@ -524,7 +524,7 @@ CHKAMB: PUSH    BC
         LD      DE,FCB
         LD      B,12
 CHKAM1: LD      A,(DE)
-        CP      '?'
+        CP      "?"
         JR      Z,AMBIG         ;AMBIGUOUS
         INC     DE
         DJNZ    CHKAM1
@@ -617,12 +617,12 @@ SETUP1: LD      (HL),C
         LD      (DE),A
         POP     DE
         CALL    SKIPSP
-        CP      '"'
+        CP      """
         JR      NZ,SETUP2
         INC     HL
         CALL    SKIPSP
         CALL    SETUP2
-        CP      '"'
+        CP      """
         INC     HL
         JR      Z,SKIPSP
 BADSTR: LD      A,253
@@ -632,9 +632,9 @@ BADSTR: LD      A,253
 ;
 PARSE:  LD      A,(HL)
         INC     HL
-        CP      '`'
+        CP      "`"
         RET     NC
-        CP      '?'
+        CP      "?"
         RET     C
         XOR     0x40
         RET
@@ -642,7 +642,7 @@ PARSE:  LD      A,(HL)
 SETUP2: PUSH    DE
         INC     HL
         LD      A,(HL)
-        CP      ':'
+        CP      ":"
         DEC     HL
         LD      A,B
         JR      NZ,DEVICE
@@ -655,22 +655,22 @@ DEVICE: LD      DE,FCB
         INC     DE
         LD      B,8
 COPYF:  LD      A,(HL)
-        CP      '.'
+        CP      "."
         JR      Z,COPYF1
-        CP      ' '
+        CP      " "
         JR      Z,COPYF1
         CP      CR
         JR      Z,COPYF1
-        CP      '='
+        CP      "="
         JR      Z,COPYF1
-        CP      '"'
+        CP      """
         JR      Z,COPYF1
         LD      C,'?'
-        CP      '*'
+        CP      "*"
         JR      Z,COPYF1
         LD      C,' '
         INC     HL
-        CP      '|'
+        CP      "|"
         JR      NZ,COPYF2
         CALL    PARSE
         JR      COPYF0
@@ -681,9 +681,9 @@ COPYF0: LD      (DE),A
         DJNZ    COPYF
 COPYF3: LD      A,(HL)
         INC     HL
-        CP      '*'
+        CP      "*"
         JR      Z,COPYF3
-        CP      '.'
+        CP      "."
         LD      BC,3*256+' '
         LD      DE,FCB+9
         JR      Z,COPYF
@@ -691,7 +691,7 @@ COPYF3: LD      A,(HL)
         POP     DE
         LD      BC,128
 SKIPSP: LD      A,(HL)
-        CP      ' '
+        CP      " "
         RET     NZ
         INC     HL
         JR      SKIPSP
@@ -709,11 +709,11 @@ HEX:    LD      DE,0            ;INITIALISE
         CALL    SKIPSP
 HEX1:   LD      A,(HL)
         CALL    UPPRC
-        CP      '0'
+        CP      "0"
         JR      C,SKIPSP
         CP      '9'+1
         JR      C,HEX2
-        CP      'A'
+        CP      "A"
         JR      C,SKIPSP
         CP      'F'+1
         JR      NC,SKIPSP
@@ -735,9 +735,9 @@ HEX2:   AND     0x0F
 OSCLI:  CALL    SKIPSP
         CP      CR
         RET     Z
-        CP      '|'
+        CP      "|"
         RET     Z
-        CP      '.'
+        CP      "."
         JP      Z,DOT           ;*.
         EX      DE,HL
         LD      HL,COMDS
@@ -758,7 +758,7 @@ OSCLI3: INC     DE
         INC     HL
         LD      A,(DE)
         CALL    UPPRC
-        CP      '.'             ;ABBREVIATED?
+        CP      "."             ;ABBREVIATED?
         JR      Z,OSCLI4
         XOR     (HL)
         JR      Z,OSCLI3
@@ -797,7 +797,7 @@ DRV:    CALL    SETUP0          ;*DRIVE
         JR      XEQ0
 ;
 REN:    CALL    SETUP0          ;*REN, *RENAME
-        CP      '='
+        CP      "="
         JR      NZ,HUH
         INC     HL              ;SKIP "="
         PUSH    HL
@@ -836,7 +836,7 @@ EXISTS: LD      HL,DSKBUF
 ;
 SAVLOD: CALL    SETUP0          ;PART OF *SAVE, *LOAD
         CALL    HEX
-        CP      '+'
+        CP      "+"
         PUSH    AF
         PUSH    DE
         JR      NZ,SAVLO1
@@ -955,7 +955,7 @@ SPOOL:  LD      A,00000010B     ;*SPOOL
 JPIX:   JP      (IX)            ;"RETURN"
 ;
 UPPRC:  AND     0x7F
-        CP      '`'
+        CP      "`"
         RET     C
         AND     0x5F             ;CONVERT TO UPPER CASE
         RET
@@ -964,7 +964,7 @@ UPPRC:  AND     0x7F
 ;
 ESCCTL: LD      A,(HL)
         CALL    UPPRC           ;**
-        CP      'O'
+        CP      "O"
         JR      NZ,ESCC1
         INC     HL
 ESCC1:  CALL    HEX
@@ -1128,7 +1128,7 @@ TEST:   PUSH    DE
         POP     DE
         OR      A
         RET     Z
-        CP      'S' AND 0x1F     ;PAUSE DISPLAY?
+        CP      "S" AND 0x1F     ;PAUSE DISPLAY?
         JR      Z,OSRDCH
         CP      ESC
         JR      Z,ESCSET
@@ -1220,7 +1220,7 @@ EDPUT:  LD      A,(FLAGS)
         BIT     3,A
         JR      Z,WRCH
         LD      A,E
-        CP      ' '
+        CP      " "
         RET     C
         LD      HL,(EDPTR)
         LD      (HL),E
@@ -1326,7 +1326,7 @@ LIMIT:  CALL    Z,KEYGET        ;READ KEYBOARD
         CP      (IX-8)          ;END OF LINE   (IX-8)
         JP      Z,RIGHT
         LD      C,0             ;INHIBIT REPEAT
-        CP      'P' AND 0x1F
+        CP      "P" AND 0x1F
         JP      Z,TOGGLE
         CP      (IX-6)          ;DELETE LEFT   (IX-6)
         JR      Z,BACK
@@ -1338,7 +1338,7 @@ LIMIT:  CALL    Z,KEYGET        ;READ KEYBOARD
         JR      Z,INSERT
         CP      (IX-3)          ;CURSOR RIGHT  (IX-3)
         JR      Z,RIGHT
-        CP      ' '             ;PRINTING CHARACTER
+        CP      " "             ;PRINTING CHARACTER
         JR      NC,SAVECH
         CP      CR              ;ENTER LINE
         RET     NZ
@@ -1369,7 +1369,7 @@ CMPARE: LD      A,(DE)
         INC     HL
         INC     DE
         LD      A,(HL)
-        CP      '.'
+        CP      "."
         JR      Z,ABBR
         DJNZ    CMPARE
 ABBR:   XOR     A

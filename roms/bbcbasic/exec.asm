@@ -231,7 +231,7 @@ XEQ:    LD      (ERRLIN),IY     ;ERROR POINTER
         CALL    TRAP            ;CHECK KEYBOARD
 XEQ1:   CALL    NXT
         INC     IY
-        CP      ':'             ;SEPARATOR
+        CP      ":"             ;SEPARATOR
         JR      Z,XEQ1
         CP      CR
         JR      Z,XEQ0          ;NEW PROGRAM LINE
@@ -408,7 +408,7 @@ DIM:    CALL    GETVAR          ;VARIABLE
         PUSH    HL
         POP     IX
         LD      A,(IY)
-        CP      '('
+        CP      "("
         LD      A,D
         JR      NZ,DIM4
         PUSH    HL
@@ -436,7 +436,7 @@ DIM1:   INC     IY
         POP     BC
         INC     B               ;DIMENSION COUNTER
         LD      A,(IY)
-        CP      ','             ;ANOTHER
+        CP      ","             ;ANOTHER
         JR      Z,DIM1
         CALL    BRAKET          ;CLOSING BRACKET
         POP     AF              ;RESTORE TYPE
@@ -463,7 +463,7 @@ DIM2:   LD      A,D
         DEC     DE
         JR      DIM2
 DIM5:   CALL    NXT
-        CP      ','             ;ANOTHER VARIABLE?
+        CP      ","             ;ANOTHER VARIABLE?
         JP      NZ,XEQ
         INC     IY
         CALL    NXT
@@ -479,7 +479,7 @@ DIM4:   OR      A
         JP      M,BADDIM        
         LD      B,A
         LD      A,(IY-1)
-        CP      ')'
+        CP      ")"
         LD      A,B
         JR      Z,BADDIM
         LD      HL,(FREE)
@@ -497,11 +497,11 @@ DIM4:   OR      A
 ;PRINT list...
 ;PRINT #channel,list...
 ;
-PRINT:  CP      '#'
+PRINT:  CP      "#"
         JR      NZ,PRINT0
         CALL    CHNL            ;CHANNEL NO. = E
 PRNTN1: CALL    NXT
-        CP      ','
+        CP      ","
         JP      NZ,XEQ
         INC     IY
         PUSH    DE
@@ -565,11 +565,11 @@ PRINTC: CALL    TERM?
         JR      Z,PRINT4
         RES     0,B
         INC     IY
-        CP      '~'
+        CP      "~"
         JR      Z,PRINT6
-        CP      ';'
+        CP      ";"
         JR      Z,PRINT8
-        CP      ','
+        CP      ","
         JR      Z,PRINT9
         CALL    FORMAT          ;SPC, TAB, '
         JR      Z,PRINTC
@@ -826,7 +826,7 @@ NEXT0:  SBC     HL,DE
         ADD     HL,SP
         LD      SP,HL
         CALL    NXT
-        CP      ','
+        CP      ","
         JP      NZ,XEQ
         INC     IY
         JR      NEXT
@@ -910,10 +910,10 @@ PROC4:  LD      E,(HL)
         PUSH    DE              ;EXCHANGE DE,IY
         EX      (SP),IY
         POP     DE
-        CP      '('             ;ARGUMENTS?
+        CP      "("             ;ARGUMENTS?
         JR      NZ,PROC5
         CALL    NXT             ;ALLOW SPACE BEFORE (
-        CP      '('
+        CP      "("
         JP      NZ,SYNTAX       ;"Syntax error"
         PUSH    IY
         POP     BC              ;SAVE IY IN BC
@@ -979,7 +979,7 @@ LOCAL2: CALL    GETVAR
         LD      E,C
         CALL    M,STORES
         CALL    NXT
-        CP      ','
+        CP      ","
         JP      NZ,XEQ
         INC     IY
         CALL    NXT
@@ -1022,7 +1022,7 @@ UNSTK1: LD      HL,0
 ;
 INPUTN: CALL    CHNL            ;E = CHANNEL NUMBER
 INPN1:  CALL    NXT
-        CP      ','
+        CP      ","
         JP      NZ,XEQ
         INC     IY
         CALL    NXT
@@ -1071,7 +1071,7 @@ INPN4:  POP     IX
 ;INPUT ['][SPC(x)][TAB(x[,y])]["prompt",]var[,var...]
 ;INPUT LINE [SPC(x)][TAB(x[,y])]["prompt",]var[,var...]
 ;
-INPUT:  CP      '#'
+INPUT:  CP      "#"
         JR      Z,INPUTN
         LD      C,0             ;FLAG PROMPT
         CP      LINE
@@ -1083,12 +1083,12 @@ INPUT0: LD      HL,BUFFER
 INPUT1: CALL    TERM?
         JP      Z,XEQ           ;DONE
         INC     IY
-        CP      ','
+        CP      ","
         JR      Z,INPUT3        ;SKIP COMMA
-        CP      ';'
+        CP      ";"
         JR      Z,INPUT3
         PUSH    HL              ;SAVE BUFFER POINTER
-        CP      '"'
+        CP      """
         JR      NZ,INPUT6
         PUSH    BC
         CALL    CONS
@@ -1161,7 +1161,7 @@ REFIL1: LD      A,(HL)
 ;
 ;READ var[,var...]
 ;
-READ:   CP      '#'
+READ:   CP      "#"
         JP      Z,INPUTN
         LD      HL,(DATPTR)
 READ0:  LD      A,(HL)
@@ -1189,7 +1189,7 @@ READ1:  CALL    FETCHS
 READ2:  POP     HL
         LD      (DATPTR),HL
         CALL    NXT
-        CP      ','
+        CP      ","
         JP      NZ,XEQ
         INC     IY
         CALL    NXT
@@ -1295,7 +1295,7 @@ PAGEV:  CALL    EQUALS
         LD      (PAGE),HL
         JP      XEQ
 ;
-TIMEV:  CP      '$'
+TIMEV:  CP      "$"
         JR      Z,TIMEVS
         CALL    EQUALS
         CALL    EXPRI
@@ -1305,7 +1305,7 @@ TIMEV:  CP      '$'
         CALL    PUTIME
         JP      XEQ
 ;
-TIMEVS: INC     IY              ;SKIP '$'
+TIMEVS: INC     IY              ;SKIP "$"
         CALL    EQUALS
         CALL    EXPRS
         CALL    PUTIMS
@@ -1369,9 +1369,9 @@ VDU:    CALL    EXPRI
         LD      A,L
         CALL    OSWRCH
         LD      A,(IY)
-        CP      ','
+        CP      ","
         JR      Z,VDU2
-        CP      ';'
+        CP      ";"
         JR      NZ,VDU3
         LD      A,H
         CALL    OSWRCH
@@ -1406,7 +1406,7 @@ CALL:   CALL    EXPRI           ;ADDRESS
         LD      B,0             ;PARAMETER COUNTER
         LD      DE,BUFFER       ;VECTOR
 CALL1:  CALL    NXT
-        CP      ','
+        CP      ","
         JR      NZ,CALL2
         INC     IY
         INC     B
@@ -1618,16 +1618,16 @@ ARGUE2: CALL    EXPRS
         CALL    PUSHS
         EXX
 ARGUE4: CALL    NXT
-        CP      ','
+        CP      ","
         JR      NZ,ARGUE5
         LD      A,(DE)
-        CP      ','
+        CP      ","
         JR      Z,ARGUE1        ;ANOTHER
 ARGERR: LD      A,31
         JP      ERROR           ;"Arguments"
 ARGUE5: CALL    BRAKET
         LD      A,(DE)
-        CP      ')'
+        CP      ")"
         JR      NZ,ARGERR
         INC     DE
         EXX
@@ -1719,28 +1719,28 @@ SAVLO4: PUSH    IX              ;VARPTR
 LOCCHK  =     $
 SAVLO5: CALL    CHECK
         CALL    NXT
-        CP      ','             ;MORE?
+        CP      ","             ;MORE?
         JR      Z,SAVLO1
         EX      DE,HL
         JP      (HL)            ;"RETURN"
 ;
 DELIM:  LD      A,(IY)          ;ASSEMBLER DELIMITER
-        CP      ' '
+        CP      " "
         RET     Z
-        CP      ','
+        CP      ","
         RET     Z
-        CP      ')'
+        CP      ")"
         RET     Z
-TERM:   CP      ';'             ;ASSEMBLER TERMINATOR
+TERM:   CP      ";"             ;ASSEMBLER TERMINATOR
         RET     Z
-        CP      '\'
+        CP      "\"
         RET     Z
         JR      TERM0
 ;
 TERM?:  CALL    NXT
         CP      ELSE
         RET     NC
-TERM0:  CP      ':'             ;ASSEMBLER SEPARATOR
+TERM0:  CP      ":"             ;ASSEMBLER SEPARATOR
         RET     NC
         CP      CR
         RET
@@ -1752,7 +1752,7 @@ SPAN:   CALL    TERM?
 ;
 EQUALS: CALL    NXT
         INC     IY
-        CP      '='
+        CP      "="
         RET     Z
         LD      A,4
         JP      ERROR           ;"Mistake"
@@ -1772,7 +1772,7 @@ DOTAB:  PUSH    BC
         EXX
         POP     BC
         LD      A,(IY)
-        CP      ','
+        CP      ","
         JR      Z,DOTAB1
         CALL    BRAKET
         LD      A,L
@@ -1843,14 +1843,14 @@ LINE1S: LD      A,(HL)
         JR      LINE1S
 ;
 XTRACT: CALL    NXT
-        CP      '"'
+        CP      """
         INC     IY
         JP      Z,CONS
         DEC     IY
         LD      DE,ACCS
 XTRAC1: LD      A,(IY)
         LD      (DE),A
-        CP      ','
+        CP      ","
         RET     Z
         CP      CR
         RET     Z
@@ -1905,10 +1905,10 @@ MUL162: DEC     A
         RET
 ;
 CHANEL: CALL    NXT
-        CP      '#'
+        CP      "#"
         LD      A,45
         JP      NZ,ERROR        ;"Missing #"
-CHNL:   INC     IY              ;SKIP '#'
+CHNL:   INC     IY              ;SKIP "#"
         CALL    ITEMI
         EXX
         EX      DE,HL
@@ -1920,9 +1920,9 @@ CHNL:   INC     IY              ;SKIP '#'
 ;
 ASSEM:  CALL    SKIP
         INC     IY
-        CP      ':'
+        CP      ":"
         JR      Z,ASSEM
-        CP      ']'
+        CP      "]"
         RET     Z
         CP      CR
         RET     Z
@@ -2024,7 +2024,7 @@ OUTCH1: JP      OUT
 ;   Inputs: A = initial character
 ;  Outputs: Carry set if syntax error.
 ;
-ASMB:   CP      '.'
+ASMB:   CP      "."
         JR      NZ,ASMB1
         INC     IY
         PUSH    IX
@@ -2233,7 +2233,7 @@ GROUPF: DJNZ    MISC
         CALL    REGHI
         EX      AF,AF'
         CALL    SKIP
-        CP      '('
+        CP      "("
         JR      Z,LDIN
         EX      AF,AF'
         JP      NC,G6
@@ -2370,7 +2370,7 @@ BYTE:   LD      (IX),A
         RET
 ;
 OFFSET: LD      A,(IY)
-        CP      ')'
+        CP      ")"
         LD      HL,0
         RET     Z
 NUMBER: CALL    SKIP
@@ -2486,9 +2486,9 @@ SKIP:   CALL    DELIM
         INC     IY
         JR      SKIP
 ;
-SIGN:   CP      '+'
+SIGN:   CP      "+"
         RET     Z
-        CP      '-'
+        CP      "-"
         RET
 ;
         ;.XLIST
@@ -2536,13 +2536,13 @@ OPCODS: DEFM    'NO'
         DEFB    0
         DEFM    'DE'
         DEFB    0
-        DEFM    'H'
+        DEFM    "H"
         DEFB    'L'+0x80
         DEFB    0x0EB
-        DEFM    'D'
+        DEFM    "D"
         DEFB    'I'+0x80
         DEFB    0x0F3
-        DEFM    'E'
+        DEFM    "E"
         DEFB    'I'+0x80
         DEFB    0x0FB
 ;
@@ -2638,10 +2638,10 @@ OPCODS: DEFM    'NO'
         DEFM    'RR'
         DEFB    'C'+0x80
         DEFB    8
-        DEFM    'R'
+        DEFM    "R"
         DEFB    'L'+0x80
         DEFB    0x10
-        DEFM    'R'
+        DEFM    "R"
         DEFB    'R'+0x80
         DEFB    0x18
         DEFM    'SL'
@@ -2675,10 +2675,10 @@ OPCODS: DEFM    'NO'
         DEFM    'XO'
         DEFB    'R'+0x80
         DEFB    0x0A8
-        DEFM    'O'
+        DEFM    "O"
         DEFB    'R'+0x80
         DEFB    0x0B0
-        DEFM    'C'
+        DEFM    "C"
         DEFB    'P'+0x80
         DEFB    0x0B8
         DEFB    TAND
@@ -2703,21 +2703,21 @@ OPCODS: DEFM    'NO'
         DEFB    'C'+0x80
         DEFB    5
 ;
-        DEFM    'I'
+        DEFM    "I"
         DEFB    'N'+0x80
         DEFB    0x40
         DEFM    'OU'
         DEFB    'T'+0x80
         DEFB    0x41
 ;
-        DEFM    'J'
+        DEFM    "J"
         DEFB    'R'+0x80
         DEFB    0x20
         DEFM    'DJN'
         DEFB    'Z'+0x80
         DEFB    0x10
 ;
-        DEFM    'J'
+        DEFM    "J"
         DEFB    'P'+0x80
         DEFB    0x0C2
 ;
@@ -2733,7 +2733,7 @@ OPCODS: DEFM    'NO'
         DEFB    'T'+0x80
         DEFB    0x0C0
 ;
-        DEFM    'L'
+        DEFM    "L"
         DEFB    'D'+0x80
         DEFB    0x40
 ;
@@ -2779,40 +2779,40 @@ OPRNDS: DEFB    'B'+0x80
         DEFB    'Y'+0x80
         DEFB    0x0C6
 ;
-        DEFM    'B'
+        DEFM    "B"
         DEFB    'C'+0x80
         DEFB    8
-        DEFM    'D'
+        DEFM    "D"
         DEFB    'E'+0x80
         DEFB    10
-        DEFM    'H'
+        DEFM    "H"
         DEFB    'L'+0x80
         DEFB    12
-        DEFM    'I'
+        DEFM    "I"
         DEFB    'X'+0x80
         DEFB    0x8C
-        DEFM    'I'
+        DEFM    "I"
         DEFB    'Y'+0x80
         DEFB    0x0CC
-        DEFM    'A'
+        DEFM    "A"
         DEFB    'F'+0x80
         DEFB    14
-        DEFM    'S'
+        DEFM    "S"
         DEFB    'P'+0x80
         DEFB    14
 ;
-        DEFM    'N'
+        DEFM    "N"
         DEFB    'Z'+0x80
         DEFB    16
         DEFB    'Z'+0x80
         DEFB    17
-        DEFM    'N'
+        DEFM    "N"
         DEFB    'C'+0x80
         DEFB    18
-        DEFM    'P'
+        DEFM    "P"
         DEFB    'O'+0x80
         DEFB    20
-        DEFM    'P'
+        DEFM    "P"
         DEFB    'E'+0x80
         DEFB    21
         DEFB    'P'+0x80
@@ -2820,25 +2820,25 @@ OPRNDS: DEFB    'B'+0x80
         DEFB    'M'+0x80
         DEFB    23
 ;
-        DEFM    '('
+        DEFM    "("
         DEFB    'C'+0x80
         DEFB    0x20
 ;
         DEFB    0
 ;
-LDOPS:  DEFM    'I'
+LDOPS:  DEFM    "I"
         DEFB    0
         DEFB    'A'+0x80
         DEFB    0x47
-        DEFM    'R'
+        DEFM    "R"
         DEFB    0
         DEFB    'A'+0x80
         DEFB    0x4F
-        DEFM    'A'
+        DEFM    "A"
         DEFB    0
         DEFB    'I'+0x80
         DEFB    0x57
-        DEFM    'A'
+        DEFM    "A"
         DEFB    0
         DEFB    'R'+0x80
         DEFB    0x5F
@@ -2850,12 +2850,12 @@ LDOPS:  DEFM    'I'
         DEFB    0
         DEFB    'A'+0x80
         DEFB    0x12
-        DEFM    'A'
+        DEFM    "A"
         DEFB    0
         DEFM    '(B'
         DEFB    'C'+0x80
         DEFB    0x0A
-        DEFM    'A'
+        DEFM    "A"
         DEFB    0
         DEFM    '(D'
         DEFB    'E'+0x80

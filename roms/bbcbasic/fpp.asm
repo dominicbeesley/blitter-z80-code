@@ -716,7 +716,7 @@ VAL:    CALL    SIGNQ
         PUSH    AF
         CALL    CON
         POP     AF
-        CP      '-'
+        CP      "-"
         LD      A,0             ;NUMERIC MARKER
         RET     NZ
         DEC     C
@@ -1288,7 +1288,7 @@ STR23:  DEC     C
 STR24:  PUSH    AF
         LD      A,C
         ADC     A,'0'           ;ADD CARRY
-        CP      '0'
+        CP      "0"
         JR      Z,STR25         ;SUPPRESS ZERO
         CP      '9'+1
         CCF
@@ -1428,10 +1428,10 @@ DLOAD5: LD      B,(IX+4)
 CON:    CALL    ZERO            ;INITIALISE TO ZERO
         LD      C,0             ;TRUNCATION COUNTER
         CALL    NUMBER          ;GET INTEGER PART
-        CP      '.'
+        CP      "."
         LD      B,0             ;DECL. PLACE COUNTER
         CALL    Z,NUMBIX        ;GET FRACTION PART
-        CP      'E'
+        CP      "E"
         LD      A,0             ;INITIALISE EXPONENT
         CALL    Z,GETEXP        ;GET EXPONENT
         BIT     7,H
@@ -1480,7 +1480,7 @@ CON3:   PUSH    AF
 GETEXP: PUSH    BC              ;SAVE REGISTERS
         LD      B,A             ;INITIAL VALUE
         LD      C,2             ;2 DIGITS MAX
-        INC     IX              ;BUMP PAST 'E'
+        INC     IX              ;BUMP PAST "E"
         CALL    SIGNQ
         EX      AF,AF'          ;SAVE EXPONENT SIGN
 GETEX1: CALL    DIGITQ
@@ -1501,7 +1501,7 @@ GETEX1: CALL    DIGITQ
         LD      B,100           ;FORCE OVERFLOW
         JR      GETEX1
 GETEX2: EX      AF,AF'          ;RESTORE SIGN
-        CP      '-'
+        CP      "-"
         LD      A,B
         POP     BC              ;RESTORE
         RET     NZ
@@ -2224,16 +2224,16 @@ DIGITQ: LD      A,(IX)
         CP      '9'+1
         CCF
         RET     C
-        CP      '0'
+        CP      "0"
         RET
 ;
 SIGNQ:  LD      A,(IX)
         INC     IX
-        CP      ' '
+        CP      " "
         JR      Z,SIGNQ
-        CP      '+'
+        CP      "+"
         RET     Z
-        CP      '-'
+        CP      "-"
         RET     Z
         DEC     IX
         RET

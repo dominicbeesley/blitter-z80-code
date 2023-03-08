@@ -601,7 +601,7 @@ ERRWDS: DEFB    7
         DEFM    'Mistake'
         DEFB    0
         DEFB    1
-        DEFM    ','
+        DEFM    ","
         DEFB    0
         DEFM    'Type mismatch'
         DEFB    0
@@ -609,7 +609,7 @@ ERRWDS: DEFB    7
         DEFB    FN
         DEFW    0
         DEFB    1
-        DEFM    '"'
+        DEFM    """
         DEFB    0
         DEFB    3
         DEFB    DIM
@@ -651,14 +651,14 @@ ERRWDS: DEFB    7
         DEFB    5
         DEFB    0
         DEFB    1
-        DEFM    ')'
+        DEFM    ")"
         DEFB    0
         DEFB    3
         DEFM    'HEX'
         DEFB    0
         DEFB    2
         DEFB    FN
-        DEFM    '/'
+        DEFM    "/"
         DEFB    PROC
         DEFB    0
         DEFB    3
@@ -673,7 +673,7 @@ ERRWDS: DEFB    7
         DEFB    FOR
         DEFB    0
         DEFB    FOR
-        DEFM    ' '
+        DEFM    " "
         DEFB    5
         DEFW    0
         DEFB    7
@@ -692,14 +692,14 @@ ERRWDS: DEFB    7
         DEFM    'line'
         DEFB    0
         DEFB    6
-        DEFM    ' '
+        DEFM    " "
         DEFB    DATA
         DEFB    0
         DEFB    7
         DEFB    REPEAT
         DEFW    0
         DEFB    1
-        DEFM    '#'
+        DEFM    "#"
         DEFB    0
         PAGE
 ;
@@ -746,7 +746,7 @@ CLOOP1: JP      CLOOP
 ;LIST ,line
 ;LIST line,
 ;
-LIST:   CP      'O'
+LIST:   CP      "O"
         JR      Z,LISTO
         CALL    DLPAIR
         CALL    NXT
@@ -1108,7 +1108,7 @@ LEX3:   INC     HL
         JR      NZ,LEX6         ;FOUND
         INC     IY
         LD      A,(IY)
-        CP      '.'
+        CP      "."
         JR      Z,LEX6          ;FOUND (ABBREV.)
         CP      (HL)
         JR      Z,LEX3
@@ -1258,7 +1258,7 @@ LIST8:  LD      A,(HL)
         INC     HL
         CP      CR
         JR      Z,CRLF
-        CP      '"'
+        CP      """
         JR      NZ,LIST7
         INC     E
 LIST7:  CALL    LOUT
@@ -1464,7 +1464,7 @@ PBCD4:  LD      DE,1000
 ;
 PUTVAR: CALL    CREATE
         LD      A,(IY)
-        CP      '('
+        CP      "("
         JR      NZ,GETVZ        ;SET EXIT CONDITIONS
 ARRAY:  LD      A,14            ;'Array'
 ERROR3: JP      ERROR
@@ -1481,16 +1481,16 @@ ERROR3: JP      ERROR
 ; Destroys: everything
 ;
 GETVAR: LD      A,(IY)
-        CP      '$'
+        CP      "$"
         JR      Z,GETV4
-        CP      '!'
+        CP      "!"
         JR      Z,GETV5
-        CP      '?'
+        CP      "?"
         JR      Z,GETV6
         CALL    LOCATE
         RET     NZ
         LD      A,(IY)
-        CP      '('             ;ARRAY?
+        CP      "("             ;ARRAY?
         JR      NZ,GETVX        ;EXIT
         PUSH    DE              ;SAVE TYPE
         LD      A,(HL)          ;NO. OF DIMENSIONS
@@ -1536,9 +1536,9 @@ GETV3:  PUSH    HL
         ADD     HL,DE
         LD      D,A             ;TYPE
         LD      A,(IY)
-GETVX:  CP      '?'
+GETVX:  CP      "?"
         JR      Z,GETV9
-        CP      '!'
+        CP      "!"
         JR      Z,GETV8
 GETVZ:  PUSH    HL              ;SET EXIT CONDITIONS
         POP     IX
@@ -1616,7 +1616,7 @@ GETDEF: LD      A,(IY+1)
 ;                               129 = string
 ; Destroys: A,D,E,H,L,IY,F
 ;
-LOCATE: SUB     '@'
+LOCATE: SUB     "@"
         RET     C
         LD      H,0
         CP      'Z'-'@'+1
@@ -1624,10 +1624,10 @@ LOCATE: SUB     '@'
         ADD     A,A
         LD      L,A
         LD      A,(IY+1)        ;2nd CHARACTER
-        CP      '%'
+        CP      "%"
         JR      NZ,LOC1         ;NOT STATIC
         LD      A,(IY+2)
-        CP      '('
+        CP      "("
         JR      Z,LOC1          ;NOT STATIC
         ADD     HL,HL
         LD      DE,STAVAR       ;STATIC VARIABLES
@@ -1677,22 +1677,22 @@ LOC4:   POP     IY
 ;
 LOC5:   DEC     IY
         LD      A,(IY)
-        CP      '('
+        CP      "("
         JR      Z,LOC5A         ;FOUND
         INC     IY
         CALL    RANGE
         JR      C,LOC5A         ;FOUND
-        CP      '('
+        CP      "("
         JR      Z,LOC4          ;KEEP LOOKING
         LD      A,(IY-1)
         CALL    RANGE1
         JR      NC,LOC4         ;KEEP LOOKING
 LOC5A:  POP     DE
 TYPE:   LD      A,(IY-1)
-        CP      '$'
+        CP      "$"
         LD      D,129
         RET     Z               ;STRING
-        CP      '%'
+        CP      "%"
         LD      D,4
         RET     Z               ;INTEGER
         INC     D
@@ -1724,10 +1724,10 @@ LOC7:   INC     IY
         INC     HL
         CALL    RANGE1
         JR      NC,LOC7
-        CP      '('
+        CP      "("
         JR      Z,LOC8
         LD      A,(IY+1)
-        CP      '('
+        CP      "("
         JR      Z,LOC7
         INC     IY
 LOC8:   LD      (HL),0          ;TERMINATOR
@@ -1757,7 +1757,7 @@ LOC9:   LD      (HL),0          ;INITIALISE TO ZERO
 LINNUM: CALL    NXT
         LD      HL,0
 LINNM1: LD      A,(IY)
-        SUB     '0'
+        SUB     "0"
         RET     C
         CP      10
         RET     NC
@@ -1829,25 +1829,25 @@ DLP1:   EX      (SP),HL
 ; Destroys: A,F
 ;
 RANGE:  LD      A,(IY)
-        CP      '$'
+        CP      "$"
         RET     Z
-        CP      '%'
+        CP      "%"
         RET     Z
-        CP      '('
+        CP      "("
         RET     Z
-RANGE1: CP      '0'
+RANGE1: CP      "0"
         RET     C
         CP      '9'+1
         CCF
         RET     NC
-        CP      '@'             ;V2.4
+        CP      "@"             ;V2.4
         RET     Z
-RANGE2: CP      'A'
+RANGE2: CP      "A"
         RET     C
         CP      'Z'+1
         CCF
         RET     NC
-        CP      '_'
+        CP      "_"
         RET     C
         CP      'z'+1
         CCF
@@ -1886,14 +1886,14 @@ LEXAN2: LD      A,E             ;MAIN ENTRY
         JR      NC,LEXAN3
         RES     5,C             ;NOT IN VARIABLE
         RES     3,C             ;NOT IN HEX
-LEXAN3: CP      ' '
+LEXAN3: CP      " "
         JR      Z,LEXAN1        ;PASS SPACES
-        CP      ','
+        CP      ","
         JR      Z,LEXAN1        ;PASS COMMAS
-        CP      'G'
+        CP      "G"
         JR      C,LEXAN4
         RES     3,C             ;NOT IN HEX
-LEXAN4: CP      '"'
+LEXAN4: CP      """
         JR      NZ,LEXAN5
         RL      C
         CCF                     ;TOGGLE C7
@@ -1919,7 +1919,7 @@ LEXAN6: DEC     C
         CALL    P,LEX           ;TOKENISE IF POSS.
         JR      LEXAN8
 ;
-LEXAN7: CP      '*'
+LEXAN7: CP      "*"
         JR      Z,LEXAN9
         OR      A
         CALL    P,LEX           ;TOKENISE IF POSS.
@@ -1940,7 +1940,7 @@ LEXANA: CP      FN
         CALL    RANGE2
         JR      C,LEXANC
 LEXANB: SET     5,C             ;IN VARIABLE/FN/PROC
-LEXANC: CP      '&'
+LEXANC: CP      "&"
         JR      NZ,LEXAND
         SET     3,C             ;IN HEX
 LEXAND: LD      HL,LIST1
@@ -1968,7 +1968,7 @@ LIST2:  DEFB    THEN
 LIST1L  =     $-LIST1
         DEFB    REPEAT
         DEFB    TERROR
-        DEFB    ':'
+        DEFB    ":"
 LIST2L  =     $-LIST2
 ;
 ;ENCODE - ENCODE LINE NUMBER INTO PSEUDO-BINARY FORM.
@@ -1995,12 +1995,12 @@ ENCODE: SET     4,C
         INC     HL
         LD      A,E
         AND     0x3F
-        OR      '@'
+        OR      "@"
         LD      (HL),A
         INC     HL
         LD      A,D
         AND     0x3F
-        OR      '@'
+        OR      "@"
         LD      (HL),A
         INC     HL
         EX      DE,HL
