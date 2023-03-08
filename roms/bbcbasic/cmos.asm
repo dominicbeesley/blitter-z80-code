@@ -711,11 +711,11 @@ HEX1:   LD      A,(HL)
         CALL    UPPRC
         CP      "0"
         JR      C,SKIPSP
-        CP      '9'+1
+        CP      "9"+1
         JR      C,HEX2
         CP      "A"
         JR      C,SKIPSP
-        CP      'F'+1
+        CP      "F"+1
         JR      NC,SKIPSP
         SUB     7
 HEX2:   AND     0x0F
@@ -978,52 +978,52 @@ ESCC1:  CALL    HEX
 ;
 ;
 COMDS:  .ascii    'BY'
-        .db    'E'+0x80
+        .db    "E"+0x80
         .dw    BYE
         .ascii    'CP'
-        .db    'M'+0x80
+        .db    "M"+0x80
         .dw    BYE
         .ascii    'DI'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .dw    DIR
         .ascii    'DRIV'
-        .db    'E'+0x80
+        .db    "E"+0x80
         .dw    DRV
         .ascii    'ERAS'
-        .db    'E'+0x80
+        .db    "E"+0x80
         .dw    ERA
         .ascii    'ER'
-        .db    'A'+0x80
+        .db    "A"+0x80
         .dw    ERA
         .ascii    'ES'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .dw    ESCCTL
         .ascii    'EXE'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .dw    EXEC
         .ascii    'LOA'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .dw    STLOAD
         .ascii    'OP'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .dw    OPT
         .ascii    'RENAM'
-        .db    'E'+0x80
+        .db    "E"+0x80
         .dw    REN
         .ascii    'RE'
-        .db    'N'+0x80
+        .db    "N"+0x80
         .dw    REN
         .ascii    'RESE'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .dw    RES
         .ascii    'SAV'
-        .db    'E'+0x80
+        .db    "E"+0x80
         .dw    STSAVE
         .ascii    'SPOO'
-        .db    'L'+0x80
+        .db    "L"+0x80
         .dw    SPOOL
         .ascii    'TYP'
-        .db    'E'+0x80
+        .db    "E"+0x80
         .dw    TYPE
         .db    0x0FF
 ;

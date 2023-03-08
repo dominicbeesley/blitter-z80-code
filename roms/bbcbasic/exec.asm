@@ -2493,193 +2493,193 @@ SIGN:   CP      "+"
 ;
         ;.XLIST
 OPCODS: .ascii    'NO'
-        .db    'P'+0x80
+        .db    "P"+0x80
         .db    0
         .ascii    'RLC'
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    7
         .ascii    'EX'
         .db    0
         .ascii    'AF'
         .db    0
         .ascii    'AF'
-        .db    ''''+0x80
+        .db    ' "'"+0x80
         .db    8
         .ascii    'RRC'
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x0F
         .ascii    'RL'
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x17
         .ascii    'RR'
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x1F
         .ascii    'DA'
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x27
         .ascii    'CP'
-        .db    'L'+0x80
+        .db    "L"+0x80
         .db    0x2F
         .ascii    'SC'
-        .db    'F'+0x80
+        .db    "F"+0x80
         .db    0x37
         .ascii    'CC'
-        .db    'F'+0x80
+        .db    "F"+0x80
         .db    0x3F
         .ascii    'HAL'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .db    0x76
         .ascii    'EX'
-        .db    'X'+0x80
+        .db    "X"+0x80
         .db    0x0D9
         .ascii    'EX'
         .db    0
         .ascii    'DE'
         .db    0
         .ascii    "H"
-        .db    'L'+0x80
+        .db    "L"+0x80
         .db    0x0EB
         .ascii    "D"
-        .db    'I'+0x80
+        .db    "I"+0x80
         .db    0x0F3
         .ascii    "E"
-        .db    'I'+0x80
+        .db    "I"+0x80
         .db    0x0FB
 ;
         .ascii    'NE'
-        .db    'G'+0x80
+        .db    "G"+0x80
         .db    0x44
         .ascii    'IM'
         .db    0
-        .db    '0'+0x80
+        .db    "0"+0x80
         .db    0x46
         .ascii    'RET'
-        .db    'N'+0x80
+        .db    "N"+0x80
         .db    0x45
         .ascii    'RET'
-        .db    'I'+0x80
+        .db    "I"+0x80
         .db    0x4D
         .ascii    'IM'
         .db    0
-        .db    '1'+0x80
+        .db    "1"+0x80
         .db    0x56
         .ascii    'IM'
         .db    0
-        .db    '2'+0x80
+        .db    "2"+0x80
         .db    0x5E
         .ascii    'RR'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x67
         .ascii    'RL'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x6F
         .ascii    'LD'
-        .db    'I'+0x80
+        .db    "I"+0x80
         .db    0x0A0
         .ascii    'CP'
-        .db    'I'+0x80
+        .db    "I"+0x80
         .db    0x0A1
         .ascii    'IN'
-        .db    'I'+0x80
+        .db    "I"+0x80
         .db    0x0A2
         .ascii    'OUT'
-        .db    'I'+0x80
+        .db    "I"+0x80
         .db    0x0A3
         .ascii    'LD'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x0A8
         .ascii    'CP'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x0A9
         .ascii    'IN'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x0AA
         .ascii    'OUT'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x0AB
         .ascii    'LDI'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0B0
         .ascii    'CPI'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0B1
         .ascii    'INI'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0B2
         .ascii    'OTI'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0B3
         .ascii    'LDD'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0B8
         .ascii    'CPD'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0B9
         .ascii    'IND'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0BA
         .ascii    'OTD'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0BB
 ;
         .ascii    'BI'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .db    0x40
         .ascii    'RE'
-        .db    'S'+0x80
+        .db    "S"+0x80
         .db    0x80
         .ascii    'SE'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .db    0x0C0
 ;
         .ascii    'RL'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    0
         .ascii    'RR'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    8
         .ascii    "R"
-        .db    'L'+0x80
+        .db    "L"+0x80
         .db    0x10
         .ascii    "R"
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x18
         .ascii    'SL'
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x20
         .ascii    'SR'
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x28
         .ascii    'SR'
-        .db    'L'+0x80
+        .db    "L"+0x80
         .db    0x38
 ;
         .ascii    'PO'
-        .db    'P'+0x80
+        .db    "P"+0x80
         .db    0x0C1
         .ascii    'PUS'
-        .db    'H'+0x80
+        .db    "H"+0x80
         .db    0x0C5
         .ascii    'EX'
         .db    0
         .ascii    '(S'
-        .db    'P'+0x80
+        .db    "P"+0x80
         .db    0x0E3
 ;
         .ascii    'SU'
-        .db    'B'+0x80
+        .db    "B"+0x80
         .db    0x90
         .ascii    'AN'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x0A0
         .ascii    'XO'
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0A8
         .ascii    "O"
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x0B0
         .ascii    "C"
-        .db    'P'+0x80
+        .db    "P"+0x80
         .db    0x0B8
         .db    TAND
         .db    0x0A0
@@ -2687,178 +2687,178 @@ OPCODS: .ascii    'NO'
         .db    0x0B0
 ;
         .ascii    'AD'
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x80
         .ascii    'AD'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    0x88
         .ascii    'SB'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    0x98
 ;
         .ascii    'IN'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    4
         .ascii    'DE'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    5
 ;
         .ascii    "I"
-        .db    'N'+0x80
+        .db    "N"+0x80
         .db    0x40
         .ascii    'OU'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .db    0x41
 ;
         .ascii    "J"
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x20
         .ascii    'DJN'
-        .db    'Z'+0x80
+        .db    "Z"+0x80
         .db    0x10
 ;
         .ascii    "J"
-        .db    'P'+0x80
+        .db    "P"+0x80
         .db    0x0C2
 ;
         .ascii    'CAL'
-        .db    'L'+0x80
+        .db    "L"+0x80
         .db    0x0C4
 ;
         .ascii    'RS'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .db    0x0C7
 ;
         .ascii    'RE'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .db    0x0C0
 ;
         .ascii    "L"
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    0x40
 ;
         .db    DEF AND 0x7F
-        .db    'M'+0x80
+        .db    "M"+0x80
         .db    0
 ;
         .db    DEF AND 0x7F
-        .db    'B'+0x80
+        .db    "B"+0x80
         .db    0
 ;
         .ascii    'OP'
-        .db    'T'+0x80
+        .db    "T"+0x80
         .db    0
 ;
         .db    DEF AND 0x7F
-        .db    'W'+0x80
+        .db    "W"+0x80
         .db    0
 ;
         .db    0
 ;
-OPRNDS: .db    'B'+0x80
+OPRNDS: .db    "B"+0x80
         .db    0
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    1
-        .db    'D'+0x80
+        .db    "D"+0x80
         .db    2
-        .db    'E'+0x80
+        .db    "E"+0x80
         .db    3
-        .db    'H'+0x80
+        .db    "H"+0x80
         .db    4
-        .db    'L'+0x80
+        .db    "L"+0x80
         .db    5
         .ascii    '(H'
-        .db    'L'+0x80
+        .db    "L"+0x80
         .db    6
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    7
         .ascii    '(I'
-        .db    'X'+0x80
+        .db    "X"+0x80
         .db    0x86
         .ascii    '(I'
-        .db    'Y'+0x80
+        .db    "Y"+0x80
         .db    0x0C6
 ;
         .ascii    "B"
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    8
         .ascii    "D"
-        .db    'E'+0x80
+        .db    "E"+0x80
         .db    10
         .ascii    "H"
-        .db    'L'+0x80
+        .db    "L"+0x80
         .db    12
         .ascii    "I"
-        .db    'X'+0x80
+        .db    "X"+0x80
         .db    0x8C
         .ascii    "I"
-        .db    'Y'+0x80
+        .db    "Y"+0x80
         .db    0x0CC
         .ascii    "A"
-        .db    'F'+0x80
+        .db    "F"+0x80
         .db    14
         .ascii    "S"
-        .db    'P'+0x80
+        .db    "P"+0x80
         .db    14
 ;
         .ascii    "N"
-        .db    'Z'+0x80
+        .db    "Z"+0x80
         .db    16
-        .db    'Z'+0x80
+        .db    "Z"+0x80
         .db    17
         .ascii    "N"
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    18
         .ascii    "P"
-        .db    'O'+0x80
+        .db    "O"+0x80
         .db    20
         .ascii    "P"
-        .db    'E'+0x80
+        .db    "E"+0x80
         .db    21
-        .db    'P'+0x80
+        .db    "P"+0x80
         .db    22
-        .db    'M'+0x80
+        .db    "M"+0x80
         .db    23
 ;
         .ascii    "("
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    0x20
 ;
         .db    0
 ;
 LDOPS:  .ascii    "I"
         .db    0
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x47
         .ascii    "R"
         .db    0
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x4F
         .ascii    "A"
         .db    0
-        .db    'I'+0x80
+        .db    "I"+0x80
         .db    0x57
         .ascii    "A"
         .db    0
-        .db    'R'+0x80
+        .db    "R"+0x80
         .db    0x5F
         .ascii    '(BC'
         .db    0
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    2
         .ascii    '(DE'
         .db    0
-        .db    'A'+0x80
+        .db    "A"+0x80
         .db    0x12
         .ascii    "A"
         .db    0
         .ascii    '(B'
-        .db    'C'+0x80
+        .db    "C"+0x80
         .db    0x0A
         .ascii    "A"
         .db    0
         .ascii    '(D'
-        .db    'E'+0x80
+        .db    "E"+0x80
         .db    0x1A
 ;
         .db    0

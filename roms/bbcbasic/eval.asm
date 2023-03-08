@@ -218,7 +218,7 @@ EXPR2B: LD      A,B
         JP      M,EXPR2S
         EX      AF,AF'
         SUB     4
-        CP      '>'-4
+        CP      ">"-4
         JR      NZ,EXPR2C
         ADD     A,2
 EXPR2C: CALL    SAVE1
@@ -1432,12 +1432,12 @@ POPS1:  LD      SP,HL
 HEXDIG: LD      A,(IY)
         CP      "0"
         RET     C
-        CP      '9'+1
+        CP      "9"+1
         CCF
         RET     NC
         CP      "A"
         RET     C
-        SUB     'A'-10
+        SUB     "A"-10
         CP      16
         CCF
         RET

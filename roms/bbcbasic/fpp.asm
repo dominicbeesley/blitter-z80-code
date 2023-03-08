@@ -297,7 +297,7 @@ FADD:   DEC     B
         LD      A,D             ;SIGN OF LARGER
         SET     7,D             ;IMPLIED 1
         JP      M,FADD3         ;SIGNS DIFFERENT
-        CALL    ADD             ;HLH'L'=HLH'L'+DED'E'
+        CALL    ADD             ;HLH'L'=HLH "L"+DED'E'
         CALL    C,DIV2          ;NORMALISE
         SET     7,H
         JR      FADD4
@@ -1290,7 +1290,7 @@ STR24:  PUSH    AF
         ADC     A,'0'           ;ADD CARRY
         CP      "0"
         JR      Z,STR25         ;SUPPRESS ZERO
-        CP      '9'+1
+        CP      "9"+1
         CCF
         JR      NC,STR26
 STR25:  EX      (SP),HL
@@ -2221,7 +2221,7 @@ SQRB:   ADD     HL,HL
         RET
 ;
 DIGITQ: LD      A,(IX)
-        CP      '9'+1
+        CP      "9"+1
         CCF
         RET     C
         CP      "0"

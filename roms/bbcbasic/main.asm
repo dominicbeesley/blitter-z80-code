@@ -1620,7 +1620,7 @@ GETDEF: LD      A,(IY+1)
 LOCATE: SUB     "@"
         RET     C
         LD      H,0
-        CP      'Z'-'@'+1
+        CP      "Z"- "@"+1
         JR      NC,LOC0         ;NOT STATIC
         ADD     A,A
         LD      L,A
@@ -1639,9 +1639,9 @@ LOCATE: SUB     "@"
         XOR     A
         RET
 ;
-LOC0:   CP      '_'-'@'
+LOC0:   CP      "_"-'@'
         RET     C
-        CP      'z'-'@'+1
+        CP      "z"- "@"+1
         CCF
         DEC     A               ;SET NZ
         RET     C
@@ -1838,19 +1838,19 @@ RANGE:  LD      A,(IY)
         RET     Z
 RANGE1: CP      "0"
         RET     C
-        CP      '9'+1
+        CP      "9"+1
         CCF
         RET     NC
         CP      "@"             ;V2.4
         RET     Z
 RANGE2: CP      "A"
         RET     C
-        CP      'Z'+1
+        CP      "Z"+1
         CCF
         RET     NC
         CP      "_"
         RET     C
-        CP      'z'+1
+        CP      "z"+1
         CCF
         RET
 ;
