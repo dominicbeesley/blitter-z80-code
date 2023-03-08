@@ -257,14 +257,14 @@ ISUB:   CALL    SUB
         CALL    ADD
         CALL    FLOAT2
 FSUB:   LD      A,D
-        XOR     80H             ;CHANGE SIGN THEN ADD
+        XOR     0x80             ;CHANGE SIGN THEN ADD
         LD      D,A
         JR      FADD
 ;
 ;Reverse subtract.
 ;
 RSUB:   LD      A,H
-        XOR     80H
+        XOR     0x80
         LD      H,A
         JR      FADD
 ;
@@ -308,7 +308,7 @@ FADD3:  CALL    SUB             ;HLH'L'=HLH'L'-DED'E'
         CPL                     ;CHANGE RESULT SIGN
 FADD4:  EXX
         EX      DE,HL
-        LD      HL,8000H
+        LD      HL,0x8000
         OR      A               ;CLEAR CARRY
         SBC     HL,BC
         EX      DE,HL
@@ -447,7 +447,7 @@ FMUL:   DEC     B               ;TEST FOR ZERO
         CALL    C,MULB          ;NORMALISE & INC A
         EXX
         PUSH    HL
-        LD      HL,8000H
+        LD      HL,0x8000
         OR      A               ;CLEAR CARRY
         SBC     HL,DE
         POP     HL
@@ -462,7 +462,7 @@ CHKOVF: JR      C,CHKO1
         JP      P,ZERO          ;UNDERFLOW
         JR      CHKO2
 CHKO1:  JP      M,OFLOW         ;OVERFLOW
-CHKO2:  ADD     A,80H
+CHKO2:  ADD     A,0x80
         LD      C,A
         JP      Z,ZERO
         EX      AF,AF'          ;RESTORE SIGN BIT
@@ -525,7 +525,7 @@ IPOW3:  PUSH    BC
         RL      E
         RL      D
         PUSH    DE
-        LD      A,'*' AND 0FH
+        LD      A,'*' AND 0x0F
         PUSH    AF
         CALL    COPY
         CALL    OP              ;SQUARE
@@ -663,11 +663,11 @@ NOTK:   CALL    SFIX
 ;PI - Return PI (3.141592654)
 ;Result is floating-point numeric.
 ;
-PI:     LD      HL,490FH
+PI:     LD      HL,0x490F
         EXX
-        LD      HL,0DAA2H
+        LD      HL,0x0DAA2
         EXX
-        LD      C,81H
+        LD      C,0x81
         XOR     A               ;NUMERIC MARKER
         RET
 ;
@@ -690,11 +690,11 @@ RAD:    CALL    FPI180
 ;180/PI
 ;
 FPI180: CALL    SFLOAT
-        LD      DE,652EH
+        LD      DE,0x652E
         EXX
-        LD      DE,0E0D3H
+        LD      DE,0x0E0D3
         EXX
-        LD      B,85H
+        LD      B,0x85
         RET
 ;
 ;SGN - Return -1, 0 or +1
@@ -723,7 +723,7 @@ VAL:    CALL    SIGNQ
         INC     C
         JP      Z,NEGATE        ;ZERO/INTEGER
         LD      A,H
-        XOR     80H             ;CHANGE SIGN (FP)
+        XOR     0x80             ;CHANGE SIGN (FP)
         LD      H,A
         XOR     A
         RET
@@ -761,9 +761,9 @@ SQR0:   BIT     7,H
         BIT     0,C
         CALL    Z,DIV2          ;MAKE EXPONENT ODD
         LD      A,C
-        SUB     80H
+        SUB     0x80
         SRA     A               ;HALVE EXPONENT
-        ADD     A,80H
+        ADD     A,0x80
         LD      C,A
         PUSH    BC              ;SAVE EXPONENT
         EX      DE,HL
@@ -850,21 +850,21 @@ SIN1:   PUSH    AF              ;OCTANT
         CALL    PUSH5           ;SAVE X
         CALL    SQUARE          ;PUSH X*X
         CALL    POLY
-        DEFW    0A8B7H          ;a(8)
-        DEFW    3611H
-        DEFB    6DH
-        DEFW    0DE26H          ;a(6)
-        DEFW    0D005H
-        DEFB    73H
-        DEFW    80C0H           ;a(4)
-        DEFW    888H
-        DEFB    79H
-        DEFW    0AA9DH          ;a(2)
-        DEFW    0AAAAH
-        DEFB    7DH
+        DEFW    0x0A8B7          ;a(8)
+        DEFW    0x3611
+        DEFB    0x6D
+        DEFW    0x0DE26          ;a(6)
+        DEFW    0x0D005
+        DEFB    0x73
+        DEFW    0x80C0           ;a(4)
+        DEFW    0x888
+        DEFB    0x79
+        DEFW    0x0AA9D          ;a(2)
+        DEFW    0x0AAAA
+        DEFB    0x7D
         DEFW    0               ;a(0)
         DEFW    0
-        DEFB    80H
+        DEFB    0x80
         CALL    POP5
         CALL    POP5
         CALL    FMUL
@@ -872,21 +872,21 @@ SIN1:   PUSH    AF              ;OCTANT
 ;
 SIN2:   CALL    SQUARE          ;PUSH X*X
         CALL    POLY
-        DEFW    0D571H          ;b(8)
-        DEFW    4C78H
-        DEFB    70H
-        DEFW    94AFH           ;b(6)
-        DEFW    0B603H
-        DEFB    76H
-        DEFW    9CC8H           ;b(4)
-        DEFW    2AAAH
-        DEFB    7BH
-        DEFW    0FFDDH          ;b(2)
-        DEFW    0FFFFH
-        DEFB    7EH
+        DEFW    0x0D571          ;b(8)
+        DEFW    0x4C78
+        DEFB    0x70
+        DEFW    0x94AF           ;b(6)
+        DEFW    0x0B603
+        DEFB    0x76
+        DEFW    0x9CC8           ;b(4)
+        DEFW    0x2AAA
+        DEFB    0x7B
+        DEFW    0x0FFDD          ;b(2)
+        DEFW    0x0FFFF
+        DEFB    0x7E
         DEFW    0               ;b(0)
         DEFW    0
-        DEFB    80H
+        DEFB    0x80
         CALL    POP5
 SIN3:   POP     AF
         AND     4
@@ -903,21 +903,21 @@ FONE:   LD      HL,0
         EXX
         LD      HL,0
         EXX
-        LD      C,80H
+        LD      C,0x80
         RET
 ;
 DONE:   LD      DE,0
         EXX
         LD      DE,0
         EXX
-        LD      B,80H
+        LD      B,0x80
         RET
 ;
-PIBY4:  LD      DE,490FH
+PIBY4:  LD      DE,0x490F
         EXX
-        LD      DE,0DAA2H
+        LD      DE,0x0DAA2
         EXX
-        LD      B,7FH
+        LD      B,0x7F
         RET
 ;
 ;EXP - Exponential function
@@ -927,7 +927,7 @@ EXP:    CALL    SFLOAT
 EXP0:   CALL    LN2             ;LN(2)
         EXX
         DEC     E
-        LD      BC,0D1CFH       ;0.6931471805599453
+        LD      BC,0x0D1CF       ;0.6931471805599453
         EXX
         PUSH    HL              ;H7=SIGN
         CALL    MOD48           ;"MODULUS"
@@ -939,51 +939,51 @@ EXP0:   CALL    LN2             ;LN(2)
         LD      A,EXPRNG
         JP      ERROR           ;"Exp range"
 ;
-EXP1:   AND     80H
+EXP1:   AND     0x80
         OR      E
         PUSH    AF              ;INTEGER PART
         RES     7,H
         CALL    PUSH5           ;PUSH X*LN(2)
         CALL    POLY
-        DEFW    4072H           ;a(7)
-        DEFW    942EH
-        DEFB    73H
-        DEFW    6F65H           ;a(6)
-        DEFW    2E4FH
-        DEFB    76H
-        DEFW    6D37H           ;a(5)
-        DEFW    8802H
-        DEFB    79H
-        DEFW    0E512H          ;a(4)
-        DEFW    2AA0H
-        DEFB    7BH
-        DEFW    4F14H           ;a(3)
-        DEFW    0AAAAH
-        DEFB    7DH
-        DEFW    0FD56H          ;a(2)
-        DEFW    7FFFH
-        DEFB    7EH
-        DEFW    0FFFEH          ;a(1)
-        DEFW    0FFFFH
-        DEFB    7FH
+        DEFW    0x4072           ;a(7)
+        DEFW    0x942E
+        DEFB    0x73
+        DEFW    0x6F65           ;a(6)
+        DEFW    0x2E4F
+        DEFB    0x76
+        DEFW    0x6D37           ;a(5)
+        DEFW    0x8802
+        DEFB    0x79
+        DEFW    0x0E512          ;a(4)
+        DEFW    0x2AA0
+        DEFB    0x7B
+        DEFW    0x4F14           ;a(3)
+        DEFW    0x0AAAA
+        DEFB    0x7D
+        DEFW    0x0FD56          ;a(2)
+        DEFW    0x7FFF
+        DEFB    0x7E
+        DEFW    0x0FFFE          ;a(1)
+        DEFW    0x0FFFF
+        DEFB    0x7F
         DEFW    0               ;a(0)
         DEFW    0
-        DEFB    80H
+        DEFB    0x80
         CALL    POP5
         POP     AF
         PUSH    AF
         CALL    P,RECIP         ;X=1/X
         POP     AF
         JP      P,EXP4
-        AND     7FH
+        AND     0x7F
         NEG
-EXP4:   ADD     A,80H
+EXP4:   ADD     A,0x80
         ADD     A,C
         JR      C,EXP2
         JP      P,ZERO          ;UNDERFLOW
         JR      EXP3
 EXP2:   JP      M,OFLOW         ;OVERFLOW
-EXP3:   ADD     A,80H
+EXP3:   ADD     A,0x80
         JP      Z,ZERO
         LD      C,A
         XOR     A               ;NUMERIC MARKER
@@ -993,11 +993,11 @@ RECIP:  CALL    DONE
 RDIV:   CALL    SWAP
         JP      FDIV            ;RECIPROCAL
 ;
-LN2:    LD      DE,3172H        ;LN(2)
+LN2:    LD      DE,0x3172        ;LN(2)
         EXX
-        LD      DE,17F8H
+        LD      DE,0x17F8
         EXX
-        LD      B,7FH
+        LD      B,0x7F
         RET
 ;
 ;LN - Natural log.
@@ -1010,13 +1010,13 @@ LN0:    LD      A,LOGRNG
         INC     C
         DEC     C
         JP      Z,ERROR
-        LD      DE,3504H        ;SQR(2)
+        LD      DE,0x3504        ;SQR(2)
         EXX
-        LD      DE,0F333H       ;1.41421356237
+        LD      DE,0x0F333       ;1.41421356237
         EXX
         CALL    ICP0            ;MANTISSA>SQR(2)?
         LD      A,C             ;EXPONENT
-        LD      C,80H           ;1 <= X < 2
+        LD      C,0x80           ;1 <= X < 2
         JR      C,LN4
         DEC     C
         INC     A
@@ -1025,21 +1025,21 @@ LN4:    PUSH    AF              ;SAVE EXPONENT
         CALL    PUSH5
         CALL    SQUARE          ;PUSH X*X
         CALL    POLY
-        DEFW    0CC48H          ;a(9)
-        DEFW    74FBH
-        DEFB    7DH
-        DEFW    0AEAFH          ;a(7)
-        DEFW    11FFH
-        DEFB    7EH
-        DEFW    0D98CH          ;a(5)
-        DEFW    4CCDH
-        DEFB    7EH
-        DEFW    0A9E3H          ;a(3)
-        DEFW    2AAAH
-        DEFB    7FH
+        DEFW    0x0CC48          ;a(9)
+        DEFW    0x74FB
+        DEFB    0x7D
+        DEFW    0x0AEAF          ;a(7)
+        DEFW    0x11FF
+        DEFB    0x7E
+        DEFW    0x0D98C          ;a(5)
+        DEFW    0x4CCD
+        DEFB    0x7E
+        DEFW    0x0A9E3          ;a(3)
+        DEFW    0x2AAA
+        DEFB    0x7F
         DEFW    0               ;a(1)
         DEFW    0
-        DEFB    81H
+        DEFB    0x81
         CALL    POP5
         CALL    POP5
         CALL    FMUL
@@ -1048,13 +1048,13 @@ LN4:    PUSH    AF              ;SAVE EXPONENT
         EX      AF,AF'
         CALL    ZERO
         EX      AF,AF'
-        SUB     80H
+        SUB     0x80
         JR      Z,LN3
         JR      NC,LN1
         CPL
         INC     A
 LN1:    LD      H,A
-        LD      C,87H
+        LD      C,0x87
         PUSH    AF
         CALL    FLOAT
         RES     7,H
@@ -1073,11 +1073,11 @@ LN3:    CALL    POP5
 ;Result is floating-point numeric.
 ;
 LOG:    CALL    LN
-        LD      DE,5E5BH        ;LOG(e)
+        LD      DE,0x5E5B        ;LOG(e)
         EXX
-        LD      DE,0D8A9H
+        LD      DE,0x0D8A9
         EXX
-        LD      B,7EH
+        LD      B,0x7E
         CALL    FMUL
         XOR     A
         RET
@@ -1108,19 +1108,19 @@ ASN:    CALL    SFLOAT
 ATN:    CALL    SFLOAT
 ATN0:   PUSH    HL              ;SAVE SIGN
         RES     7,H
-        LD      DE,5413H        ;TAN(PI/8)=SQR(2)-1
+        LD      DE,0x5413        ;TAN(PI/8)=SQR(2)-1
         EXX
-        LD      DE,0CCD0H
+        LD      DE,0x0CCD0
         EXX
-        LD      B,7EH
+        LD      B,0x7E
         CALL    FCP0            ;COMPARE
         LD      B,0
         JR      C,ATN2
-        LD      DE,1A82H        ;TAN(3*PI/8)=SQR(2)+1
+        LD      DE,0x1A82        ;TAN(3*PI/8)=SQR(2)+1
         EXX
-        LD      DE,799AH
+        LD      DE,0x799A
         EXX
-        LD      B,81H
+        LD      B,0x81
         CALL    FCP0            ;COMPARE
         JR      C,ATN1
         CALL    RECIP           ;X=1/X
@@ -1132,27 +1132,27 @@ ATN2:   PUSH    BC              ;SAVE FLAG
         CALL    PUSH5
         CALL    SQUARE          ;PUSH X*X
         CALL    POLY
-        DEFW    0F335H          ;a(13)
-        DEFW    37D8H
-        DEFB    7BH
-        DEFW    6B91H           ;a(11)
-        DEFW    0AAB9H
-        DEFB    7CH
-        DEFW    41DEH           ;a(9)
-        DEFW    6197H
-        DEFB    7CH
-        DEFW    9D7BH           ;a(7)
-        DEFW    9237H
-        DEFB    7DH
-        DEFW    2A5AH           ;a(5)
-        DEFW    4CCCH
-        DEFB    7DH
-        DEFW    0A95CH          ;a(3)
-        DEFW    0AAAAH
-        DEFB    7EH
+        DEFW    0x0F335          ;a(13)
+        DEFW    0x37D8
+        DEFB    0x7B
+        DEFW    0x6B91           ;a(11)
+        DEFW    0x0AAB9
+        DEFB    0x7C
+        DEFW    0x41DE           ;a(9)
+        DEFW    0x6197
+        DEFB    0x7C
+        DEFW    0x9D7B           ;a(7)
+        DEFW    0x9237
+        DEFB    0x7D
+        DEFW    0x2A5A           ;a(5)
+        DEFW    0x4CCC
+        DEFB    0x7D
+        DEFW    0x0A95C          ;a(3)
+        DEFW    0x0AAAA
+        DEFB    0x7E
         DEFW    0               ;a(1)
         DEFW    0
-        DEFB    80H
+        DEFB    0x80
         CALL    POP5
         CALL    POP5
         CALL    FMUL
@@ -1275,7 +1275,7 @@ STR23:  DEC     C
         JR      NZ,STR22        ;32 TIMES
         LD      C,A             ;REMAINDER
         LD      A,H
-        AND     3FH             ;CLEAR OUT JUNK
+        AND     0x3F             ;CLEAR OUT JUNK
         LD      H,A
         POP     AF
         JP      P,STR24
@@ -1336,7 +1336,7 @@ STR30:  LD      A,D
         CP      11
         JR      C,STR32
 STR31:  LD      A,B             ;G MODE
-        LD      DE,101H
+        LD      DE,0x101
         OR      A
         JP      M,STR34
         JR      Z,STR32
@@ -1493,7 +1493,7 @@ GETEX1: CALL    DIGITQ
         LD      B,A
         LD      A,(IX)          ;GET BACK DIGIT
         INC     IX
-        AND     0FH             ;MASK UNWANTED BITS
+        AND     0x0F             ;MASK UNWANTED BITS
         ADD     A,B             ;ADD IN DIGIT
         LD      B,A
         DEC     C
@@ -1529,7 +1529,7 @@ NUMBER: CALL    DIGITQ
         DEC     C               ;SEE IF TRUNCATED
         INC     C
         JR      NZ,NUMB1        ;IMPORTANT!
-        AND     0FH
+        AND     0x0F
         EXX
         LD      B,0
         LD      C,A
@@ -1630,7 +1630,7 @@ SCALE:  LD      A,150
         JP      C,ERROR         ;"Accuracy lost"
         CALL    PIBY4
         EXX
-        LD      BC,2169H        ;3.141592653589793238
+        LD      BC,0x2169        ;3.141592653589793238
         EXX
 MOD48:  SET     7,D             ;IMPLIED 1
         SET     7,H
@@ -1828,7 +1828,7 @@ FCOMP:  LD      A,B
         CALL    ICP
 FCOMP0: LD      A,0
         RET     Z               ;Equal
-        LD      A,80H
+        LD      A,0x80
         RRA
         RET
 ;
@@ -2148,7 +2148,7 @@ MULB:   EXX
 ;SQRA, SQRB - SQUARE ROOT PRIMITIVES
 ;    Function: B'C'BC = SQR (D'E'DE)
 ;    Inputs: A = loop counter (normally -31)
-;            B'C'BCH'L'HL initialised to 0
+;            B'C'0xBC'L'HL initialised to 0
 ;  Destroys: A,B,C,D,E,H,L,B',C',D',E',H',L',F
 ;
 SQR1:   SBC     HL,BC

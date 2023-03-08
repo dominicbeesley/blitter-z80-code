@@ -7,7 +7,7 @@
 ;THIS PROGRAM ALLOWS THE USER TO ADAPT BBC BASIC TO THE
 ;PARTICULAR CHARACTERISTICS OF HIS SYSTEM HARDWARE ETC.
 ;
-;THE PROGRAM RESIDES AT 100H FOR EASE OF LOADING.
+;THE PROGRAM RESIDES AT 0x100 FOR EASE OF LOADING.
 ;*** IT MUST NOT EXCEED 256 BYTES IN TOTAL LENGTH ***
 ;
 ;PLEASE NOTE THAT A Z80 PROCESSOR AND CP/M VERSION 2.2
@@ -16,7 +16,7 @@
 ;R.T.RUSSELL, 04-02-1984
 ;
 BDOS    =     5
-COLD    =     200H
+COLD    =     0x200
 ;
         .globl  CLRSCN
         .globl  PUTCSR
@@ -27,7 +27,7 @@ COLD    =     200H
         .globl  BYE
 ;
         ASEG
-        ORG     100H
+        ORG     0x100
 ;
 ;JUMP TABLE - BASIC makes calls to hardware-dependent
 ;features via this table:
@@ -50,7 +50,7 @@ BYE:    JP      REBOOT          ;RETURN TO CP/M
 ;
 ;VECTOR TABLE FOR Z80-CTC:
 ;
-        ORG     $+7 AND 0FFF8H
+        ORG     $+7 AND 0x0FFF8
 ;
 ;VECTOR: DEFW    TIMER
 ;        DEFW    TIMER
@@ -76,7 +76,7 @@ REBOOT: LD      A,3
 ;        IM      2
 ;        LD      A,VECTOR/256
 ;        LD      I,A
-;        LD      A,VECTOR AND 0FFH
+;        LD      A,VECTOR AND 0x0FF
 ;        OUT     (CTC0),A
 ;        LD      A,10100111B
 ;        OUT     (CTC0+3),A
@@ -148,7 +148,7 @@ CLS:    PUSH    BC
 INKEY:  PUSH    BC
         PUSH    HL
         LD      C,6
-        LD      E,0FFH
+        LD      E,0x0FF
         CALL    BDOS            ;CONSOLE INPUT
         POP     HL
         POP     BC
@@ -192,7 +192,7 @@ PCSR:   RET
 ;        LD      A,14
 ;        OUT     (CRTCS),A
 ;        LD      A,H
-;        AND     0FH
+;        AND     0x0F
 ;        OUT     (CRTCD),A
 ;        LD      A,15
 ;        OUT     (CRTCS),A
@@ -234,30 +234,30 @@ GCSR:	ld		de, 0
 ;
 TIME:   DEFS    4
 ;
-HOME    =     0FF21H
+HOME    =     0x0FF21
 ;
-CTC0    =     80H
-CRTCS   =     84H
-CRTCD   =     85H
+CTC0    =     0x80
+CRTCS   =     0x84
+CRTCD   =     0x85
 ;
-        IF      $ GT 1F4H
+        IF      $ GT 0x1F4
         ERROR   'INSUFFICIENT SPACE'
         ENDIF
 ;
-        ORG     1F4H
+        ORG     0x1F4
 ;
         DEFB    80              ;WIDTH
-        DEFB    'K' AND 1FH     ;CURSOR UP
-        DEFB    'J' AND 1FH     ;CURSOR DOWN
-        DEFB    'L' AND 1FH     ;START OF LINE
-        DEFB    'B' AND 1FH     ;END OF LINE
-        DEFB    'C' AND 1FH     ;DELETE TO END OF LINE
-        DEFB    7FH             ;BACKSPACE & DELETE
-        DEFB    'X' AND 1FH     ;CANCEL LINE
-        DEFB    'H' AND 1FH     ;CURSOR LEFT
-        DEFB    'I' AND 1FH     ;CURSOR RIGHT
-        DEFB    'E' AND 1FH     ;DELETE CHARACTER
-        DEFB    'A' AND 1FH     ;INSERT CHARACTER
+        DEFB    'K' AND 0x1F     ;CURSOR UP
+        DEFB    'J' AND 0x1F     ;CURSOR DOWN
+        DEFB    'L' AND 0x1F     ;START OF LINE
+        DEFB    'B' AND 0x1F     ;END OF LINE
+        DEFB    'C' AND 0x1F     ;DELETE TO END OF LINE
+        DEFB    0x7F             ;BACKSPACE & DELETE
+        DEFB    'X' AND 0x1F     ;CANCEL LINE
+        DEFB    'H' AND 0x1F     ;CURSOR LEFT
+        DEFB    'I' AND 0x1F     ;CURSOR RIGHT
+        DEFB    'E' AND 0x1F     ;DELETE CHARACTER
+        DEFB    'A' AND 0x1F     ;INSERT CHARACTER
 ;
 FIN:    END
 

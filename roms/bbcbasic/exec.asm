@@ -116,27 +116,27 @@
         .globl   PC
         .globl   OC
 ;
-TAND    =     80H
-TOR     =     84H
-TERROR  =     85H
-LINE    =     86H
-OFF     =     87H
-STEP    =     88H
-SPC     =     89H
-TAB     =     8AH
-ELSE    =     8BH
-THEN    =     8CH
-LINO    =     8DH
-TO      =     0B8H
-TCMD    =     0C6H
-TCALL   =     0D6H
-DATA    =     0DCH
-DEF     =     0DDH
-TGOSUB  =     0E4H
-TGOTO   =     0E5H
-TON     =     0EEH
-TPROC   =     0F2H
-TSTOP   =     0FAH
+TAND    =     0x80
+TOR     =     0x84
+TERROR  =     0x85
+LINE    =     0x86
+OFF     =     0x87
+STEP    =     0x88
+SPC     =     0x89
+TAB     =     0x8A
+ELSE    =     0x8B
+THEN    =     0x8C
+LINO    =     0x8D
+TO      =     0x0B8
+TCMD    =     0x0C6
+TCALL   =     0x0D6
+DATA    =     0x0DC
+DEF     =     0x0DD
+TGOSUB  =     0x0E4
+TGOTO   =     0x0E5
+TON     =     0x0EE
+TPROC   =     0x0F2
+TSTOP   =     0x0FA
 ;
 CMDTAB: DEFW    AUTO
         DEFW    DELETE
@@ -281,7 +281,7 @@ NEWLIN: LD      A,(IY+0)        ;A=LINE LENGTH
         LD      A,' '
         JP      OUTCHR
 ;
-;ROUTINES FOR EACH STATEMENT:
+;ROUTINES FOR 0xEAC STATEMENT:
 ;
 ;OSCLI
 ;
@@ -338,8 +338,8 @@ ASM:    LD      (ERRLIN),IY
         JR      Z,ASM0
         LD      HL,LISTON
         LD      A,(HL)
-        AND     0FH
-        OR      30H
+        AND     0x0F
+        OR      0x30
         LD      (HL),A
         JR      XEQR
 ;
@@ -347,7 +347,7 @@ VAR:    CALL    GETVAR
         RET     Z
         JP      NC,PUTVAR
 SYNTAX: LD      A,16            ;"Syntax error"
-        DEFB    21H
+        DEFB    0x21
 ESCAPE: LD      A,17            ;"Escape"
 ERROR0: JP      ERROR
 ;
@@ -470,7 +470,7 @@ DIM5:   CALL    NXT
         JR      DIM
 ;
 BADDIM: LD      A,10            ;"Bad DIM"
-        DEFB    21H
+        DEFB    0x21
 NOROOM: LD      A,11            ;"DIM space"
 ERROR1: JP      ERROR
 ;
@@ -544,7 +544,7 @@ PRNTN4: LD      A,CR
 ;
 PRINT6: LD      B,2
         JR      PRINTC
-PRINT8: LD      BC,100H
+PRINT8: LD      BC,0x100
         JR      PRINTC
 PRINT9: LD      HL,STAVAR
         XOR     A
@@ -806,7 +806,7 @@ NEXT0:  SBC     HL,DE
         CALL    LOADN           ;LOOP VARIABLE
         BIT     7,D             ;SIGN?
         PUSH    AF
-        LD      A,'+' AND 0FH
+        LD      A,'+' AND 0x0F
         CALL    FPP             ;ADD STEP
         JR      C,ERROR3
         POP     AF              ;RESTORE TYPE
@@ -817,7 +817,7 @@ NEXT0:  SBC     HL,DE
         CALL    DLOAD5          ;LIMIT
         POP     AF
         CALL    Z,SWAP
-        LD      A,0+('<'-4) AND 0FH
+        LD      A,0+('<'-4) AND 0x0F
         CALL    FPP             ;TEST AGAINST LIMIT
         JR      C,ERROR3
         INC     H
@@ -1077,7 +1077,7 @@ INPUT:  CP      '#'
         CP      LINE
         JR      NZ,INPUT0
         INC     IY              ;SKIP "LINE"
-        LD      C,80H
+        LD      C,0x80
 INPUT0: LD      HL,BUFFER
         LD      (HL),CR         ;INITIALISE EMPTY
 INPUT1: CALL    TERM?
@@ -2005,10 +2005,10 @@ HEX:    PUSH    AF
         RRCA
         CALL    HEXOUT
         POP     AF
-HEXOUT: AND     0FH
-        ADD     A,90H
+HEXOUT: AND     0x0F
+        ADD     A,0x90
         DAA
-        ADC     A,40H
+        ADC     A,0x40
         DAA
 OUTCH1: JP      OUT
 ;
@@ -2040,7 +2040,7 @@ ASMB:   CP      '.'
 ASMB1:  CALL    SKIP
         RET     Z
         CP      TCALL
-        LD      C,0C4H
+        LD      C,0x0C4
         INC     IY
         JP      Z,GRPC
         DEC     IY
@@ -2094,20 +2094,20 @@ GROUP5: SUB     8+2
 G6:     CALL    REGLO
         LD      A,C
         JR      NC,BIND1
-        XOR     46H
+        XOR     0x46
         CALL    BIND
 DB:     CALL    NUMBER
         JR      VAL8
 ;
-G6HL:   AND     3FH
+G6HL:   AND     0x3F
         CP      12
         SCF
         RET     NZ
         LD      A,C
-        CP      80H
+        CP      0x80
         LD      C,9
         JR      Z,G4
-        XOR     1CH
+        XOR     0x1C
         RRCA
         LD      C,A
         CALL    ED
@@ -2120,7 +2120,7 @@ GROUP7: SUB     2
         CALL    REGHI
         LD      A,C
 BIND1:  JP      NC,BIND
-        XOR     64H
+        XOR     0x64
         RLCA
         RLCA
         RLCA
@@ -2164,7 +2164,7 @@ GROUPA: SUB     2
         CALL    NZ,COND
         LD      A,C
         JR      NC,GRPA
-        LD      A,18H
+        LD      A,0x18
 GRPA:   CALL    BYTE
         CALL    NUMBER
         LD      DE,(PC)
@@ -2188,11 +2188,11 @@ GROUPB: LD      B,A
         LD      A,C
         JR      NC,GRPB
         LD      A,B
-        AND     3FH
+        AND     0x3F
         CP      6
-        LD      A,0E9H
+        LD      A,0x0E9
         JR      Z,BYTE2
-        LD      A,0C3H
+        LD      A,0x0C3
 GRPB:   CALL    BYTE
         JR      ADDR
 ;
@@ -2245,11 +2245,11 @@ GROUPF: DJNZ    MISC
         LD      B,A
         CALL    Z,PAIR
         LD      A,B
-        AND     3FH
+        AND     0x3F
         CP      12
         LD      A,C
         JR      NZ,GRPB
-        LD      A,0F9H
+        LD      A,0x0F9
         JR      BYTE1
 ;
 LDIN:   EX      AF,AF'
@@ -2258,7 +2258,7 @@ LDIN:   EX      AF,AF'
         LD      A,C
         POP     BC
         JR      NC,BIND
-        LD      C,0AH
+        LD      C,0x0A
         CALL    PAIR1
         CALL    LD16
         JR      NC,GRPB
@@ -2309,20 +2309,20 @@ DEFM1:  XOR     A
 LD16:   LD      A,B
         JR      C,LD8
         LD      A,B
-        AND     3FH
+        AND     0x3F
         CP      12
         LD      A,C
         RET     Z
         CALL    ED
         LD      A,C
-        OR      43H
+        OR      0x43
         RET
 ;
 LD8:    CP      7
         SCF
         RET     NZ
         LD      A,C
-        OR      30H
+        OR      0x30
         RET
 ;
 CORN:   PUSH    BC
@@ -2331,11 +2331,11 @@ CORN:   PUSH    BC
         POP     BC
         JR      Z,NUMBER
         LD      H,-1
-ED:     LD      A,0EDH
+ED:     LD      A,0x0ED
         JR      BYTE
 ;
-CB:     LD      A,0CBH
-BIND:   CP      76H
+CB:     LD      A,0x0CB
+BIND:   CP      0x76
         SCF
         RET     Z               ;REJECT LD (HL),(HL)
         CALL    BYTE
@@ -2356,10 +2356,10 @@ OPND:   PUSH    HL
         CALL    Z,OFFSET
         LD      E,L
         POP     HL
-        LD      A,0DDH
+        LD      A,0x0DD
         BIT     6,B
         JR      Z,OP1
-        LD      A,0FDH
+        LD      A,0x0FD
 OP1:    OR      A
         INC     D
         LD      D,A
@@ -2389,7 +2389,7 @@ NUMBER: CALL    SKIP
 REG:    CALL    OPND
         RET     C
         LD      A,B
-        AND     3FH
+        AND     0x3F
         CP      8
         CCF
         RET
@@ -2405,7 +2405,7 @@ REGHI:  CALL    REG
 COND:   CALL    OPND
         RET     C
         LD      A,B
-        AND     1FH
+        AND     0x1F
         SUB     16
         JR      NC,SHL3
         CP      -15
@@ -2417,7 +2417,7 @@ COND:   CALL    OPND
 PAIR:   CALL    OPND
         RET     C
 PAIR1:  LD      A,B
-        AND     0FH
+        AND     0x0F
         SUB     8
         RET     C
         JR      SHL3
@@ -2493,380 +2493,380 @@ SIGN:   CP      '+'
 ;
         ;.XLIST
 OPCODS: DEFM    'NO'
-        DEFB    'P'+80H
+        DEFB    'P'+0x80
         DEFB    0
         DEFM    'RLC'
-        DEFB    'A'+80H
+        DEFB    'A'+0x80
         DEFB    7
         DEFM    'EX'
         DEFB    0
         DEFM    'AF'
         DEFB    0
         DEFM    'AF'
-        DEFB    ''''+80H
+        DEFB    ''''+0x80
         DEFB    8
         DEFM    'RRC'
-        DEFB    'A'+80H
-        DEFB    0FH
+        DEFB    'A'+0x80
+        DEFB    0x0F
         DEFM    'RL'
-        DEFB    'A'+80H
-        DEFB    17H
+        DEFB    'A'+0x80
+        DEFB    0x17
         DEFM    'RR'
-        DEFB    'A'+80H
-        DEFB    1FH
+        DEFB    'A'+0x80
+        DEFB    0x1F
         DEFM    'DA'
-        DEFB    'A'+80H
-        DEFB    27H
+        DEFB    'A'+0x80
+        DEFB    0x27
         DEFM    'CP'
-        DEFB    'L'+80H
-        DEFB    2FH
+        DEFB    'L'+0x80
+        DEFB    0x2F
         DEFM    'SC'
-        DEFB    'F'+80H
-        DEFB    37H
+        DEFB    'F'+0x80
+        DEFB    0x37
         DEFM    'CC'
-        DEFB    'F'+80H
-        DEFB    3FH
+        DEFB    'F'+0x80
+        DEFB    0x3F
         DEFM    'HAL'
-        DEFB    'T'+80H
-        DEFB    76H
+        DEFB    'T'+0x80
+        DEFB    0x76
         DEFM    'EX'
-        DEFB    'X'+80H
-        DEFB    0D9H
+        DEFB    'X'+0x80
+        DEFB    0x0D9
         DEFM    'EX'
         DEFB    0
         DEFM    'DE'
         DEFB    0
         DEFM    'H'
-        DEFB    'L'+80H
-        DEFB    0EBH
+        DEFB    'L'+0x80
+        DEFB    0x0EB
         DEFM    'D'
-        DEFB    'I'+80H
-        DEFB    0F3H
+        DEFB    'I'+0x80
+        DEFB    0x0F3
         DEFM    'E'
-        DEFB    'I'+80H
-        DEFB    0FBH
+        DEFB    'I'+0x80
+        DEFB    0x0FB
 ;
         DEFM    'NE'
-        DEFB    'G'+80H
-        DEFB    44H
+        DEFB    'G'+0x80
+        DEFB    0x44
         DEFM    'IM'
         DEFB    0
-        DEFB    '0'+80H
-        DEFB    46H
+        DEFB    '0'+0x80
+        DEFB    0x46
         DEFM    'RET'
-        DEFB    'N'+80H
-        DEFB    45H
+        DEFB    'N'+0x80
+        DEFB    0x45
         DEFM    'RET'
-        DEFB    'I'+80H
-        DEFB    4DH
+        DEFB    'I'+0x80
+        DEFB    0x4D
         DEFM    'IM'
         DEFB    0
-        DEFB    '1'+80H
-        DEFB    56H
+        DEFB    '1'+0x80
+        DEFB    0x56
         DEFM    'IM'
         DEFB    0
-        DEFB    '2'+80H
-        DEFB    5EH
+        DEFB    '2'+0x80
+        DEFB    0x5E
         DEFM    'RR'
-        DEFB    'D'+80H
-        DEFB    67H
+        DEFB    'D'+0x80
+        DEFB    0x67
         DEFM    'RL'
-        DEFB    'D'+80H
-        DEFB    6FH
+        DEFB    'D'+0x80
+        DEFB    0x6F
         DEFM    'LD'
-        DEFB    'I'+80H
-        DEFB    0A0H
+        DEFB    'I'+0x80
+        DEFB    0x0A0
         DEFM    'CP'
-        DEFB    'I'+80H
-        DEFB    0A1H
+        DEFB    'I'+0x80
+        DEFB    0x0A1
         DEFM    'IN'
-        DEFB    'I'+80H
-        DEFB    0A2H
+        DEFB    'I'+0x80
+        DEFB    0x0A2
         DEFM    'OUT'
-        DEFB    'I'+80H
-        DEFB    0A3H
+        DEFB    'I'+0x80
+        DEFB    0x0A3
         DEFM    'LD'
-        DEFB    'D'+80H
-        DEFB    0A8H
+        DEFB    'D'+0x80
+        DEFB    0x0A8
         DEFM    'CP'
-        DEFB    'D'+80H
-        DEFB    0A9H
+        DEFB    'D'+0x80
+        DEFB    0x0A9
         DEFM    'IN'
-        DEFB    'D'+80H
-        DEFB    0AAH
+        DEFB    'D'+0x80
+        DEFB    0x0AA
         DEFM    'OUT'
-        DEFB    'D'+80H
-        DEFB    0ABH
+        DEFB    'D'+0x80
+        DEFB    0x0AB
         DEFM    'LDI'
-        DEFB    'R'+80H
-        DEFB    0B0H
+        DEFB    'R'+0x80
+        DEFB    0x0B0
         DEFM    'CPI'
-        DEFB    'R'+80H
-        DEFB    0B1H
+        DEFB    'R'+0x80
+        DEFB    0x0B1
         DEFM    'INI'
-        DEFB    'R'+80H
-        DEFB    0B2H
+        DEFB    'R'+0x80
+        DEFB    0x0B2
         DEFM    'OTI'
-        DEFB    'R'+80H
-        DEFB    0B3H
+        DEFB    'R'+0x80
+        DEFB    0x0B3
         DEFM    'LDD'
-        DEFB    'R'+80H
-        DEFB    0B8H
+        DEFB    'R'+0x80
+        DEFB    0x0B8
         DEFM    'CPD'
-        DEFB    'R'+80H
-        DEFB    0B9H
+        DEFB    'R'+0x80
+        DEFB    0x0B9
         DEFM    'IND'
-        DEFB    'R'+80H
-        DEFB    0BAH
+        DEFB    'R'+0x80
+        DEFB    0x0BA
         DEFM    'OTD'
-        DEFB    'R'+80H
-        DEFB    0BBH
+        DEFB    'R'+0x80
+        DEFB    0x0BB
 ;
         DEFM    'BI'
-        DEFB    'T'+80H
-        DEFB    40H
+        DEFB    'T'+0x80
+        DEFB    0x40
         DEFM    'RE'
-        DEFB    'S'+80H
-        DEFB    80H
+        DEFB    'S'+0x80
+        DEFB    0x80
         DEFM    'SE'
-        DEFB    'T'+80H
-        DEFB    0C0H
+        DEFB    'T'+0x80
+        DEFB    0x0C0
 ;
         DEFM    'RL'
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFB    0
         DEFM    'RR'
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFB    8
         DEFM    'R'
-        DEFB    'L'+80H
-        DEFB    10H
+        DEFB    'L'+0x80
+        DEFB    0x10
         DEFM    'R'
-        DEFB    'R'+80H
-        DEFB    18H
+        DEFB    'R'+0x80
+        DEFB    0x18
         DEFM    'SL'
-        DEFB    'A'+80H
-        DEFB    20H
+        DEFB    'A'+0x80
+        DEFB    0x20
         DEFM    'SR'
-        DEFB    'A'+80H
-        DEFB    28H
+        DEFB    'A'+0x80
+        DEFB    0x28
         DEFM    'SR'
-        DEFB    'L'+80H
-        DEFB    38H
+        DEFB    'L'+0x80
+        DEFB    0x38
 ;
         DEFM    'PO'
-        DEFB    'P'+80H
-        DEFB    0C1H
+        DEFB    'P'+0x80
+        DEFB    0x0C1
         DEFM    'PUS'
-        DEFB    'H'+80H
-        DEFB    0C5H
+        DEFB    'H'+0x80
+        DEFB    0x0C5
         DEFM    'EX'
         DEFB    0
         DEFM    '(S'
-        DEFB    'P'+80H
-        DEFB    0E3H
+        DEFB    'P'+0x80
+        DEFB    0x0E3
 ;
         DEFM    'SU'
-        DEFB    'B'+80H
-        DEFB    90H
+        DEFB    'B'+0x80
+        DEFB    0x90
         DEFM    'AN'
-        DEFB    'D'+80H
-        DEFB    0A0H
+        DEFB    'D'+0x80
+        DEFB    0x0A0
         DEFM    'XO'
-        DEFB    'R'+80H
-        DEFB    0A8H
+        DEFB    'R'+0x80
+        DEFB    0x0A8
         DEFM    'O'
-        DEFB    'R'+80H
-        DEFB    0B0H
+        DEFB    'R'+0x80
+        DEFB    0x0B0
         DEFM    'C'
-        DEFB    'P'+80H
-        DEFB    0B8H
+        DEFB    'P'+0x80
+        DEFB    0x0B8
         DEFB    TAND
-        DEFB    0A0H
+        DEFB    0x0A0
         DEFB    TOR
-        DEFB    0B0H
+        DEFB    0x0B0
 ;
         DEFM    'AD'
-        DEFB    'D'+80H
-        DEFB    80H
+        DEFB    'D'+0x80
+        DEFB    0x80
         DEFM    'AD'
-        DEFB    'C'+80H
-        DEFB    88H
+        DEFB    'C'+0x80
+        DEFB    0x88
         DEFM    'SB'
-        DEFB    'C'+80H
-        DEFB    98H
+        DEFB    'C'+0x80
+        DEFB    0x98
 ;
         DEFM    'IN'
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFB    4
         DEFM    'DE'
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFB    5
 ;
         DEFM    'I'
-        DEFB    'N'+80H
-        DEFB    40H
+        DEFB    'N'+0x80
+        DEFB    0x40
         DEFM    'OU'
-        DEFB    'T'+80H
-        DEFB    41H
+        DEFB    'T'+0x80
+        DEFB    0x41
 ;
         DEFM    'J'
-        DEFB    'R'+80H
-        DEFB    20H
+        DEFB    'R'+0x80
+        DEFB    0x20
         DEFM    'DJN'
-        DEFB    'Z'+80H
-        DEFB    10H
+        DEFB    'Z'+0x80
+        DEFB    0x10
 ;
         DEFM    'J'
-        DEFB    'P'+80H
-        DEFB    0C2H
+        DEFB    'P'+0x80
+        DEFB    0x0C2
 ;
         DEFM    'CAL'
-        DEFB    'L'+80H
-        DEFB    0C4H
+        DEFB    'L'+0x80
+        DEFB    0x0C4
 ;
         DEFM    'RS'
-        DEFB    'T'+80H
-        DEFB    0C7H
+        DEFB    'T'+0x80
+        DEFB    0x0C7
 ;
         DEFM    'RE'
-        DEFB    'T'+80H
-        DEFB    0C0H
+        DEFB    'T'+0x80
+        DEFB    0x0C0
 ;
         DEFM    'L'
-        DEFB    'D'+80H
-        DEFB    40H
+        DEFB    'D'+0x80
+        DEFB    0x40
 ;
-        DEFB    DEF AND 7FH
-        DEFB    'M'+80H
+        DEFB    DEF AND 0x7F
+        DEFB    'M'+0x80
         DEFB    0
 ;
-        DEFB    DEF AND 7FH
-        DEFB    'B'+80H
+        DEFB    DEF AND 0x7F
+        DEFB    'B'+0x80
         DEFB    0
 ;
         DEFM    'OP'
-        DEFB    'T'+80H
+        DEFB    'T'+0x80
         DEFB    0
 ;
-        DEFB    DEF AND 7FH
-        DEFB    'W'+80H
+        DEFB    DEF AND 0x7F
+        DEFB    'W'+0x80
         DEFB    0
 ;
         DEFB    0
 ;
-OPRNDS: DEFB    'B'+80H
+OPRNDS: DEFB    'B'+0x80
         DEFB    0
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFB    1
-        DEFB    'D'+80H
+        DEFB    'D'+0x80
         DEFB    2
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFB    3
-        DEFB    'H'+80H
+        DEFB    'H'+0x80
         DEFB    4
-        DEFB    'L'+80H
+        DEFB    'L'+0x80
         DEFB    5
         DEFM    '(H'
-        DEFB    'L'+80H
+        DEFB    'L'+0x80
         DEFB    6
-        DEFB    'A'+80H
+        DEFB    'A'+0x80
         DEFB    7
         DEFM    '(I'
-        DEFB    'X'+80H
-        DEFB    86H
+        DEFB    'X'+0x80
+        DEFB    0x86
         DEFM    '(I'
-        DEFB    'Y'+80H
-        DEFB    0C6H
+        DEFB    'Y'+0x80
+        DEFB    0x0C6
 ;
         DEFM    'B'
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFB    8
         DEFM    'D'
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFB    10
         DEFM    'H'
-        DEFB    'L'+80H
+        DEFB    'L'+0x80
         DEFB    12
         DEFM    'I'
-        DEFB    'X'+80H
-        DEFB    8CH
+        DEFB    'X'+0x80
+        DEFB    0x8C
         DEFM    'I'
-        DEFB    'Y'+80H
-        DEFB    0CCH
+        DEFB    'Y'+0x80
+        DEFB    0x0CC
         DEFM    'A'
-        DEFB    'F'+80H
+        DEFB    'F'+0x80
         DEFB    14
         DEFM    'S'
-        DEFB    'P'+80H
+        DEFB    'P'+0x80
         DEFB    14
 ;
         DEFM    'N'
-        DEFB    'Z'+80H
+        DEFB    'Z'+0x80
         DEFB    16
-        DEFB    'Z'+80H
+        DEFB    'Z'+0x80
         DEFB    17
         DEFM    'N'
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFB    18
         DEFM    'P'
-        DEFB    'O'+80H
+        DEFB    'O'+0x80
         DEFB    20
         DEFM    'P'
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFB    21
-        DEFB    'P'+80H
+        DEFB    'P'+0x80
         DEFB    22
-        DEFB    'M'+80H
+        DEFB    'M'+0x80
         DEFB    23
 ;
         DEFM    '('
-        DEFB    'C'+80H
-        DEFB    20H
+        DEFB    'C'+0x80
+        DEFB    0x20
 ;
         DEFB    0
 ;
 LDOPS:  DEFM    'I'
         DEFB    0
-        DEFB    'A'+80H
-        DEFB    47H
+        DEFB    'A'+0x80
+        DEFB    0x47
         DEFM    'R'
         DEFB    0
-        DEFB    'A'+80H
-        DEFB    4FH
+        DEFB    'A'+0x80
+        DEFB    0x4F
         DEFM    'A'
         DEFB    0
-        DEFB    'I'+80H
-        DEFB    57H
+        DEFB    'I'+0x80
+        DEFB    0x57
         DEFM    'A'
         DEFB    0
-        DEFB    'R'+80H
-        DEFB    5FH
+        DEFB    'R'+0x80
+        DEFB    0x5F
         DEFM    '(BC'
         DEFB    0
-        DEFB    'A'+80H
+        DEFB    'A'+0x80
         DEFB    2
         DEFM    '(DE'
         DEFB    0
-        DEFB    'A'+80H
-        DEFB    12H
+        DEFB    'A'+0x80
+        DEFB    0x12
         DEFM    'A'
         DEFB    0
         DEFM    '(B'
-        DEFB    'C'+80H
-        DEFB    0AH
+        DEFB    'C'+0x80
+        DEFB    0x0A
         DEFM    'A'
         DEFB    0
         DEFM    '(D'
-        DEFB    'E'+80H
-        DEFB    1AH
+        DEFB    'E'+0x80
+        DEFB    0x1A
 ;
         DEFB    0
 ;
         .LIST
 ;
-LF      =     0AH
-CR      =     0DH
+LF      =     0x0A
+CR      =     0x0D
 ;
 FIN:    END
 

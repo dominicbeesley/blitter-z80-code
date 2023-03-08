@@ -347,10 +347,10 @@ PUTPTR: LD      D,L
         PUSH    DE
         CALL    FIND
         POP     AF
-        AND     7FH
+        AND     0x7F
         BIT     7,(HL)          ;PENDING WRITE?
         JR      Z,PUTPT1
-        OR      80H
+        OR      0x80
 PUTPT1: LD      (HL),A
         PUSH    DE
         PUSH    HL
@@ -636,7 +636,7 @@ PARSE:  LD      A,(HL)
         RET     NC
         CP      '?'
         RET     C
-        XOR     40H
+        XOR     0x40
         RET
 ;
 SETUP2: PUSH    DE
@@ -718,7 +718,7 @@ HEX1:   LD      A,(HL)
         CP      'F'+1
         JR      NC,SKIPSP
         SUB     7
-HEX2:   AND     0FH
+HEX2:   AND     0x0F
         EX      DE,HL
         ADD     HL,HL
         ADD     HL,HL
@@ -762,7 +762,7 @@ OSCLI3: INC     DE
         JR      Z,OSCLI4
         XOR     (HL)
         JR      Z,OSCLI3
-        CP      80H
+        CP      0x80
         JR      Z,OSCLI4
         POP     DE
         JR      OSCLI1
@@ -870,7 +870,7 @@ DIR1:   CALL    LTRAP
         RRCA
         RRCA
         RRCA
-        AND     60H
+        AND     0x60
         LD      E,A
         LD      D,0
         LD      HL,DSKBUF+1
@@ -954,10 +954,10 @@ SPOOL:  LD      A,00000010B     ;*SPOOL
         CALL    OPEN3           ;FINISH OPEN OPERATION
 JPIX:   JP      (IX)            ;"RETURN"
 ;
-UPPRC:  AND     7FH
+UPPRC:  AND     0x7F
         CP      '`'
         RET     C
-        AND     5FH             ;CONVERT TO UPPER CASE
+        AND     0x5F             ;CONVERT TO UPPER CASE
         RET
 ;
 ;*ESC COMMAND
@@ -978,54 +978,54 @@ ESCC1:  CALL    HEX
 ;
 ;
 COMDS:  DEFM    'BY'
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFW    BYE
         DEFM    'CP'
-        DEFB    'M'+80H
+        DEFB    'M'+0x80
         DEFW    BYE
         DEFM    'DI'
-        DEFB    'R'+80H
+        DEFB    'R'+0x80
         DEFW    DIR
         DEFM    'DRIV'
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFW    DRV
         DEFM    'ERAS'
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFW    ERA
         DEFM    'ER'
-        DEFB    'A'+80H
+        DEFB    'A'+0x80
         DEFW    ERA
         DEFM    'ES'
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFW    ESCCTL
         DEFM    'EXE'
-        DEFB    'C'+80H
+        DEFB    'C'+0x80
         DEFW    EXEC
         DEFM    'LOA'
-        DEFB    'D'+80H
+        DEFB    'D'+0x80
         DEFW    STLOAD
         DEFM    'OP'
-        DEFB    'T'+80H
+        DEFB    'T'+0x80
         DEFW    OPT
         DEFM    'RENAM'
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFW    REN
         DEFM    'RE'
-        DEFB    'N'+80H
+        DEFB    'N'+0x80
         DEFW    REN
         DEFM    'RESE'
-        DEFB    'T'+80H
+        DEFB    'T'+0x80
         DEFW    RES
         DEFM    'SAV'
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFW    STSAVE
         DEFM    'SPOO'
-        DEFB    'L'+80H
+        DEFB    'L'+0x80
         DEFW    SPOOL
         DEFM    'TYP'
-        DEFB    'E'+80H
+        DEFB    'E'+0x80
         DEFW    TYPE
-        DEFB    0FFH
+        DEFB    0x0FF
 ;
 ;PTEXT - Print text
 ;   Inputs: HL = address of text
@@ -1038,7 +1038,7 @@ CPTEXT: PUSH    AF              ;**
         POP     AF              ;**
 SPTEXT: CALL    OSWRCH          ;**
 PTEXT:  LD      A,(HL)
-        AND     7FH
+        AND     0x7F
         INC     HL
         CALL    OSWRCH
         DJNZ    PTEXT
@@ -1065,8 +1065,8 @@ OSINIT: LD      C,45            ;*
         ; dtrg: this is the checksum code, intended to validate binary
         ; integrity over bad connections. It doesn't have any use with
         ; CP/Mish so I've simply disabled it.
-;        LD      BC,SUMFIX+2-200H
-;        LD      HL,200H
+;        LD      BC,SUMFIX+2-0x200
+;        LD      HL,0x200
 ;        XOR     A
 ;        LD      E,A
 ;SUM:    ADD     A,(HL)
@@ -1123,12 +1123,12 @@ ABORT:  LD      HL,FLAGS        ;ACKNOWLEDGE
 TEST20: LD      (HL),20
 TEST:   PUSH    DE
         LD      A,6
-        LD      E,0FFH
+        LD      E,0x0FF
         CALL    BDOS0
         POP     DE
         OR      A
         RET     Z
-        CP      'S' AND 1FH     ;PAUSE DISPLAY?
+        CP      'S' AND 0x1F     ;PAUSE DISPLAY?
         JR      Z,OSRDCH
         CP      ESC
         JR      Z,ESCSET
@@ -1266,7 +1266,7 @@ TOGGLE: LD      A,(FLAGS)
 ;           A=0.
 ; Destroys: A,B,C,D,E,H,L,F
 ;
-OSLINE: LD      IX,200H
+OSLINE: LD      IX,0x200
         LD      A,(FLAGS)
         BIT     3,A             ;EDIT MODE?
         JR      Z,OSLIN1
@@ -1326,7 +1326,7 @@ LIMIT:  CALL    Z,KEYGET        ;READ KEYBOARD
         CP      (IX-8)          ;END OF LINE   (IX-8)
         JP      Z,RIGHT
         LD      C,0             ;INHIBIT REPEAT
-        CP      'P' AND 1FH
+        CP      'P' AND 0x1F
         JP      Z,TOGGLE
         CP      (IX-6)          ;DELETE LEFT   (IX-6)
         JR      Z,BACK
@@ -1452,16 +1452,16 @@ SUMFIX: DEFS    2
 BEL     =     7
 BS      =     8
 HT      =     9
-LF      =     0AH
-VT      =     0BH
-CR      =     0DH
-ESC     =     1BH
-DEL     =     7FH
+LF      =     0x0A
+VT      =     0x0B
+CR      =     0x0D
+ESC     =     0x1B
+DEL     =     0x7F
 ;
 BDOS    =     5
 ;
-FCB     =     5CH
-DSKBUF  =     80H
+FCB     =     0x5C
+DSKBUF  =     0x80
 ;
 FCBSIZ  =     128+36+2
 ;

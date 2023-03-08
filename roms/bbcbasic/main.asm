@@ -98,33 +98,33 @@
         .globl   LISTON
         .globl   TRACEN
 ;
-TERROR  =     85H
-LINE    =     86H
-ELSE    =     8BH
-THEN    =     8CH
-LINO    =     8DH
-FN      =     0A4H
-TO      =     0B8H
-REN     =     0CCH
-DATA    =     0DCH
-DIM     =     0DEH
-FOR     =     0E3H
-GOSUB   =     0E4H
-GOTO    =     0E5H
-TIF     =     0E7H
-LOCAL   =     0EAH
-NEXT    =     0EDH
-ON      =     0EEH
-PROC    =     0F2H
-REM     =     0F4H
-REPEAT  =     0F5H
-RESTOR  =     0F7H
-TRACE   =     0FCH
-UNTIL   =     0FDH
+TERROR  =     0x85
+LINE    =     0x86
+ELSE    =     0x8B
+THEN    =     0x8C
+LINO    =     0x8D
+FN      =     0x0A4
+TO      =     0x0B8
+REN     =     0x0CC
+DATA    =     0x0DC
+DIM     =     0x0DE
+FOR     =     0x0E3
+GOSUB   =     0x0E4
+GOTO    =     0x0E5
+TIF     =     0x0E7
+LOCAL   =     0x0EA
+NEXT    =     0x0ED
+ON      =     0x0EE
+PROC    =     0x0F2
+REM     =     0x0F4
+REPEAT  =     0x0F5
+RESTOR  =     0x0F7
+TRACE   =     0x0FC
+UNTIL   =     0x0FD
 ;
-TOKLO   =     8FH
-TOKHI   =     93H
-OFFSET  =     0CFH-TOKLO
+TOKLO   =     0x8F
+TOKHI   =     0x93
+OFFSET  =     0x0CF-TOKLO
 ;
 
         .area   CODE(REL,CON)
@@ -155,7 +155,7 @@ COLD:   LD      HL,STAVAR       ;COLD START
 PURGE:  LD      (HL),A          ;CLEAR SCRATCHPAD
         INC     L
         JR      NZ,PURGE
-        LD      A,37H           ;V3.0
+        LD      A,0x37           ;V3.0
         LD      (LISTON),A
         LD      HL,NOTICE
         LD      (ERRTXT),HL
@@ -172,14 +172,14 @@ NOTICE: DEFM    '(C) Copyright R.T.Russell 1987'
         DEFB    CR
         DEFB    LF
         DEFB    0
-WARM:   DEFB    0F6H
+WARM:   DEFB    0x0F6
 CLOOP:  SCF
         LD      SP,(HIMEM)
         CALL    PROMPT          ;PROMPT USER
         LD      HL,LISTON
         LD      A,(HL)
-        AND     0FH             ;LISTO
-        OR      30H             ;OPT 3
+        AND     0x0F             ;LISTO
+        OR      0x30             ;OPT 3
         LD      (HL),A
         SBC     HL,HL           ;HL <- 0 (V3.0)
         LD      (ERRTRP),HL
@@ -284,291 +284,291 @@ ATEND:  POP     BC              ;LINE LENGTH
 ; ONLY MATCH WITH THE WORD FOLLOWED IMMEDIATELY
 ; BY A DELIMITER.
 ;
-KEYWDS: DEFB    80H
+KEYWDS: DEFB    0x80
         DEFM    'AND'
-        DEFB    94H
+        DEFB    0x94
         DEFM    'ABS'
-        DEFB    95H
+        DEFB    0x95
         DEFM    'ACS'
-        DEFB    96H
+        DEFB    0x96
         DEFM    'ADVAL'
-        DEFB    97H
+        DEFB    0x97
         DEFM    'ASC'
-        DEFB    98H
+        DEFB    0x98
         DEFM    'ASN'
-        DEFB    99H
+        DEFB    0x99
         DEFM    'ATN'
-        DEFB    0C6H
+        DEFB    0x0C6
         DEFM    'AUTO'
-        DEFB    9AH
+        DEFB    0x9A
         DEFM    'BGET'
         DEFB    0
-        DEFB    0D5H
+        DEFB    0x0D5
         DEFM    'BPUT'
         DEFB    0
-        DEFB    0FBH
+        DEFB    0x0FB
         DEFM    'COLOUR'
-        DEFB    0FBH
+        DEFB    0x0FB
         DEFM    'COLOR'
-        DEFB    0D6H
+        DEFB    0x0D6
         DEFM    'CALL'
-        DEFB    0D7H
+        DEFB    0x0D7
         DEFM    'CHAIN'
-        DEFB    0BDH
+        DEFB    0x0BD
         DEFM    'CHR$'
-        DEFB    0D8H
+        DEFB    0x0D8
         DEFM    'CLEAR'
         DEFB    0
-        DEFB    0D9H
+        DEFB    0x0D9
         DEFM    'CLOSE'
         DEFB    0
-        DEFB    0DAH
+        DEFB    0x0DA
         DEFM    'CLG'
         DEFB    0
-        DEFB    0DBH
+        DEFB    0x0DB
         DEFM    'CLS'
         DEFB    0
-        DEFB    9BH
+        DEFB    0x9B
         DEFM    'COS'
-        DEFB    9CH
+        DEFB    0x9C
         DEFM    'COUNT'
         DEFB    0
-        DEFB    0DCH
+        DEFB    0x0DC
         DEFM    'DATA'
-        DEFB    9DH
+        DEFB    0x9D
         DEFM    'DEG'
-        DEFB    0DDH
+        DEFB    0x0DD
         DEFM    'DEF'
-        DEFB    0C7H
+        DEFB    0x0C7
         DEFM    'DELETE'
-        DEFB    81H
+        DEFB    0x81
         DEFM    'DIV'
-        DEFB    0DEH
+        DEFB    0x0DE
         DEFM    'DIM'
-        DEFB    0DFH
+        DEFB    0x0DF
         DEFM    'DRAW'
-        DEFB    0E1H
+        DEFB    0x0E1
         DEFM    'ENDPROC'
         DEFB    0
-        DEFB    0E0H
+        DEFB    0x0E0
         DEFM    'END'
         DEFB    0
-        DEFB    0E2H
+        DEFB    0x0E2
         DEFM    'ENVELOPE'
-        DEFB    8BH
+        DEFB    0x8B
         DEFM    'ELSE'
-        DEFB    0A0H
+        DEFB    0x0A0
         DEFM    'EVAL'
-        DEFB    9EH
+        DEFB    0x9E
         DEFM    'ERL'
         DEFB    0
-        DEFB    85H
+        DEFB    0x85
         DEFM    'ERROR'
-        DEFB    0C5H
+        DEFB    0x0C5
         DEFM    'EOF'
         DEFB    0
-        DEFB    82H
+        DEFB    0x82
         DEFM    'EOR'
-        DEFB    9FH
+        DEFB    0x9F
         DEFM    'ERR'
         DEFB    0
-        DEFB    0A1H
+        DEFB    0x0A1
         DEFM    'EXP'
-        DEFB    0A2H
+        DEFB    0x0A2
         DEFM    'EXT'
         DEFB    0
-        DEFB    0E3H
+        DEFB    0x0E3
         DEFM    'FOR'
-        DEFB    0A3H
+        DEFB    0x0A3
         DEFM    'FALSE'
         DEFB    0
-        DEFB    0A4H
+        DEFB    0x0A4
         DEFM    'FN'
-        DEFB    0E5H
+        DEFB    0x0E5
         DEFM    'GOTO'
-        DEFB    0BEH
+        DEFB    0x0BE
         DEFM    'GET$'
-        DEFB    0A5H
+        DEFB    0x0A5
         DEFM    'GET'
-        DEFB    0E4H
+        DEFB    0x0E4
         DEFM    'GOSUB'
-        DEFB    0E6H
+        DEFB    0x0E6
         DEFM    'GCOL'
-        DEFB    93H
+        DEFB    0x93
         DEFM    'HIMEM'
         DEFB    0
-        DEFB    0E8H
+        DEFB    0x0E8
         DEFM    'INPUT'
-        DEFB    0E7H
+        DEFB    0x0E7
         DEFM    'IF'
-        DEFB    0BFH
+        DEFB    0x0BF
         DEFM    'INKEY$'
-        DEFB    0A6H
+        DEFB    0x0A6
         DEFM    'INKEY'
-        DEFB    0A8H
+        DEFB    0x0A8
         DEFM    'INT'
-        DEFB    0A7H
+        DEFB    0x0A7
         DEFM    'INSTR('
-        DEFB    0C9H
+        DEFB    0x0C9
         DEFM    'LIST'
-        DEFB    86H
+        DEFB    0x86
         DEFM    'LINE'
-        DEFB    0C8H
+        DEFB    0x0C8
         DEFM    'LOAD'
-        DEFB    92H
+        DEFB    0x92
         DEFM    'LOMEM'
         DEFB    0
-        DEFB    0EAH
+        DEFB    0x0EA
         DEFM    'LOCAL'
-        DEFB    0C0H
+        DEFB    0x0C0
         DEFM    'LEFT$('
-        DEFB    0A9H
+        DEFB    0x0A9
         DEFM    'LEN'
-        DEFB    0E9H
+        DEFB    0x0E9
         DEFM    'LET'
-        DEFB    0ABH
+        DEFB    0x0AB
         DEFM    'LOG'
-        DEFB    0AAH
+        DEFB    0x0AA
         DEFM    'LN'
-        DEFB    0C1H
+        DEFB    0x0C1
         DEFM    'MID$('
-        DEFB    0EBH
+        DEFB    0x0EB
         DEFM    'MODE'
-        DEFB    83H
+        DEFB    0x83
         DEFM    'MOD'
-        DEFB    0ECH
+        DEFB    0x0EC
         DEFM    'MOVE'
-        DEFB    0EDH
+        DEFB    0x0ED
         DEFM    'NEXT'
-        DEFB    0CAH
+        DEFB    0x0CA
         DEFM    'NEW'
         DEFB    0
-        DEFB    0ACH
+        DEFB    0x0AC
         DEFM    'NOT'
-        DEFB    0CBH
+        DEFB    0x0CB
         DEFM    'OLD'
         DEFB    0
-        DEFB    0EEH
+        DEFB    0x0EE
         DEFM    'ON'
-        DEFB    87H
+        DEFB    0x87
         DEFM    'OFF'
-        DEFB    84H
+        DEFB    0x84
         DEFM    'OR'
-        DEFB    8EH
+        DEFB    0x8E
         DEFM    'OPENIN'
-        DEFB    0AEH
+        DEFB    0x0AE
         DEFM    'OPENOUT'
-        DEFB    0ADH
+        DEFB    0x0AD
         DEFM    'OPENUP'
-        DEFB    0FFH
+        DEFB    0x0FF
         DEFM    'OSCLI'
-        DEFB    0F1H
+        DEFB    0x0F1
         DEFM    'PRINT'
-        DEFB    90H
+        DEFB    0x90
         DEFM    'PAGE'
         DEFB    0
-        DEFB    8FH
+        DEFB    0x8F
         DEFM    'PTR'
         DEFB    0
-        DEFB    0AFH
+        DEFB    0x0AF
         DEFM    'PI'
         DEFB    0
-        DEFB    0F0H
+        DEFB    0x0F0
         DEFM    'PLOT'
-        DEFB    0B0H
+        DEFB    0x0B0
         DEFM    'POINT('
-        DEFB    0F2H
+        DEFB    0x0F2
         DEFM    'PROC'
-        DEFB    0B1H
+        DEFB    0x0B1
         DEFM    'POS'
         DEFB    0
-        DEFB    0CEH
+        DEFB    0x0CE
         DEFM    'PUT'
-        DEFB    0F8H
+        DEFB    0x0F8
         DEFM    'RETURN'
         DEFB    0
-        DEFB    0F5H
+        DEFB    0x0F5
         DEFM    'REPEAT'
-        DEFB    0F6H
+        DEFB    0x0F6
         DEFM    'REPORT'
         DEFB    0
-        DEFB    0F3H
+        DEFB    0x0F3
         DEFM    'READ'
-        DEFB    0F4H
+        DEFB    0x0F4
         DEFM    'REM'
-        DEFB    0F9H
+        DEFB    0x0F9
         DEFM    'RUN'
         DEFB    0
-        DEFB    0B2H
+        DEFB    0x0B2
         DEFM    'RAD'
-        DEFB    0F7H
+        DEFB    0x0F7
         DEFM    'RESTORE'
-        DEFB    0C2H
+        DEFB    0x0C2
         DEFM    'RIGHT$('
-        DEFB    0B3H
+        DEFB    0x0B3
         DEFM    'RND'
         DEFB    0
-        DEFB    0CCH
+        DEFB    0x0CC
         DEFM    'RENUMBER'
-        DEFB    88H
+        DEFB    0x88
         DEFM    'STEP'
-        DEFB    0CDH
+        DEFB    0x0CD
         DEFM    'SAVE'
-        DEFB    0B4H
+        DEFB    0x0B4
         DEFM    'SGN'
-        DEFB    0B5H
+        DEFB    0x0B5
         DEFM    'SIN'
-        DEFB    0B6H
+        DEFB    0x0B6
         DEFM    'SQR'
-        DEFB    89H
+        DEFB    0x89
         DEFM    'SPC'
-        DEFB    0C3H
+        DEFB    0x0C3
         DEFM    'STR$'
-        DEFB    0C4H
+        DEFB    0x0C4
         DEFM    'STRING$('
-        DEFB    0D4H
+        DEFB    0x0D4
         DEFM    'SOUND'
-        DEFB    0FAH
+        DEFB    0x0FA
         DEFM    'STOP'
         DEFB    0
-        DEFB    0B7H
+        DEFB    0x0B7
         DEFM    'TAN'
-        DEFB    8CH
+        DEFB    0x8C
         DEFM    'THEN'
-        DEFB    0B8H
+        DEFB    0x0B8
         DEFM    'TO'
-        DEFB    8AH
+        DEFB    0x8A
         DEFM    'TAB('
-        DEFB    0FCH
+        DEFB    0x0FC
         DEFM    'TRACE'
-        DEFB    91H
+        DEFB    0x91
         DEFM    'TIME'
         DEFB    0
-        DEFB    0B9H
+        DEFB    0x0B9
         DEFM    'TRUE'
         DEFB    0
-        DEFB    0FDH
+        DEFB    0x0FD
         DEFM    'UNTIL'
-        DEFB    0BAH
+        DEFB    0x0BA
         DEFM    'USR'
-        DEFB    0EFH
+        DEFB    0x0EF
         DEFM    'VDU'
-        DEFB    0BBH
+        DEFB    0x0BB
         DEFM    'VAL'
-        DEFB    0BCH
+        DEFB    0x0BC
         DEFM    'VPOS'
         DEFB    0
-        DEFB    0FEH
+        DEFB    0x0FE
         DEFM    'WIDTH'
-        DEFB    0D3H
+        DEFB    0x0D3
         DEFM    'HIMEM'
-        DEFB    0D2H
+        DEFB    0x0D2
         DEFM    'LOMEM'
-        DEFB    0D0H
+        DEFB    0x0D0
         DEFM    'PAGE'
-        DEFB    0CFH
+        DEFB    0x0CF
         DEFM    'PTR'
-        DEFB    0D1H
+        DEFB    0x0D1
         DEFM    'TIME'
         DEFB    1
         DEFM    'Missing '
@@ -1981,12 +1981,12 @@ ENCODE: SET     4,C
         LD      (HL),LINO
         INC     HL
         LD      A,D
-        AND     0C0H
+        AND     0x0C0
         RRCA
         RRCA
         LD      B,A
         LD      A,E
-        AND     0C0H
+        AND     0x0C0
         OR      B
         RRCA
         RRCA
@@ -1994,12 +1994,12 @@ ENCODE: SET     4,C
         LD      (HL),A
         INC     HL
         LD      A,E
-        AND     3FH
+        AND     0x3F
         OR      '@'
         LD      (HL),A
         INC     HL
         LD      A,D
-        AND     3FH
+        AND     0x3F
         OR      '@'
         LD      (HL),A
         INC     HL
@@ -2028,9 +2028,9 @@ TELL:   EX      (SP),HL         ;GET RETURN ADDRESS
         EX      (SP),HL
         RET
 ;
-CR      =     0DH
-LF      =     0AH
-ESC     =     1BH
+CR      =     0x0D
+LF      =     0x0A
+ESC     =     0x1B
 ;
         END     START
 

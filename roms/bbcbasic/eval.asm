@@ -90,7 +90,7 @@
 ;
 ;TABLE OF ADDRESSES FOR FUNCTIONS:
 ;
-FUNTOK  =     8DH             ;1st FUNCTION TOKEN
+FUNTOK  =     0x8D             ;1st FUNCTION TOKEN
 ;
 FUNTBL: DEFW    DECODE          ;Line number
         DEFW    OPENIN          ;OPENIN
@@ -152,11 +152,11 @@ FUNTBL: DEFW    DECODE          ;Line number
 ;
 TCMD    =     FUNTOK+($-FUNTBL)/2
 ;
-ANDK    =     80H
-DIVK    =     81H
-EORK    =     82H
-MODK    =     83H
-ORK     =     84H
+ANDK    =     0x80
+DIVK    =     0x81
+EORK    =     0x82
+MODK    =     0x83
+ORK     =     0x84
 ;
 SOPTBL: DEFW    SLE             ;<= (STRING)
         DEFW    SNE             ;<>
@@ -298,7 +298,7 @@ EXP3S3: EXX
         POP     BC
         CALL    POPS            ;RESTORE FROM STACK
         EXX
-        OR      80H             ;FLAG STRING
+        OR      0x80             ;FLAG STRING
         EX      AF,AF'
         LD      A,(IY)
         JR      EXPR3A
@@ -376,7 +376,7 @@ HEX:    CALL    ZERO
         CALL    HEXDIG
         JR      C,BADHEX
 HEX1:   INC     IY
-        AND     0FH
+        AND     0x0F
         LD      B,4
 HEX2:   EXX
         ADD     HL,HL
@@ -405,7 +405,7 @@ MINUS0: DEC     C
         INC     C
         JR      Z,NEGATE        ;ZERO/INTEGER
         LD      A,H
-        XOR     80H             ;CHANGE SIGN (FP)
+        XOR     0x80             ;CHANGE SIGN (FP)
         LD      H,A
         XOR     A               ;NUMERIC MARKER
         RET
@@ -528,7 +528,7 @@ CONS2:  LD      A,(IY)
         INC     IY
         JR      Z,CONS1
         DEC     IY
-        LD      A,80H           ;STRING MARKER
+        LD      A,0x80           ;STRING MARKER
         RET
 ;
 ;CON - Get unsigned numeric constant from ASCII string.
@@ -565,7 +565,7 @@ LOADS:  LD      DE,ACCS
         EXX
         OR      A
         LD      C,A
-        LD      A,80H           ;STRING MARKER
+        LD      A,0x80           ;STRING MARKER
         RET     Z
         LD      B,0
         LDIR
@@ -574,7 +574,7 @@ LOADS2: LD      A,(HL)
         LD      (DE),A
         INC     HL
         CP      CR
-        LD      A,80H           ;STRING MARKER
+        LD      A,0x80           ;STRING MARKER
         RET     Z
         INC     E
         JR      NZ,LOADS2
@@ -676,9 +676,9 @@ COUNT1: EXX
 ;Result is integer channel number (0 if error)
 ;
 OPENOT: XOR     A
-        DEFB    21H             ;SKIP NEXT 2 BYTES
+        DEFB    0x21             ;SKIP NEXT 2 BYTES
 OPENUP: LD      A,2
-        DEFB    21H             ;SKIP NEXT 2 BYTES
+        DEFB    0x21             ;SKIP NEXT 2 BYTES
 OPENIN: LD      A,1
         PUSH    AF              ;SAVE OPEN TYPE
         CALL    ITEMS           ;FILENAME
@@ -722,7 +722,7 @@ TIME0:  PUSH    DE
 ;
 TIMEVS: INC     IY              ;SKIP $
         CALL    GETIMS
-        LD      A,80H           ;MARK STRING
+        LD      A,0x80           ;MARK STRING
         RET
 ;
         PAGE
@@ -956,7 +956,7 @@ RND5:   CALL    ITEMI
         CALL    LOAD5
         CALL    NZ,RND1         ;NEXT IF NON-ZERO
         EXX                     ;SCRAMBLE (CARE!)
-        LD      C,7FH
+        LD      C,0x7F
 RND6:   BIT     7,H             ;FLOAT
         JR      NZ,RND7
         EXX
@@ -1075,7 +1075,7 @@ SRCH3:  POP     HL
         XOR     A               ;Z, NC
         RET                     ;FOUND
 ;
-SRCH4:  OR      0FFH            ;NZ, NC
+SRCH4:  OR      0x0FF            ;NZ, NC
         RET                     ;NOT FOUND
 ;
 ;CHRS - Return character with given ASCII value.
@@ -1103,7 +1103,7 @@ INKEYS: CALL    ITEMI
         CALL    OSKEY
 INKEY1: LD      DE,ACCS
         LD      (DE),A
-        LD      A,80H
+        LD      A,0x80
         RET     NC
         INC     E
         RET
@@ -1135,7 +1135,7 @@ MIDS1:  CALL    NXT
         JR      Z,LEFT1
         DEC     IY
         CALL    BRAKET
-        LD      A,80H
+        LD      A,0x80
         RET
 ;
 ;LEFT$ - Return left part of string.
@@ -1155,7 +1155,7 @@ LEFT1:  CALL    PUSHS           ;SAVE STRING ON STACK
         JR      NC,LEFT3
         LD      L,E             ;FOR RIGHTS
 LEFT2:  LD      E,A
-LEFT3:  LD      A,80H           ;STRING MARKER
+LEFT3:  LD      A,0x80           ;STRING MARKER
         RET
 ;
 ;RIGHT$ - Return right part of string.
@@ -1174,7 +1174,7 @@ RIGHT1: LD      B,0
         LD      H,D
         LD      E,B
         LDIR                    ;MOVE
-        LD      A,80H
+        LD      A,0x80
         RET
 ;
 ;STRINGS - Return n concatenations of a string.
@@ -1193,7 +1193,7 @@ STRING: CALL    EXPRI
         JR      Z,LEFT2         ;N=0
         DEC     A
         LD      C,A
-        LD      A,80H           ;STRING MARKER
+        LD      A,0x80           ;STRING MARKER
         RET     Z
         INC     E
         DEC     E
@@ -1212,7 +1212,7 @@ STRIN2: LD      A,(HL)
         POP     BC
         DEC     C
         JR      NZ,STRIN1
-        LD      A,80H
+        LD      A,0x80
         RET
 ;
         PAGE
@@ -1255,14 +1255,14 @@ DECODE: EXX
         RLA
         RLA
         LD      H,A
-        AND     0C0H
+        AND     0x0C0
         XOR     (IY)
         INC     IY
         LD      L,A
         LD      A,H
         RLA
         RLA
-        AND     0C0H
+        AND     0x0C0
         XOR     (IY)
         INC     IY
         LD      H,A
@@ -1281,7 +1281,7 @@ DECODE: EXX
 HEXSTS: INC     IY              ;SKIP TILDE
         CALL    ITEMN
         CALL    HEXSTR
-        LD      A,80H
+        LD      A,0x80
         RET
 ;
 HEXSTR: CALL    SFIX
@@ -1304,9 +1304,9 @@ HEXST2: EXX
         JR      NZ,HEXST3
         CP      B
         JR      Z,HEXST1
-HEXST3: ADD     A,90H
+HEXST3: ADD     A,0x90
         DAA
-        ADC     A,40H
+        ADC     A,0x40
         DAA
         LD      (DE),A
         INC     DE
@@ -1317,7 +1317,7 @@ HEXST3: ADD     A,90H
 ;   Inputs: HLH'L'C = integer or floating-point number.
 ;  Outputs: String in string accumulator.
 ;           E = length, D = ACCS/256
-;           A = 80H (type=string)
+;           A = 0x80 (type=string)
 ;
 ;First normalise for decimal output:
 ;
@@ -1336,7 +1336,7 @@ STR0:   LD      DE,ACCS
         CALL    FPP
         JP      C,ERROR
         BIT     0,(IX+2)
-STR1:   LD      A,80H           ;STRING MARKER
+STR1:   LD      A,0x80           ;STRING MARKER
         RET     Z
         LD      A,C
         ADD     A,4
@@ -1494,7 +1494,7 @@ DOIT:   EX      AF,AF'
         EXX
         PUSH    BC
         EXX
-        AND     0FH
+        AND     0x0F
         CALL    FPP
         JR      C,ERROR1
         XOR     A
@@ -1528,7 +1528,7 @@ DISPT0: PUSH    BC
         EX      (SP),HL
         RET                     ;OFF TO ROUTINE
 ;
-CR      =     0DH
+CR      =     0x0D
 ;
         END
 
