@@ -1,0 +1,13 @@
+-i build/test-mos.ihx
+-b CODE=0x8000
+-m
+-j
+build/main.rel
+build/cmos.rel
+build/eval.rel
+build/exec.rel
+build/fpp.rel
+build/patch.rel
+build/sorry.rel
+build/ram.rel 
+-e
