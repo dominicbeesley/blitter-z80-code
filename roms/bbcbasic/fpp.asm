@@ -78,72 +78,72 @@ DISPAT: PUSH    HL
 ;
 ;Despatch table:
 ;
-DTABLE: DEFW    IAND            ;AND (INTEGER)
-        DEFW    IBDIV           ;DIV
-        DEFW    IEOR            ;EOR
-        DEFW    IMOD            ;MOD
-        DEFW    IOR             ;OR
-        DEFW    ILE             ;<=
-        DEFW    INE             ;<>
-        DEFW    IGE             ;>=
-        DEFW    ILT             ;<
-        DEFW    IEQ             ;=
-        DEFW    IMUL            ;*
-        DEFW    IADD            ;+
-        DEFW    IGT             ;>
-        DEFW    ISUB            ;-
-        DEFW    IPOW            ;^
-        DEFW    IDIV            ;/
+DTABLE: .dw    IAND            ;AND (INTEGER)
+        .dw    IBDIV           ;DIV
+        .dw    IEOR            ;EOR
+        .dw    IMOD            ;MOD
+        .dw    IOR             ;OR
+        .dw    ILE             ;<=
+        .dw    INE             ;<>
+        .dw    IGE             ;>=
+        .dw    ILT             ;<
+        .dw    IEQ             ;=
+        .dw    IMUL            ;*
+        .dw    IADD            ;+
+        .dw    IGT             ;>
+        .dw    ISUB            ;-
+        .dw    IPOW            ;^
+        .dw    IDIV            ;/
 ;
-FTABLE: DEFW    ABS             ;ABS
-        DEFW    ACS             ;ACS
-        DEFW    ASN             ;ASN
-        DEFW    ATN             ;ATN
-        DEFW    COS             ;COS
-        DEFW    DEG             ;DEG
-        DEFW    EXP             ;EXP
-        DEFW    INT             ;INT
-        DEFW    LN              ;LN
-        DEFW    LOG             ;LOG
-        DEFW    NOTK            ;NOT
-        DEFW    RAD             ;RAD
-        DEFW    SGN             ;SGN
-        DEFW    SIN             ;SIN
-        DEFW    SQR             ;SQR
-        DEFW    TAN             ;TAN
+FTABLE: .dw    ABS             ;ABS
+        .dw    ACS             ;ACS
+        .dw    ASN             ;ASN
+        .dw    ATN             ;ATN
+        .dw    COS             ;COS
+        .dw    DEG             ;DEG
+        .dw    EXP             ;EXP
+        .dw    INT             ;INT
+        .dw    LN              ;LN
+        .dw    LOG             ;LOG
+        .dw    NOTK            ;NOT
+        .dw    RAD             ;RAD
+        .dw    SGN             ;SGN
+        .dw    SIN             ;SIN
+        .dw    SQR             ;SQR
+        .dw    TAN             ;TAN
 ;
-        DEFW    ZERO            ;ZERO
-        DEFW    FONE            ;FONE
-        DEFW    TRUE            ;TRUE
-        DEFW    PI              ;PI
+        .dw    ZERO            ;ZERO
+        .dw    FONE            ;FONE
+        .dw    TRUE            ;TRUE
+        .dw    PI              ;PI
 ;
-        DEFW    VAL             ;VAL
-        DEFW    STR             ;STR$
+        .dw    VAL             ;VAL
+        .dw    STR             ;STR$
 ;
-        DEFW    SFIX            ;FIX
-        DEFW    SFLOAT          ;FLOAT
+        .dw    SFIX            ;FIX
+        .dw    SFLOAT          ;FLOAT
 ;
-        DEFW    FTEST           ;TEST
-        DEFW    FCOMP           ;COMPARE
+        .dw    FTEST           ;TEST
+        .dw    FCOMP           ;COMPARE
 ;
-RTABLE: DEFW    FAND            ;AND (FLOATING-POINT)
-        DEFW    FBDIV           ;DIV
-        DEFW    FEOR            ;EOR
-        DEFW    FMOD            ;MOD
-        DEFW    FOR             ;OR
-        DEFW    FLE             ;<= 
-        DEFW    FNE             ;<>
-        DEFW    FGE             ;>=
-        DEFW    FLT             ;<
-        DEFW    FEQ             ;=
-        DEFW    FMUL            ;*
-        DEFW    FADD            ;+
-        DEFW    FGT             ;>
-        DEFW    FSUB            ;-
-        DEFW    FPOW            ;^
-        DEFW    FDIV            ;/
+RTABLE: .dw    FAND            ;AND (FLOATING-POINT)
+        .dw    FBDIV           ;DIV
+        .dw    FEOR            ;EOR
+        .dw    FMOD            ;MOD
+        .dw    FOR             ;OR
+        .dw    FLE             ;<= 
+        .dw    FNE             ;<>
+        .dw    FGE             ;>=
+        .dw    FLT             ;<
+        .dw    FEQ             ;=
+        .dw    FMUL            ;*
+        .dw    FADD            ;+
+        .dw    FGT             ;>
+        .dw    FSUB            ;-
+        .dw    FPOW            ;^
+        .dw    FDIV            ;/
 ;
-        PAGE
+        .page
 ;
 ;ARITHMETIC AND LOGICAL OPERATORS:
 ;All take two arguments, in HLH'L'C & DED'E'B.
@@ -620,7 +620,7 @@ TRUE:   LD      HL,-1
         LD      C,A
         RET
 ;
-        PAGE
+        .page
 ;
 ;FUNCTIONS:
 ;
@@ -850,20 +850,20 @@ SIN1:   PUSH    AF              ;OCTANT
         CALL    PUSH5           ;SAVE X
         CALL    SQUARE          ;PUSH X*X
         CALL    POLY
-        DEFW    0x0A8B7          ;a(8)
-        DEFW    0x3611
+        .dw    0x0A8B7          ;a(8)
+        .dw    0x3611
         .db    0x6D
-        DEFW    0x0DE26          ;a(6)
-        DEFW    0x0D005
+        .dw    0x0DE26          ;a(6)
+        .dw    0x0D005
         .db    0x73
-        DEFW    0x80C0           ;a(4)
-        DEFW    0x888
+        .dw    0x80C0           ;a(4)
+        .dw    0x888
         .db    0x79
-        DEFW    0x0AA9D          ;a(2)
-        DEFW    0x0AAAA
+        .dw    0x0AA9D          ;a(2)
+        .dw    0x0AAAA
         .db    0x7D
-        DEFW    0               ;a(0)
-        DEFW    0
+        .dw    0               ;a(0)
+        .dw    0
         .db    0x80
         CALL    POP5
         CALL    POP5
@@ -872,20 +872,20 @@ SIN1:   PUSH    AF              ;OCTANT
 ;
 SIN2:   CALL    SQUARE          ;PUSH X*X
         CALL    POLY
-        DEFW    0x0D571          ;b(8)
-        DEFW    0x4C78
+        .dw    0x0D571          ;b(8)
+        .dw    0x4C78
         .db    0x70
-        DEFW    0x94AF           ;b(6)
-        DEFW    0x0B603
+        .dw    0x94AF           ;b(6)
+        .dw    0x0B603
         .db    0x76
-        DEFW    0x9CC8           ;b(4)
-        DEFW    0x2AAA
+        .dw    0x9CC8           ;b(4)
+        .dw    0x2AAA
         .db    0x7B
-        DEFW    0x0FFDD          ;b(2)
-        DEFW    0x0FFFF
+        .dw    0x0FFDD          ;b(2)
+        .dw    0x0FFFF
         .db    0x7E
-        DEFW    0               ;b(0)
-        DEFW    0
+        .dw    0               ;b(0)
+        .dw    0
         .db    0x80
         CALL    POP5
 SIN3:   POP     AF
@@ -945,29 +945,29 @@ EXP1:   AND     0x80
         RES     7,H
         CALL    PUSH5           ;PUSH X*LN(2)
         CALL    POLY
-        DEFW    0x4072           ;a(7)
-        DEFW    0x942E
+        .dw    0x4072           ;a(7)
+        .dw    0x942E
         .db    0x73
-        DEFW    0x6F65           ;a(6)
-        DEFW    0x2E4F
+        .dw    0x6F65           ;a(6)
+        .dw    0x2E4F
         .db    0x76
-        DEFW    0x6D37           ;a(5)
-        DEFW    0x8802
+        .dw    0x6D37           ;a(5)
+        .dw    0x8802
         .db    0x79
-        DEFW    0x0E512          ;a(4)
-        DEFW    0x2AA0
+        .dw    0x0E512          ;a(4)
+        .dw    0x2AA0
         .db    0x7B
-        DEFW    0x4F14           ;a(3)
-        DEFW    0x0AAAA
+        .dw    0x4F14           ;a(3)
+        .dw    0x0AAAA
         .db    0x7D
-        DEFW    0x0FD56          ;a(2)
-        DEFW    0x7FFF
+        .dw    0x0FD56          ;a(2)
+        .dw    0x7FFF
         .db    0x7E
-        DEFW    0x0FFFE          ;a(1)
-        DEFW    0x0FFFF
+        .dw    0x0FFFE          ;a(1)
+        .dw    0x0FFFF
         .db    0x7F
-        DEFW    0               ;a(0)
-        DEFW    0
+        .dw    0               ;a(0)
+        .dw    0
         .db    0x80
         CALL    POP5
         POP     AF
@@ -1025,20 +1025,20 @@ LN4:    PUSH    AF              ;SAVE EXPONENT
         CALL    PUSH5
         CALL    SQUARE          ;PUSH X*X
         CALL    POLY
-        DEFW    0x0CC48          ;a(9)
-        DEFW    0x74FB
+        .dw    0x0CC48          ;a(9)
+        .dw    0x74FB
         .db    0x7D
-        DEFW    0x0AEAF          ;a(7)
-        DEFW    0x11FF
+        .dw    0x0AEAF          ;a(7)
+        .dw    0x11FF
         .db    0x7E
-        DEFW    0x0D98C          ;a(5)
-        DEFW    0x4CCD
+        .dw    0x0D98C          ;a(5)
+        .dw    0x4CCD
         .db    0x7E
-        DEFW    0x0A9E3          ;a(3)
-        DEFW    0x2AAA
+        .dw    0x0A9E3          ;a(3)
+        .dw    0x2AAA
         .db    0x7F
-        DEFW    0               ;a(1)
-        DEFW    0
+        .dw    0               ;a(1)
+        .dw    0
         .db    0x81
         CALL    POP5
         CALL    POP5
@@ -1132,26 +1132,26 @@ ATN2:   PUSH    BC              ;SAVE FLAG
         CALL    PUSH5
         CALL    SQUARE          ;PUSH X*X
         CALL    POLY
-        DEFW    0x0F335          ;a(13)
-        DEFW    0x37D8
+        .dw    0x0F335          ;a(13)
+        .dw    0x37D8
         .db    0x7B
-        DEFW    0x6B91           ;a(11)
-        DEFW    0x0AAB9
+        .dw    0x6B91           ;a(11)
+        .dw    0x0AAB9
         .db    0x7C
-        DEFW    0x41DE           ;a(9)
-        DEFW    0x6197
+        .dw    0x41DE           ;a(9)
+        .dw    0x6197
         .db    0x7C
-        DEFW    0x9D7B           ;a(7)
-        DEFW    0x9237
+        .dw    0x9D7B           ;a(7)
+        .dw    0x9237
         .db    0x7D
-        DEFW    0x2A5A           ;a(5)
-        DEFW    0x4CCC
+        .dw    0x2A5A           ;a(5)
+        .dw    0x4CCC
         .db    0x7D
-        DEFW    0x0A95C          ;a(3)
-        DEFW    0x0AAAA
+        .dw    0x0A95C          ;a(3)
+        .dw    0x0AAAA
         .db    0x7E
-        DEFW    0               ;a(1)
-        DEFW    0
+        .dw    0               ;a(1)
+        .dw    0
         .db    0x80
         CALL    POP5
         CALL    POP5
@@ -1406,7 +1406,7 @@ STR47:  INC     HL
 STR44:  EX      DE,HL
         RET
 ;
-        PAGE
+        .page
 ;
 ;Support subroutines:
 ;

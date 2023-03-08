@@ -99,7 +99,7 @@
         .globl   ZERO
 ;
         .globl   ACCS
-        .globl   PAGE
+        .globl   .page
         .globl   LOMEM
         .globl   HIMEM
         .globl   FREE
@@ -138,64 +138,64 @@ TON     =     0x0EE
 TPROC   =     0x0F2
 TSTOP   =     0x0FA
 ;
-CMDTAB: DEFW    AUTO
-        DEFW    DELETE
-        DEFW    LOAD
-        DEFW    LIST
-        DEFW    NEW
-        DEFW    OLD
-        DEFW    RENUM
-        DEFW    SAVE
-        DEFW    PUT
-        DEFW    PTR
-        DEFW    PAGEV
-        DEFW    TIMEV
-        DEFW    LOMEMV
-        DEFW    HIMEMV
-        DEFW    SOUND
-        DEFW    BPUT
-        DEFW    CALL
-        DEFW    CHAIN
-        DEFW    CLR
-        DEFW    CLOSE
-        DEFW    CLG
-        DEFW    CLS
-        DEFW    REM             ;DATA
-        DEFW    REM             ;DEF
-        DEFW    DIM
-        DEFW    DRAW
-        DEFW    END
-        DEFW    ENDPRO
-        DEFW    ENVEL
-        DEFW    FOR
-        DEFW    GOSUB
-        DEFW    GOTO
-        DEFW    GCOL
-        DEFW    IF
-        DEFW    INPUT
-        DEFW    LET
-        DEFW    LOCAL
-        DEFW    MODE
-        DEFW    MOVE
-        DEFW    NEXT
-        DEFW    ON
-        DEFW    VDU
-        DEFW    PLOT
-        DEFW    PRINT
-        DEFW    PROC
-        DEFW    READ
-        DEFW    REM
-        DEFW    REPEAT
-        DEFW    REPOR
-        DEFW    RESTOR
-        DEFW    RETURN
-        DEFW    RUN
-        DEFW    STOP
-        DEFW    COLOUR
-        DEFW    TRACE
-        DEFW    UNTIL
-        DEFW    WIDTHV
-        DEFW    CLI             ;OSCLI
+CMDTAB: .dw    AUTO
+        .dw    DELETE
+        .dw    LOAD
+        .dw    LIST
+        .dw    NEW
+        .dw    OLD
+        .dw    RENUM
+        .dw    SAVE
+        .dw    PUT
+        .dw    PTR
+        .dw    PAGEV
+        .dw    TIMEV
+        .dw    LOMEMV
+        .dw    HIMEMV
+        .dw    SOUND
+        .dw    BPUT
+        .dw    CALL
+        .dw    CHAIN
+        .dw    CLR
+        .dw    CLOSE
+        .dw    CLG
+        .dw    CLS
+        .dw    REM             ;DATA
+        .dw    REM             ;DEF
+        .dw    DIM
+        .dw    DRAW
+        .dw    END
+        .dw    ENDPRO
+        .dw    ENVEL
+        .dw    FOR
+        .dw    GOSUB
+        .dw    GOTO
+        .dw    GCOL
+        .dw    IF
+        .dw    INPUT
+        .dw    LET
+        .dw    LOCAL
+        .dw    MODE
+        .dw    MOVE
+        .dw    NEXT
+        .dw    ON
+        .dw    VDU
+        .dw    PLOT
+        .dw    PRINT
+        .dw    PROC
+        .dw    READ
+        .dw    REM
+        .dw    REPEAT
+        .dw    REPOR
+        .dw    RESTOR
+        .dw    RETURN
+        .dw    RUN
+        .dw    STOP
+        .dw    COLOUR
+        .dw    TRACE
+        .dw    UNTIL
+        .dw    WIDTHV
+        .dw    CLI             ;OSCLI
 ;
 RUN:    CALL    TERM?
         JR      Z,RUN0
@@ -221,11 +221,11 @@ RUN0:   LD      SP,(HIMEM)      ;PREPARE FOR RUN
         CALL    CLEAR
         LD      HL,0
         LD      (ERRTRP),HL
-        LD      HL,(PAGE)
+        LD      HL,(.page)
         LD      A,DATA
         CALL    SEARCH          ;LOOK FOR "DATA"
         LD      (DATPTR),HL     ;SET DATA POINTER
-        LD      IY,(PAGE)
+        LD      IY,(.page)
 XEQ0:   CALL    NEWLIN
 XEQ:    LD      (ERRLIN),IY     ;ERROR POINTER
         CALL    TRAP            ;CHECK KEYBOARD
@@ -874,7 +874,7 @@ PROC1:  CALL    CHECK
         LD      A,30
         JR      C,ERROR3        ;"Bad call"
         PUSH    BC
-        LD      HL,(PAGE)
+        LD      HL,(.page)
 PROC2:  LD      A,DEF
         CALL    SEARCH          ;LOOK FOR "DEF"
         JR      C,PROC3
@@ -1252,12 +1252,12 @@ REPOR:  CALL    REPORT
 ;CLEAR
 ;
 CLR:    CALL    CLEAR
-        LD      HL,(PAGE)
+        LD      HL,(.page)
         JR      RESTR1
 ;
 ;RESTORE [line]
 ;
-RESTOR: LD      HL,(PAGE)
+RESTOR: LD      HL,(.page)
         CALL    TERM?
         JR      Z,RESTR1
         CALL    ITEMI
@@ -1271,7 +1271,7 @@ RESTR1: LD      A,DATA
         JP      XEQ
 ;
 ;PTR#channel=expr
-;PAGE=expr
+;.page=expr
 ;TIME=expr
 ;LOMEM=expr
 ;HIMEM=expr
@@ -1292,7 +1292,7 @@ PAGEV:  CALL    EQUALS
         CALL    EXPRI
         EXX
         LD      L,0
-        LD      (PAGE),HL
+        LD      (.page),HL
         JP      XEQ
 ;
 TIMEV:  CP      "$"
@@ -1437,11 +1437,11 @@ USR:    CALL    ITEMI
         EXX
 USR1:   PUSH    HL              ;ADDRESS ON STACK
         EX      (SP),IY
-        INC     H               ;PAGE &FF?
+        INC     H               ;.page &FF?
         LD      HL,USR2         ;RETURN ADDRESS
         PUSH    HL
         LD      IX,STAVAR
-        CALL    Z,OSCALL        ;INTERCEPT PAGE &FF
+        CALL    Z,OSCALL        ;INTERCEPT .page &FF
         LD      C,(IX+24)
         PUSH    BC
         POP     AF              ;LOAD FLAGS
@@ -1470,7 +1470,7 @@ PUT:    CALL    EXPRI           ;PORT ADDRESS
         POP     BC
         OUT     (C),L           ;OUTPUT TO PORT BC
         JP      XEQ
-        PAGE
+        .page
 ;
 ;SUBROUTINES:
 ;
@@ -2288,7 +2288,7 @@ LDA:    CP      4
         LD      A,B
 BYTE1:  JR      BYTE
 ;
-;MISC - .db, DEFW, .ascii
+;MISC - .db, .dw, .ascii
 ;
 MISC:   DJNZ    OPT
         PUSH    IX

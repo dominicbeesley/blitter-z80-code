@@ -74,7 +74,7 @@
         .globl  LEXAN2
         .globl  RANGE
 ;
-        .globl   PAGE
+        .globl   .page
         .globl   ACCS
         .globl   BUFFER
         .globl   LINENO
@@ -161,7 +161,7 @@ PURGE:  LD      (HL),A          ;CLEAR SCRATCHPAD
         LD      (ERRTXT),HL
         CALL    OSINIT
         LD      (HIMEM),DE
-        LD      (PAGE),HL
+        LD      (.page),HL
         CALL    NEWIT
         JP      NZ,CHAIN0       ;AUTO-RUN
         CALL    TELL
@@ -197,7 +197,7 @@ CLOOP:  SCF
         ADD     HL,BC
         JP      C,TOOBIG
         LD      (AUTONO),HL
-        LD      A,' '
+        LD      A," "
         CALL    OUTCHR
 NOAUTO: LD      HL,ACCS
         CALL    OSLINE          ;GET CONSOLE INPUT
@@ -277,7 +277,8 @@ ATEND:  POP     BC              ;LINE LENGTH
         LDIR                    ;ADD LINE
         CALL    CLEAN
         JP      CLOOP
-        PAGE
+        
+                .page
 ;
 ;LIST OF TOKENS AND KEYWORDS.
 ;IF A KEYWORD IS FOLLOWED BY NUL THEN IT WILL
@@ -465,7 +466,7 @@ KEYWDS: .db    0x80
         .db    0x0F1
         .ascii    'PRINT'
         .db    0x90
-        .ascii    'PAGE'
+        .ascii    '.page'
         .db    0
         .db    0x8F
         .ascii    'PTR'
@@ -565,7 +566,7 @@ KEYWDS: .db    0x80
         .db    0x0D2
         .ascii    'LOMEM'
         .db    0x0D0
-        .ascii    'PAGE'
+        .ascii    '.page'
         .db    0x0CF
         .ascii    'PTR'
         .db    0x0D1
@@ -587,7 +588,7 @@ KEYWDS: .db    0x80
         .db    8
         .ascii    ' space'
 KEYWDL  =     $-KEYWDS
-        DEFW    -1
+        .dw    -1
 ;
 ;ERROR MESSAGES:
 ;
@@ -597,7 +598,7 @@ ERRWDS: .db    7
         .db    6
         .db    4
         .db    0
-        DEFW    0
+        .dw    0
         .ascii    'Mistake'
         .db    0
         .db    1
@@ -607,9 +608,9 @@ ERRWDS: .db    7
         .db    0
         .db    7
         .db    FN
-        DEFW    0
+        .dw    0
         .db    1
-        .ascii    """
+        .ascii    '"'
         .db    0
         .db    3
         .db    DIM
@@ -646,7 +647,7 @@ ERRWDS: .db    7
         .db    0
         .ascii    'Exp'
         .db    4
-        DEFW    0
+        .dw    0
         .db    2
         .db    5
         .db    0
@@ -669,16 +670,16 @@ ERRWDS: .db    7
         .db    7
         .db    FOR
         .db    0
-        .ascii    'Can''t match '
+        .ascii    "Can't match "
         .db    FOR
         .db    0
         .db    FOR
         .ascii    " "
         .db    5
-        DEFW    0
+        .dw    0
         .db    7
         .db    TO
-        DEFW    0
+        .dw    0
         .db    7
         .db    GOSUB
         .db    0
@@ -697,11 +698,11 @@ ERRWDS: .db    7
         .db    0
         .db    7
         .db    REPEAT
-        DEFW    0
+        .dw    0
         .db    1
         .ascii    "#"
         .db    0
-        PAGE
+        .page
 ;
 ;COMMANDS:
 ;
@@ -851,7 +852,7 @@ WARMNC: JP      NC,WARM
 RENUM:  CALL    CLEAR           ;USES DYNAMIC AREA
         CALL    PAIR            ;LOAD HL,BC
         EXX
-        LD      HL,(PAGE)
+        LD      HL,(.page)
         LD      DE,(LOMEM)
 RENUM1: LD      A,(HL)          ;BUILD TABLE
         OR      A
@@ -903,7 +904,7 @@ RENUM2: EX      DE,HL
         LD      (HL),-1
         LD      DE,(LOMEM)
         EXX
-        LD      HL,(PAGE)
+        LD      HL,(.page)
 RENUM3: LD      C,(HL)
         LD      A,C
         OR      A
@@ -998,7 +999,7 @@ NEW:    CALL    NEWIT
 ;
 ;OLD
 ;
-OLD:    LD      HL,(PAGE)
+OLD:    LD      HL,(.page)
         PUSH    HL
         INC     HL
         INC     HL
@@ -1028,7 +1029,7 @@ SAVE:   CALL    SETTOP          ;SET TOP
         CALL    EXPRS           ;FILENAME
         LD      A,CR
         LD      (DE),A
-        LD      DE,(PAGE)
+        LD      DE,(.page)
         LD      HL,(TOP)
         OR      A
         SBC     HL,DE
@@ -1078,7 +1079,7 @@ ERROR2: LD      HL,0
         CALL    C,OSSHUT        ;CLOSE ALL FILES
         CALL    CRLF
         JP      CLOOP
-        PAGE
+        .page
 ;
 ;SUBROUTINES:
 ;
@@ -1157,7 +1158,7 @@ DEL:    PUSH    DE
 ; AND WRITE FF FF, THEN LOAD (TOP).
 ; Destroys: A,B,C,H,L,F
 ;
-LOAD0:  LD      DE,(PAGE)
+LOAD0:  LD      DE,(.page)
         LD      HL,-256
         ADD     HL,SP
         SBC     HL,DE           ;FIND AVAILABLE SPACE
@@ -1175,7 +1176,7 @@ CLEAN:  CALL    SETTOP
         LD      (HL),-1
         JR      CLEAR
 ;
-SETTOP: LD      HL,(PAGE)
+SETTOP: LD      HL,(.page)
         LD      B,0
         LD      A,CR
 SETOP1: LD      C,(HL)
@@ -1201,7 +1202,7 @@ SETOP2: INC     HL              ;N.B. CALLED FROM NEWIT
 ; FUNCTION AND PROCEDURE POINTERS.
 ;   Destroys: Nothing
 ;
-NEWIT:  LD      HL,(PAGE)
+NEWIT:  LD      HL,(.page)
         LD      (HL),0
         CALL    SETOP2
 CLEAR:  PUSH    HL
@@ -1357,7 +1358,7 @@ TOKEN1: LD      A,(HL)
 ; Destroys: A,B,C,D,E,H,L,F
 ;
 FINDL:  EX      DE,HL
-        LD      HL,(PAGE)
+        LD      HL,(.page)
         XOR     A               ;A=0
         CP      (HL)
         INC     A
@@ -1385,7 +1386,7 @@ FINDL1: LD      C,(HL)
 ;
 SETLIN: LD      B,0
         LD      DE,(ERRLIN)
-        LD      HL,(PAGE)
+        LD      HL,(.page)
         OR      A
         SBC     HL,DE
         ADD     HL,DE

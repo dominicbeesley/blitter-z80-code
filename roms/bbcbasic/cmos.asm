@@ -979,52 +979,52 @@ ESCC1:  CALL    HEX
 ;
 COMDS:  .ascii    'BY'
         .db    'E'+0x80
-        DEFW    BYE
+        .dw    BYE
         .ascii    'CP'
         .db    'M'+0x80
-        DEFW    BYE
+        .dw    BYE
         .ascii    'DI'
         .db    'R'+0x80
-        DEFW    DIR
+        .dw    DIR
         .ascii    'DRIV'
         .db    'E'+0x80
-        DEFW    DRV
+        .dw    DRV
         .ascii    'ERAS'
         .db    'E'+0x80
-        DEFW    ERA
+        .dw    ERA
         .ascii    'ER'
         .db    'A'+0x80
-        DEFW    ERA
+        .dw    ERA
         .ascii    'ES'
         .db    'C'+0x80
-        DEFW    ESCCTL
+        .dw    ESCCTL
         .ascii    'EXE'
         .db    'C'+0x80
-        DEFW    EXEC
+        .dw    EXEC
         .ascii    'LOA'
         .db    'D'+0x80
-        DEFW    STLOAD
+        .dw    STLOAD
         .ascii    'OP'
         .db    'T'+0x80
-        DEFW    OPT
+        .dw    OPT
         .ascii    'RENAM'
         .db    'E'+0x80
-        DEFW    REN
+        .dw    REN
         .ascii    'RE'
         .db    'N'+0x80
-        DEFW    REN
+        .dw    REN
         .ascii    'RESE'
         .db    'T'+0x80
-        DEFW    RES
+        .dw    RES
         .ascii    'SAV'
         .db    'E'+0x80
-        DEFW    STSAVE
+        .dw    STSAVE
         .ascii    'SPOO'
         .db    'L'+0x80
-        DEFW    SPOOL
+        .dw    SPOOL
         .ascii    'TYP'
         .db    'E'+0x80
-        DEFW    TYPE
+        .dw    TYPE
         .db    0x0FF
 ;
 ;PTEXT - Print text
@@ -1048,13 +1048,13 @@ BADSUM: CALL    TELL
         .ascii    'Bad sum'
         .db    0
         JP      BYE
-        PAGE
+        .page
 ;
 ;OSINIT - Initialise RAM mapping etc.
 ;If BASIC is entered by BBCBASIC FILENAME then file
 ;FILENAME.BBC is automatically CHAINed.
 ;   Outputs: DE = initial value of HIMEM (top of RAM)
-;            HL = initial value of PAGE (user program)
+;            HL = initial value of .page (user program)
 ;            Z-flag reset indicates AUTO-RUN.
 ;  Destroys: A,B,C,D,E,H,L,F
 ;
@@ -1094,7 +1094,7 @@ CLRTAB: LD      (HL),A          ;CLEAR FILE TABLE ETC.
 NOBOOT: EX      DE,HL
         LD      (HL),CR
         LD      DE,(6)          ;DE = HIMEM
-        LD      E,A             ;PAGE BOUNDARY
+        LD      E,A             ;.page BOUNDARY
         LD      HL,USER
         RET
 ;
@@ -1469,7 +1469,7 @@ TRPCNT: .db    10
 TABLE:  DEFS    16              ;FILE BLOCK POINTERS
 FLAGS:  .db    0
 INKEY:  .db    0
-EDPTR:  DEFW    0
+EDPTR:  .dw    0
 OPTVAL: .db    0
 INILEN  =     $-TABLE
 ;

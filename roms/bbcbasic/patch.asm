@@ -52,10 +52,10 @@ BYE:    JP      REBOOT          ;RETURN TO CP/M
 ;
         ORG     $+7 AND 0x0FFF8
 ;
-;VECTOR: DEFW    TIMER
-;        DEFW    TIMER
-;        DEFW    TIMER
-;        DEFW    TIMER
+;VECTOR: .dw    TIMER
+;        .dw    TIMER
+;        .dw    TIMER
+;        .dw    TIMER
 ;
 ;INIT - Perform hardware initialisation.
 ;

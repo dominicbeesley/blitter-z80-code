@@ -9,7 +9,7 @@
         .globl  BUFFER
         .globl  LINENO
         .globl  TOP
-        .globl  PAGE
+        .globl  .page
         .globl  LOMEM
         .globl  FREE
         .globl  HIMEM
@@ -45,7 +45,7 @@ DYNVAR: DEFS    54*2            ;DYN. VARIABLE POINTERS
 FNPTR:  DEFS    2               ;DYN. FUNCTION POINTER
 PROPTR: DEFS    2               ;DYN. PROCEDURE POINTER
 ;
-PAGE:   DEFS    2               ;START OF USER PROGRAM
+.page:   DEFS    2               ;START OF USER PROGRAM
 TOP:    DEFS    2               ;FIRST LOCN AFTER PROG.
 LOMEM:  DEFS    2               ;START OF DYN. STORAGE
 FREE:   DEFS    2               ;FIRST FREE-SPACE BYTE

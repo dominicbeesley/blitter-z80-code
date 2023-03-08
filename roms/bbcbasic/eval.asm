@@ -60,7 +60,7 @@
         .globl   RANGE
 ;
         .globl   STAVAR
-        .globl   PAGE
+        .globl   .page
         .globl   TOP
         .globl   LOMEM
         .globl   HIMEM
@@ -92,63 +92,63 @@
 ;
 FUNTOK  =     0x8D             ;1st FUNCTION TOKEN
 ;
-FUNTBL: DEFW    DECODE          ;Line number
-        DEFW    OPENIN          ;OPENIN
-        DEFW    PTR             ;PTR
-        DEFW    PAGEV           ;PAGE
-        DEFW    TIMEV           ;TIME
-        DEFW    LOMEMV          ;LOMEM
-        DEFW    HIMEMV          ;HIMEM
-        DEFW    ABS             ;ABS
-        DEFW    ACS             ;ACS
-        DEFW    ADVAL           ;ADVAL
-        DEFW    ASC             ;ASC
-        DEFW    ASN             ;ASN
-        DEFW    ATN             ;ATN
-        DEFW    BGET            ;BGET
-        DEFW    COS             ;COS
-        DEFW    COUNTV          ;COUNT
-        DEFW    DEG             ;DEG
-        DEFW    ERLV            ;ERL
-        DEFW    ERRV            ;ERR
-        DEFW    EVAL            ;EVAL
-        DEFW    EXP             ;EXP
-        DEFW    EXT             ;EXT
-        DEFW    ZERO            ;FALSE
-        DEFW    FN              ;FN
-        DEFW    GET             ;GET
-        DEFW    INKEY           ;INKEY
-        DEFW    INSTR           ;INSTR(
-        DEFW    INT             ;INT
-        DEFW    LEN             ;LEN
-        DEFW    LN              ;LN
-        DEFW    LOG             ;LOG
-        DEFW    NOTK            ;NOT
-        DEFW    OPENUP          ;OPENUP
-        DEFW    OPENOT          ;OPENOUT
-        DEFW    PI              ;PI
-        DEFW    POINT           ;POINT(
-        DEFW    POS             ;POS
-        DEFW    RAD             ;RAD
-        DEFW    RND             ;RND
-        DEFW    SGN             ;SGN
-        DEFW    SIN             ;SIN
-        DEFW    SQR             ;SQR
-        DEFW    TAN             ;TAN
-        DEFW    TOPV            ;TO(P)
-        DEFW    TRUE            ;TRUE
-        DEFW    USR             ;USR
-        DEFW    VAL             ;VAL
-        DEFW    VPOS            ;VPOS
-        DEFW    CHRS            ;CHRS
-        DEFW    GETS            ;GETS
-        DEFW    INKEYS          ;INKEYS
-        DEFW    LEFTS           ;LEFTS(
-        DEFW    MIDS            ;MIDS(
-        DEFW    RIGHTS          ;RIGHTS(
-        DEFW    STRS            ;STR$
-        DEFW    STRING          ;STRINGS(
-        DEFW    EOF             ;EOF
+FUNTBL: .dw    DECODE          ;Line number
+        .dw    OPENIN          ;OPENIN
+        .dw    PTR             ;PTR
+        .dw    PAGEV           ;.page
+        .dw    TIMEV           ;TIME
+        .dw    LOMEMV          ;LOMEM
+        .dw    HIMEMV          ;HIMEM
+        .dw    ABS             ;ABS
+        .dw    ACS             ;ACS
+        .dw    ADVAL           ;ADVAL
+        .dw    ASC             ;ASC
+        .dw    ASN             ;ASN
+        .dw    ATN             ;ATN
+        .dw    BGET            ;BGET
+        .dw    COS             ;COS
+        .dw    COUNTV          ;COUNT
+        .dw    DEG             ;DEG
+        .dw    ERLV            ;ERL
+        .dw    ERRV            ;ERR
+        .dw    EVAL            ;EVAL
+        .dw    EXP             ;EXP
+        .dw    EXT             ;EXT
+        .dw    ZERO            ;FALSE
+        .dw    FN              ;FN
+        .dw    GET             ;GET
+        .dw    INKEY           ;INKEY
+        .dw    INSTR           ;INSTR(
+        .dw    INT             ;INT
+        .dw    LEN             ;LEN
+        .dw    LN              ;LN
+        .dw    LOG             ;LOG
+        .dw    NOTK            ;NOT
+        .dw    OPENUP          ;OPENUP
+        .dw    OPENOT          ;OPENOUT
+        .dw    PI              ;PI
+        .dw    POINT           ;POINT(
+        .dw    POS             ;POS
+        .dw    RAD             ;RAD
+        .dw    RND             ;RND
+        .dw    SGN             ;SGN
+        .dw    SIN             ;SIN
+        .dw    SQR             ;SQR
+        .dw    TAN             ;TAN
+        .dw    TOPV            ;TO(P)
+        .dw    TRUE            ;TRUE
+        .dw    USR             ;USR
+        .dw    VAL             ;VAL
+        .dw    VPOS            ;VPOS
+        .dw    CHRS            ;CHRS
+        .dw    GETS            ;GETS
+        .dw    INKEYS          ;INKEYS
+        .dw    LEFTS           ;LEFTS(
+        .dw    MIDS            ;MIDS(
+        .dw    RIGHTS          ;RIGHTS(
+        .dw    STRS            ;STR$
+        .dw    STRING          ;STRINGS(
+        .dw    EOF             ;EOF
 ;
 TCMD    =     FUNTOK+($-FUNTBL)/2
 ;
@@ -158,12 +158,12 @@ EORK    =     0x82
 MODK    =     0x83
 ORK     =     0x84
 ;
-SOPTBL: DEFW    SLE             ;<= (STRING)
-        DEFW    SNE             ;<>
-        DEFW    SGE             ;>=
-        DEFW    SLT             ;<
-        DEFW    SEQ             ;=
-        DEFW    SGT             ;>
+SOPTBL: .dw    SLE             ;<= (STRING)
+        .dw    SNE             ;<>
+        .dw    SGE             ;>=
+        .dw    SLT             ;<
+        .dw    SEQ             ;=
+        .dw    SGT             ;>
 ;
 ;EXPR - VARIABLE-TYPE EXPRESSION EVALUATION
 ;     Expression type is returned in A'F':
@@ -580,7 +580,7 @@ LOADS2: LD      A,(HL)
         JR      NZ,LOADS2
         RET                     ;RETURN NULL STRING
 ;
-        PAGE
+        .page
 ;
 ;VARIABLE-TYPE FUNCTIONS:
 ;
@@ -603,7 +603,7 @@ LOADS2: LD      A,(HL)
 ;LEN - length of string.
 ;LOMEM - location of dynamic variables.
 ;HIMEM - top of available RAM.
-;PAGE - start of current text page.
+;.page - start of current text page.
 ;TOP - address of first free byte after program.
 ;ERL - line number where last error occurred.
 ;ERR - number of last error.
@@ -649,7 +649,7 @@ LOMEMV: LD      HL,(LOMEM)
         JR      COUNT1
 HIMEMV: LD      HL,(HIMEM)
         JR      COUNT1
-PAGEV:  LD      HL,(PAGE)
+PAGEV:  LD      HL,(.page)
         JR      COUNT1
 TOPV:   LD      A,(IY)
         INC     IY              ;SKIP "P"
@@ -725,7 +725,7 @@ TIMEVS: INC     IY              ;SKIP $
         LD      A,0x80           ;MARK STRING
         RET
 ;
-        PAGE
+        .page
 ;
 ;String comparison:
 ;
@@ -1215,7 +1215,7 @@ STRIN2: LD      A,(HL)
         LD      A,0x80
         RET
 ;
-        PAGE
+        .page
 ;
 ;SUBROUTINES
 ;
@@ -1348,7 +1348,7 @@ STR2:   CP      E
         EX      DE,HL
         JR      STR2
 ;
-G9:     DEFW    9
+G9:     .dw    9
 ;
 ;STRING COMPARE
 ;Compare string (DE) length B with string (HL) length C.
