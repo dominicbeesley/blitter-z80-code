@@ -1,4 +1,4 @@
-        TITLE   BBC BASIC (C) R.T.RUSSELL 1984
+        .title   BBC BASIC (C) R.T.RUSSELL 1984
 ;
 ;BBC BASIC (Z80) - CP/M VERSION.
 ;(C) COPYRIGHT R.T.RUSSELL, 1984.
@@ -18,13 +18,13 @@
 BDOS    EQU     5
 COLD    EQU     200H
 ;
-        GLOBAL  CLRSCN
-        GLOBAL  PUTCSR
-        GLOBAL  GETCSR
-        GLOBAL  PUTIME
-        GLOBAL  GETIME
-        GLOBAL  GETKEY
-        GLOBAL  BYE
+        .globl  CLRSCN
+        .globl  PUTCSR
+        .globl  GETCSR
+        .globl  PUTIME
+        .globl  GETIME
+        .globl  GETKEY
+        .globl  BYE
 ;
         ASEG
         ORG     100H

@@ -1,4 +1,4 @@
-        TITLE   BBC BASIC (C) R.T.RUSSELL 1987
+        .title   BBC BASIC (C) R.T.RUSSELL 1987
 ;
 ;BBC BASIC INTERPRETER - Z80 VERSION
 ;EXPRESSION EVALUATION & ARITHMETIC MODULE - "EVAL"
@@ -21,72 +21,72 @@
 ;NORMAL REGISTER ALLOCATION: MANTISSA - HLH'L'
 ;                            EXPONENT - C
 ;
-        GLOBAL  EXPR
-        GLOBAL  EXPRN
-        GLOBAL  EXPRI
-        GLOBAL  EXPRS
-        GLOBAL  ITEMI
-        GLOBAL  CONS
-        GLOBAL  LOADS
-        GLOBAL  VAL0
-        GLOBAL  SFIX
-        GLOBAL  STR
-        GLOBAL  HEXSTR
-        GLOBAL  LOAD4
-        GLOBAL  LOADN
-        GLOBAL  DLOAD5
-        GLOBAL  NXT
-        GLOBAL  SWAP
-        GLOBAL  TEST
-        GLOBAL  ZERO
-        GLOBAL  COMMA
-        GLOBAL  BRAKET
-        GLOBAL  DECODE
-        GLOBAL  PUSHS
-        GLOBAL  POPS
-        GLOBAL  SEARCH
+        .globl  EXPR
+        .globl  EXPRN
+        .globl  EXPRI
+        .globl  EXPRS
+        .globl  ITEMI
+        .globl  CONS
+        .globl  LOADS
+        .globl  VAL0
+        .globl  SFIX
+        .globl  STR
+        .globl  HEXSTR
+        .globl  LOAD4
+        .globl  LOADN
+        .globl  DLOAD5
+        .globl  NXT
+        .globl  SWAP
+        .globl  TEST
+        .globl  ZERO
+        .globl  COMMA
+        .globl  BRAKET
+        .globl  DECODE
+        .globl  PUSHS
+        .globl  POPS
+        .globl  SEARCH
 ;
-        EXTRN   ERROR
-        EXTRN   SYNTAX
-        EXTRN   CHANEL
-        EXTRN   STORE4
-        EXTRN   STORE5
-        EXTRN   CHECK
-        EXTRN   USR
-        EXTRN   FN
+        ;EXTRN   ERROR
+        ;EXTRN   SYNTAX
+        ;EXTRN   CHANEL
+        ;EXTRN   STORE4
+        ;EXTRN   STORE5
+        ;EXTRN   CHECK
+        ;EXTRN   USR
+        ;EXTRN   FN
 ;
-        EXTRN   GETVAR
-        EXTRN   LEXAN2
-        EXTRN   RANGE
+        ;EXTRN   GETVAR
+        ;EXTRN   LEXAN2
+        ;EXTRN   RANGE
 ;
-        EXTRN   STAVAR
-        EXTRN   PAGE
-        EXTRN   TOP
-        EXTRN   LOMEM
-        EXTRN   HIMEM
-        EXTRN   RANDOM
-        EXTRN   COUNT
-        EXTRN   LISTON
-        EXTRN   PC
-        EXTRN   ERL
-        EXTRN   ERR
-        EXTRN   ACCS
+        ;EXTRN   STAVAR
+        ;EXTRN   PAGE
+        ;EXTRN   TOP
+        ;EXTRN   LOMEM
+        ;EXTRN   HIMEM
+        ;EXTRN   RANDOM
+        ;EXTRN   COUNT
+        ;EXTRN   LISTON
+        ;EXTRN   PC
+        ;EXTRN   ERL
+        ;EXTRN   ERR
+        ;EXTRN   ACCS
 ;
-        EXTRN   OSRDCH
-        EXTRN   OSOPEN
-        EXTRN   OSBGET
-        EXTRN   OSSTAT
-        EXTRN   GETCSR
-        EXTRN   GETIME
-        EXTRN   GETIMS
-        EXTRN   GETEXT
-        EXTRN   GETPTR
-        EXTRN   OSKEY
+        ;EXTRN   OSRDCH
+        ;EXTRN   OSOPEN
+        ;EXTRN   OSBGET
+        ;EXTRN   OSSTAT
+        ;EXTRN   GETCSR
+        ;EXTRN   GETIME
+        ;EXTRN   GETIMS
+        ;EXTRN   GETEXT
+        ;EXTRN   GETPTR
+        ;EXTRN   OSKEY
 ;
-        EXTRN   POINT
-        EXTRN   ADVAL
+        ;EXTRN   POINT
+        ;EXTRN   ADVAL
 ;
-        EXTRN   FPP
+        ;EXTRN   FPP
 ;
 ;TABLE OF ADDRESSES FOR FUNCTIONS:
 ;

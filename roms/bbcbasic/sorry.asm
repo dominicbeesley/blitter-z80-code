@@ -1,19 +1,19 @@
 ;
-        GLOBAL  CLG
-        GLOBAL  COLOUR
-        GLOBAL  DRAW
-        GLOBAL  ENVEL
-        GLOBAL  GCOL
-        GLOBAL  MODE
-        GLOBAL  MOVE
-        GLOBAL  PLOT
-        GLOBAL  SOUND
-        GLOBAL  ADVAL
-        GLOBAL  POINT
-        GLOBAL  GETIMS
-        GLOBAL  PUTIMS
+        .globl  CLG
+        .globl  COLOUR
+        .globl  DRAW
+        .globl  ENVEL
+        .globl  GCOL
+        .globl  MODE
+        .globl  MOVE
+        .globl  PLOT
+        .globl  SOUND
+        .globl  ADVAL
+        .globl  POINT
+        .globl  GETIMS
+        .globl  PUTIMS
 ;
-        EXTRN   EXTERR
+        ;EXTRN   EXTERR
 ;
 CLG:
 COLOUR:

@@ -1,38 +1,38 @@
-        TITLE   BBC BASIC (C) R.T.RUSSELL 1984
+        .title   BBC BASIC (C) R.T.RUSSELL 1984
 ;
 ;RAM MODULE FOR BBC BASIC INTERPRETER
 ;FOR USE WITH VERSION 2.0 OF BBC BASIC
 ;*STANDARD CP/M DISTRIBUTION VERSION*
 ;(C) COPYRIGHT R.T.RUSSELL 31-12-1983
 ;
-        GLOBAL  ACCS
-        GLOBAL  BUFFER
-        GLOBAL  LINENO
-        GLOBAL  TOP
-        GLOBAL  PAGE
-        GLOBAL  LOMEM
-        GLOBAL  FREE
-        GLOBAL  HIMEM
-        GLOBAL  RANDOM
-        GLOBAL  COUNT
-        GLOBAL  WIDTH
-        GLOBAL  ERL
-        GLOBAL  ERR
-        GLOBAL  ERRTRP
-        GLOBAL  ERRTXT
-        GLOBAL  TRACEN
-        GLOBAL  AUTONO
-        GLOBAL  INCREM
-        GLOBAL  LISTON
-        GLOBAL  DATPTR
-        GLOBAL  FNPTR
-        GLOBAL  PROPTR
-        GLOBAL  STAVAR
-        GLOBAL  OC
-        GLOBAL  PC
-        GLOBAL  DYNVAR
-        GLOBAL  ERRLIN
-        GLOBAL  USER
+        .globl  ACCS
+        .globl  BUFFER
+        .globl  LINENO
+        .globl  TOP
+        .globl  PAGE
+        .globl  LOMEM
+        .globl  FREE
+        .globl  HIMEM
+        .globl  RANDOM
+        .globl  COUNT
+        .globl  WIDTH
+        .globl  ERL
+        .globl  ERR
+        .globl  ERRTRP
+        .globl  ERRTXT
+        .globl  TRACEN
+        .globl  AUTONO
+        .globl  INCREM
+        .globl  LISTON
+        .globl  DATPTR
+        .globl  FNPTR
+        .globl  PROPTR
+        .globl  STAVAR
+        .globl  OC
+        .globl  PC
+        .globl  DYNVAR
+        .globl  ERRLIN
+        .globl  USER
 ;
 ;n.b. ACCS, BUFFER & STAVAR must be on page boundaries.
 ;

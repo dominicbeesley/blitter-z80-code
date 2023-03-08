@@ -1,4 +1,4 @@
-        TITLE   '(C) COPYRIGHT R.T.RUSSELL 1986'
+        .title   '(C) COPYRIGHT R.T.RUSSELL 1986'
 ;
 ;Z80 FLOATING POINT PACKAGE
 ;(C) COPYRIGHT  R.T.RUSSELL  1986
@@ -30,7 +30,7 @@ LOGRNG  EQU     22              ;Log range
 ACLOST  EQU     23              ;Accuracy lost
 EXPRNG  EQU     24              ;Exp range
 ;
-        GLOBAL  FPP
+        .globl  FPP
 ;
 ;Call entry and despatch code:
 ;

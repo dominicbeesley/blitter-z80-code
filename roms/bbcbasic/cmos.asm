@@ -1,4 +1,4 @@
-        TITLE   BBC BASIC (C) R.T.RUSSELL 1984
+        .title   BBC BASIC (C) R.T.RUSSELL 1984
 ;
 ;PATCH FOR BBC BASIC TO CP/M 2.2 & 3.0
 ;*    PLAIN VANILLA CP/M VERSION     *
@@ -6,42 +6,42 @@
 ;
 ;**  NEW TO THIS VERSION
 ;
-        GLOBAL  OSINIT
-        GLOBAL  OSRDCH
-        GLOBAL  OSWRCH
-        GLOBAL  OSLINE
-        GLOBAL  OSSAVE
-        GLOBAL  OSLOAD
-        GLOBAL  OSOPEN
-        GLOBAL  OSSHUT
-        GLOBAL  OSBGET
-        GLOBAL  OSBPUT
-        GLOBAL  OSSTAT
-        GLOBAL  GETEXT
-        GLOBAL  GETPTR
-        GLOBAL  PUTPTR
-        GLOBAL  PROMPT
-        GLOBAL  RESET
-        GLOBAL  LTRAP
-        GLOBAL  OSCLI
-        GLOBAL  TRAP
-        GLOBAL  OSKEY
-        GLOBAL  OSCALL
+        .globl  OSINIT
+        .globl  OSRDCH
+        .globl  OSWRCH
+        .globl  OSLINE
+        .globl  OSSAVE
+        .globl  OSLOAD
+        .globl  OSOPEN
+        .globl  OSSHUT
+        .globl  OSBGET
+        .globl  OSBPUT
+        .globl  OSSTAT
+        .globl  GETEXT
+        .globl  GETPTR
+        .globl  PUTPTR
+        .globl  PROMPT
+        .globl  RESET
+        .globl  LTRAP
+        .globl  OSCLI
+        .globl  TRAP
+        .globl  OSKEY
+        .globl  OSCALL
 ;
-        EXTRN   BYE
-        EXTRN   GETKEY
+        ;EXTRN   BYE
+        ;EXTRN   GETKEY
 ;
-        EXTRN   ESCAPE
-        EXTRN   EXTERR
-        EXTRN   CHECK
-        EXTRN   CRLF
-        EXTRN   TELL
+        ;EXTRN   ESCAPE
+        ;EXTRN   EXTERR
+        ;EXTRN   CHECK
+        ;EXTRN   CRLF
+        ;EXTRN   TELL
 ;
-        EXTRN   ACCS
-        EXTRN   FREE
-        EXTRN   HIMEM
-        EXTRN   ERRLIN
-        EXTRN   USER
+        ;EXTRN   ACCS
+        ;EXTRN   FREE
+        ;EXTRN   HIMEM
+        ;EXTRN   ERRLIN
+        ;EXTRN   USER
 ;
 ;
 ;OSSAVE - Save an area of memory to a file.
