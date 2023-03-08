@@ -116,27 +116,27 @@
         .globl   PC
         .globl   OC
 ;
-TAND    EQU     80H
-TOR     EQU     84H
-TERROR  EQU     85H
-LINE    EQU     86H
-OFF     EQU     87H
-STEP    EQU     88H
-SPC     EQU     89H
-TAB     EQU     8AH
-ELSE    EQU     8BH
-THEN    EQU     8CH
-LINO    EQU     8DH
-TO      EQU     0B8H
-TCMD    EQU     0C6H
-TCALL   EQU     0D6H
-DATA    EQU     0DCH
-DEF     EQU     0DDH
-TGOSUB  EQU     0E4H
-TGOTO   EQU     0E5H
-TON     EQU     0EEH
-TPROC   EQU     0F2H
-TSTOP   EQU     0FAH
+TAND    =     80H
+TOR     =     84H
+TERROR  =     85H
+LINE    =     86H
+OFF     =     87H
+STEP    =     88H
+SPC     =     89H
+TAB     =     8AH
+ELSE    =     8BH
+THEN    =     8CH
+LINO    =     8DH
+TO      =     0B8H
+TCMD    =     0C6H
+TCALL   =     0D6H
+DATA    =     0DCH
+DEF     =     0DDH
+TGOSUB  =     0E4H
+TGOTO   =     0E5H
+TON     =     0EEH
+TPROC   =     0F2H
+TSTOP   =     0FAH
 ;
 CMDTAB: DEFW    AUTO
         DEFW    DELETE
@@ -694,7 +694,7 @@ GOSUB:  CALL    ITEMI           ;LINE NUMBER
 GOSUB1: PUSH    IY              ;TEXT POINTER
         CALL    CHECK           ;CHECK ROOM
         CALL    GOTO1           ;SAVE MARKER
-GOSCHK  EQU     $
+GOSCHK  =     $
 ;
 ;RETURN
 ;
@@ -712,7 +712,7 @@ RETURN: POP     DE              ;MARKER
 REPEAT: PUSH    IY
         CALL    CHECK
         CALL    XEQ
-REPCHK  EQU     $
+REPCHK  =     $
 ;
 ;UNTIL expr
 ;
@@ -776,7 +776,7 @@ FOR1:   PUSH    BC
         PUSH    IX              ;LOOP VARIABLE
         CALL    CHECK
         CALL    XEQ
-FORCHK  EQU     $
+FORCHK  =     $
 ;
 ;NEXT [var[,var...]]
 ;
@@ -857,14 +857,14 @@ ERROR3: JP      ERROR           ;"Can't match FOR"
 ;
 FN:     PUSH    AF              ;MAKE SPACE ON STACK
         CALL    PROC1
-FNCHK   EQU     $
+FNCHK   =     $
 ;
 ;PROCname
 ;N.B. ENTERED WITH A = ON PROC FLAG
 ;
 PROC:   PUSH    AF              ;MAKE SPACE ON STACK
         CALL    PROC1
-PROCHK  EQU     $
+PROCHK  =     $
 PROC1:  CALL    CHECK
         DEC     IY
         PUSH    IY
@@ -1716,7 +1716,7 @@ SAVLO2: PUSH    AF              ;STRING TYPE
         POP     DE
 SAVLO4: PUSH    IX              ;VARPTR
         CALL    SAVLO5
-LOCCHK  EQU     $
+LOCCHK  =     $
 SAVLO5: CALL    CHECK
         CALL    NXT
         CP      ','             ;MORE?
@@ -2865,8 +2865,8 @@ LDOPS:  DEFM    'I'
 ;
         .LIST
 ;
-LF      EQU     0AH
-CR      EQU     0DH
+LF      =     0AH
+CR      =     0DH
 ;
 FIN:    END
 

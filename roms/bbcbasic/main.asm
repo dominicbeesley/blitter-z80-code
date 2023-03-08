@@ -98,33 +98,33 @@
         .globl   LISTON
         .globl   TRACEN
 ;
-TERROR  EQU     85H
-LINE    EQU     86H
-ELSE    EQU     8BH
-THEN    EQU     8CH
-LINO    EQU     8DH
-FN      EQU     0A4H
-TO      EQU     0B8H
-REN     EQU     0CCH
-DATA    EQU     0DCH
-DIM     EQU     0DEH
-FOR     EQU     0E3H
-GOSUB   EQU     0E4H
-GOTO    EQU     0E5H
-TIF     EQU     0E7H
-LOCAL   EQU     0EAH
-NEXT    EQU     0EDH
-ON      EQU     0EEH
-PROC    EQU     0F2H
-REM     EQU     0F4H
-REPEAT  EQU     0F5H
-RESTOR  EQU     0F7H
-TRACE   EQU     0FCH
-UNTIL   EQU     0FDH
+TERROR  =     85H
+LINE    =     86H
+ELSE    =     8BH
+THEN    =     8CH
+LINO    =     8DH
+FN      =     0A4H
+TO      =     0B8H
+REN     =     0CCH
+DATA    =     0DCH
+DIM     =     0DEH
+FOR     =     0E3H
+GOSUB   =     0E4H
+GOTO    =     0E5H
+TIF     =     0E7H
+LOCAL   =     0EAH
+NEXT    =     0EDH
+ON      =     0EEH
+PROC    =     0F2H
+REM     =     0F4H
+REPEAT  =     0F5H
+RESTOR  =     0F7H
+TRACE   =     0FCH
+UNTIL   =     0FDH
 ;
-TOKLO   EQU     8FH
-TOKHI   EQU     93H
-OFFSET  EQU     0CFH-TOKLO
+TOKLO   =     8FH
+TOKHI   =     93H
+OFFSET  =     0CFH-TOKLO
 ;
 
         .area   CODE(REL,CON)
@@ -586,7 +586,7 @@ KEYWDS: DEFB    80H
         DEFM    'No '
         DEFB    8
         DEFM    ' space'
-KEYWDL  EQU     $-KEYWDS
+KEYWDL  =     $-KEYWDS
         DEFW    -1
 ;
 ;ERROR MESSAGES:
@@ -1965,11 +1965,11 @@ LIST1:  DEFB    GOTO
         DEFB    TRACE
 LIST2:  DEFB    THEN
         DEFB    ELSE
-LIST1L  EQU     $-LIST1
+LIST1L  =     $-LIST1
         DEFB    REPEAT
         DEFB    TERROR
         DEFB    ':'
-LIST2L  EQU     $-LIST2
+LIST2L  =     $-LIST2
 ;
 ;ENCODE - ENCODE LINE NUMBER INTO PSEUDO-BINARY FORM.
 ;   Inputs: HL=line number, DE=string pointer
@@ -2028,9 +2028,9 @@ TELL:   EX      (SP),HL         ;GET RETURN ADDRESS
         EX      (SP),HL
         RET
 ;
-CR      EQU     0DH
-LF      EQU     0AH
-ESC     EQU     1BH
+CR      =     0DH
+LF      =     0AH
+ESC     =     1BH
 ;
         END     START
 

@@ -22,13 +22,13 @@
 ;
 ;Error codes:
 ;
-BADOP   EQU     1               ;Bad operation code
-DIVBY0  EQU     18              ;Division by zero
-TOOBIG  EQU     20              ;Too big
-NGROOT  EQU     21              ;Negative root
-LOGRNG  EQU     22              ;Log range
-ACLOST  EQU     23              ;Accuracy lost
-EXPRNG  EQU     24              ;Exp range
+BADOP   =     1               ;Bad operation code
+DIVBY0  =     18              ;Division by zero
+TOOBIG  =     20              ;Too big
+NGROOT  =     21              ;Negative root
+LOGRNG  =     22              ;Log range
+ACLOST  =     23              ;Accuracy lost
+EXPRNG  =     24              ;Exp range
 ;
         .globl  FPP
 ;

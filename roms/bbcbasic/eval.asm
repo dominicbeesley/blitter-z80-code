@@ -90,7 +90,7 @@
 ;
 ;TABLE OF ADDRESSES FOR FUNCTIONS:
 ;
-FUNTOK  EQU     8DH             ;1st FUNCTION TOKEN
+FUNTOK  =     8DH             ;1st FUNCTION TOKEN
 ;
 FUNTBL: DEFW    DECODE          ;Line number
         DEFW    OPENIN          ;OPENIN
@@ -150,13 +150,13 @@ FUNTBL: DEFW    DECODE          ;Line number
         DEFW    STRING          ;STRINGS(
         DEFW    EOF             ;EOF
 ;
-TCMD    EQU     FUNTOK+($-FUNTBL)/2
+TCMD    =     FUNTOK+($-FUNTBL)/2
 ;
-ANDK    EQU     80H
-DIVK    EQU     81H
-EORK    EQU     82H
-MODK    EQU     83H
-ORK     EQU     84H
+ANDK    =     80H
+DIVK    =     81H
+EORK    =     82H
+MODK    =     83H
+ORK     =     84H
 ;
 SOPTBL: DEFW    SLE             ;<= (STRING)
         DEFW    SNE             ;<>
@@ -1528,7 +1528,7 @@ DISPT0: PUSH    BC
         EX      (SP),HL
         RET                     ;OFF TO ROUTINE
 ;
-CR      EQU     0DH
+CR      =     0DH
 ;
         END
 

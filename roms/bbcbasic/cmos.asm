@@ -1449,21 +1449,21 @@ LISTST: DEFM    'LIST'
 ;
 SUMFIX: DEFS    2
 ;
-BEL     EQU     7
-BS      EQU     8
-HT      EQU     9
-LF      EQU     0AH
-VT      EQU     0BH
-CR      EQU     0DH
-ESC     EQU     1BH
-DEL     EQU     7FH
+BEL     =     7
+BS      =     8
+HT      =     9
+LF      =     0AH
+VT      =     0BH
+CR      =     0DH
+ESC     =     1BH
+DEL     =     7FH
 ;
-BDOS    EQU     5
+BDOS    =     5
 ;
-FCB     EQU     5CH
-DSKBUF  EQU     80H
+FCB     =     5CH
+DSKBUF  =     80H
 ;
-FCBSIZ  EQU     128+36+2
+FCBSIZ  =     128+36+2
 ;
 TRPCNT: DEFB    10
 TABLE:  DEFS    16              ;FILE BLOCK POINTERS
@@ -1471,7 +1471,7 @@ FLAGS:  DEFB    0
 INKEY:  DEFB    0
 EDPTR:  DEFW    0
 OPTVAL: DEFB    0
-INILEN  EQU     $-TABLE
+INILEN  =     $-TABLE
 ;
 FIN:    END
 

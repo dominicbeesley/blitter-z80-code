@@ -15,8 +15,8 @@
 ;
 ;R.T.RUSSELL, 04-02-1984
 ;
-BDOS    EQU     5
-COLD    EQU     200H
+BDOS    =     5
+COLD    =     200H
 ;
         .globl  CLRSCN
         .globl  PUTCSR
@@ -234,11 +234,11 @@ GCSR:	ld		de, 0
 ;
 TIME:   DEFS    4
 ;
-HOME    EQU     0FF21H
+HOME    =     0FF21H
 ;
-CTC0    EQU     80H
-CRTCS   EQU     84H
-CRTCD   EQU     85H
+CTC0    =     80H
+CRTCS   =     84H
+CRTCD   =     85H
 ;
         IF      $ GT 1F4H
         ERROR   'INSUFFICIENT SPACE'
