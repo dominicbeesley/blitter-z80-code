@@ -600,12 +600,12 @@ x_graphic_cursor_up_Beq2::	TODO "x_graphic_cursor_up_Beq2"
 ;		jmp	x_calculate_external_coordinates_from_internal_coordinates;	C6ED
 ;; ----------------------------------------------------------------------------
 ;; VDU 10  Cursor down	  No parameters
-mos_VDU_10::	TODO "mos_VDU_10"
-;
-;		jsr	check_vdu5	;	C6F0
-;		lbeq	x_text_cursor_down		;	C6F3
-;LC6F5:		ldb	#0x02				;	C6F5
-;		jmp	x_cursor_down_with_graphics_in_use;	C6F7
+mos_VDU_10::
+
+		call	check_vdu5	;	C6F0
+		jp	Z, x_text_cursor_down		;	C6F3
+LC6F5:		ld	B,2				;	C6F5
+;		jp	x_cursor_down_with_graphics_in_use;	C6F7
 ;; ----------------------------------------------------------------------------
 ;; VDU 28   define text window	      4 parameters; parameters are set up thus ; 0320  P1 left margin ; 0321  P2 bottom margin ; 0322  P3 right margin ; 0323  P4 top margin ; Note that last parameter is always in 0323 
 mos_VDU_28::	TODO "mos_VDU_28"
@@ -702,13 +702,11 @@ mos_VDU_31::	TODO "mos_VDU_31"
 ;		jmp	x_exchange_2atY_with_2atX
 ;; ----------------------------------------------------------------------------
 ;; VDU  13	  Carriage  Return	  0 parameters
-mos_VDU_13::	TODO "mos_VDU_13"
-;
-;		jsr	check_vdu5	;	C7AF
-;		beq	LC7B7				;	C7B2
-;		jmp	x_set_graphics_cursor_to_left_hand_column;	C7B4
-;LC7B7:		jsr	x_cursor_to_window_left				;	C7B7
-;		jmp	x_setup_displayaddress_and_cursor_position				;	C7BA
+mos_VDU_13::	call	check_vdu5	;	C7AF
+		jr	Z, LC7B7				;	C7B2
+		jp	x_set_graphics_cursor_to_left_hand_column;	C7B4
+LC7B7:		call	x_cursor_to_window_left				;	C7B7
+		jp	x_setup_displayaddress_and_cursor_position				;	C7BA
 ;; ----------------------------------------------------------------------------
 x_mos_home_CLG::	TODO "x_mos_home_CLG"
 ;	; LC7BD
