@@ -1109,11 +1109,11 @@ x_set_6845_screenstart_from_HL:				; LCA0E
 		ld	A,(vduvar_MODE)
 		cp	A,7
 		jr	NC,LCA27
-		sra	H
+		srl	H
 		rr	L
-		sra	H
+		srl	H
 		rr	L
-		sra	H
+		srl	H
 		rr	L
 		jr	mos_stHL_6845rB			;	CA24
 ;; ----------------------------------------------------------------------------
@@ -1830,7 +1830,7 @@ LCEC5:		ld	(HL),A
 		sub	A,(IX+vduIX_SCREEN_SIZE_HIGH)
 		ld	H,A
 		ld	A,(vduvar_TXT_BACK)
-LCEDA:		dec	(IY+zpIY_vdu_wksp+2)
+LCEDA:		dec	C
 		jp	P,LCEBF
 		ld	(zp_vdu_top_scanline),HL
 		pop	AF
