@@ -1,11 +1,11 @@
 
 ; This contains jumps to call the OS through the usual MOS entry points
 
-	
-		.area CODE_SW_VEC(ABS)
-		.org 0xFFE3
-
 		.globl	OSWRCH_ENTER
+
+		.area CODE_SW_VEC(ABS)
+		.org 0x63				; offset into vector block
+
 
 OSASCI::	cp   	0x0D
 		jr	NZ,OSWRCH
