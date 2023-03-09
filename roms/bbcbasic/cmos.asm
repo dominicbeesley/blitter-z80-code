@@ -1060,45 +1060,50 @@ BADSUM: CALL    TELL
 ;            Z-flag reset indicates AUTO-RUN.
 ;  Destroys: A,B,C,D,E,H,L,F
 ;
-OSINIT: LD      C,45            ;*
-        LD      E,254           ;*
-        CALL    BDOS            ;*
+OSINIT:         LD      HL,0x0E00
+                LD      DE,0x3000
+                XOR     A,A
+                RET
 
-        ; dtrg: this is the checksum code, intended to validate binary
-        ; integrity over bad connections. It doesn't have any use with
-        ; CP/Mish so I've simply disabled it.
-;        LD      BC,SUMFIX+2-0x200
-;        LD      HL,0x200
-;        XOR     A
-;        LD      E,A
-;SUM:    ADD     A,(HL)
-;        LD      D,E
-;        LD      E,A
-;        LD      A,D
-;        ADC     A,0
-;        CPI
-;        JP      PE,SUM
-;        OR      E
-;        JR      NZ,BADSUM
-		XOR     A
-        LD      B,INILEN
-        LD      HL,TABLE
-CLRTAB: LD      (HL),A          ;CLEAR FILE TABLE ETC.
-        INC     HL
-        DJNZ    CLRTAB
-        LD      DE,ACCS
-        LD      HL,DSKBUF
-        LD      C,(HL)
-        INC     HL
-        CP      C               ;N.B. A=B=0
-        JR      Z,NOBOOT
-        LDIR                    ;COPY TO ACCS
-NOBOOT: EX      DE,HL
-        LD      (HL),CR
-        LD      DE,(6)          ;DE = HIMEM
-        LD      E,A             ;.page BOUNDARY
-        LD      HL,USER
-        RET
+;;;OSINIT: LD      C,45            ;*
+;;;        LD      E,254           ;*
+;;;        CALL    BDOS            ;*
+;;;
+;;;        ; dtrg: this is the checksum code, intended to validate binary
+;;;        ; integrity over bad connections. It doesn't have any use with
+;;;        ; CP/Mish so I've simply disabled it.
+;;;;        LD      BC,SUMFIX+2-0x200
+;;;;        LD      HL,0x200
+;;;;        XOR     A
+;;;;        LD      E,A
+;;;;SUM:    ADD     A,(HL)
+;;;;        LD      D,E
+;;;;        LD      E,A
+;;;;        LD      A,D
+;;;;        ADC     A,0
+;;;;        CPI
+;;;;        JP      PE,SUM
+;;;;        OR      E
+;;;;        JR      NZ,BADSUM
+;;;		XOR     A
+;;;        LD      B,INILEN
+;;;        LD      HL,TABLE
+;;;CLRTAB: LD      (HL),A          ;CLEAR FILE TABLE ETC.
+;;;        INC     HL
+;;;        DJNZ    CLRTAB
+;;;        LD      DE,ACCS
+;;;        LD      HL,DSKBUF
+;;;        LD      C,(HL)
+;;;        INC     HL
+;;;        CP      C               ;N.B. A=B=0
+;;;        JR      Z,NOBOOT
+;;;        LDIR                    ;COPY TO ACCS
+;;;NOBOOT: EX      DE,HL
+;;;        LD      (HL),CR
+;;;        LD      DE,(6)          ;DE = HIMEM
+;;;        LD      E,A             ;.page BOUNDARY
+;;;        LD      HL,USER
+;;;        RET
 ;
 ;
 ;TRAP - Test ESCAPE flag and abort if set;
@@ -1202,59 +1207,67 @@ ESCSET: PUSH    HL
         SET     7,(HL)          ;SET ESCAPE FLAG
 ESCDIS: POP     HL
         RET
-;
-;OSWRCH - Write a character to console output.
-;   Inputs: A = character.
-; Destroys: Nothing
-;
-OSWRCH: PUSH    AF
-        PUSH    DE
-        PUSH    HL
-        LD      E,A
-        CALL    TEST
-        CALL    EDPUT
-        POP     HL
-        POP     DE
-        POP     AF
-        RET
-;
-EDPUT:  LD      A,(FLAGS)
-        BIT     3,A
-        JR      Z,WRCH
-        LD      A,E
-        CP      " "
-        RET     C
-        LD      HL,(EDPTR)
-        LD      (HL),E
-        INC     L
-        RET     Z
-        LD      (EDPTR),HL
-        RET
+;;;; ;
+;;;; ;OSWRCH - Write a character to console output.
+;;;; ;   Inputs: A = character.
+;;;; ; Destroys: Nothing
+;;;; ;
+;;;; OSWRCH: PUSH    AF
+;;;;         PUSH    DE
+;;;;         PUSH    HL
+;;;;         LD      E,A
+;;;;         CALL    TEST
+;;;;         CALL    EDPUT
+;;;;         POP     HL
+;;;;         POP     DE
+;;;;         POP     AF
+;;;;         RET
+;;;; ;
+;;;; EDPUT:  LD      A,(FLAGS)
+;;;;         BIT     3,A
+;;;;         JR      Z,WRCH
+;;;;         LD      A,E
+;;;;         CP      " "
+;;;;         RET     C
+;;;;         LD      HL,(EDPTR)
+;;;;         LD      (HL),E
+;;;;         INC     L
+;;;;         RET     Z
+;;;;         LD      (EDPTR),HL
+;;;;         RET
+
+OSWRCH = 0xFFEE
+
 ;
 PROMPT: LD      E,">"
-WRCH:   LD      A,(OPTVAL)      ;FAST ENTRY
-        ADD     A,3
-        CP      3
-        JR      NZ,WRCH1
-        ADD     A,E
-        LD      A,2
-        JR      C,WRCH1
-        LD      A,6
-WRCH1:  CALL    BDOS0
-        LD      HL,FLAGS
-        BIT     2,(HL)
-        LD      A,5             ;PRINTER O/P
-        CALL    NZ,BDOS0
-        BIT     1,(HL)          ;SPOOLING?
-        RET     Z
-        RES     1,(HL)
-        LD      A,E             ;BYTE TO WRITE
-        LD      E,8             ;SPOOL/EXEC CHANNEL
-        PUSH    BC
-        CALL    OSBPUT
-        POP     BC
-        SET     1,(HL)
-        RET
+
+WRCH:   LD      A,E
+        JP      OSWRCH
+        
+
+;;WRCH:   LD      A,(OPTVAL)      ;FAST ENTRY
+;;        ADD     A,3
+;;        CP      3
+;;        JR      NZ,WRCH1
+;;        ADD     A,E
+;;        LD      A,2
+;;        JR      C,WRCH1
+;;        LD      A,6
+;;WRCH1:  CALL    BDOS0
+;;        LD      HL,FLAGS
+;;        BIT     2,(HL)
+;;        LD      A,5             ;PRINTER O/P
+;;        CALL    NZ,BDOS0
+;;        BIT     1,(HL)          ;SPOOLING?
+;;        RET     Z
+;;        RES     1,(HL)
+;;        LD      A,E             ;BYTE TO WRITE
+;;        LD      E,8             ;SPOOL/EXEC CHANNEL
+;;        PUSH    BC
+;;        CALL    OSBPUT
+;;        POP     BC
+;;        SET     1,(HL)
+;;        RET
 ;
 TOGGLE: LD      A,(FLAGS)
         XOR     0b00000100

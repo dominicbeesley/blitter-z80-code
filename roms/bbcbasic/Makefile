@@ -1,12 +1,12 @@
 AS=asz80
 ASFLAGS=-ols
 LD=aslink
-LDFLAGS=
+LDFLAGS=-u
 BUILD=./build/
 TARGETS=bbc-basic.rom
 HOSTFS=~/hostfs/romsz80
 SSD=$(BUILD)/romsz80.ssd
-OBJS=main.rel cmos.rel eval.rel exec.rel fpp.rel patch.rel sorry.rel ram.rel 
+OBJS=patch.rel main.rel cmos.rel eval.rel exec.rel fpp.rel sorry.rel ram.rel 
 OBJS2=$(addprefix $(BUILD),$(OBJS))
 
 DEPS=

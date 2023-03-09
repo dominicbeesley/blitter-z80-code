@@ -16,7 +16,6 @@
 ;R.T.RUSSELL, 04-02-1984
 ;
 BDOS    =     5
-COLD    =     0x200
 ;
         .globl  CLRSCN
         .globl  PUTCSR
@@ -25,6 +24,9 @@ COLD    =     0x200
         .globl  GETIME
         .globl  GETKEY
         .globl  BYE
+
+
+        .globl  START
 ;
 ;        ASEG
  ;       ORG     0x100
@@ -63,7 +65,7 @@ BYE:    JP      REBOOT          ;RETURN TO CP/M
 ;INIT - Perform hardware initialisation.
 ;
 INIT:   ;CALL    INTIME          ;INITIALISE TIMER
-        JP      COLD
+        JP      START
 ;
 ;REBOOT - Stop interrupts and return to CP/M. 
 ;

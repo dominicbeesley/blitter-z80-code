@@ -33,6 +33,9 @@
         .globl  DYNVAR
         .globl  ERRLIN
         .globl  USER
+
+        .area   CODE(REL,CON)
+
 ;
 ;n.b. ACCS, BUFFER & STAVAR must be on page boundaries.
 ;
