@@ -49,13 +49,27 @@ mos_handle_res::
 
 		; bodge a few values
 
-		ld	A,0
+		xor	A,A
 		ld	(oswksp_VDU_VERTADJ),A
 		ld	(oswksp_VDU_INTERLACE),A
 		ld	(sysvar_VDU_Q_LEN),A
 
 
-		rst 8
+;     ____  __________  __  ________   _______________________   __________  ____  ______            ____  ________  _______ _    ________
+;    / __ \/ ____/ __ )/ / / / ____/  /_  __/ ____/ ___/_  __/  / ____/ __ \/ __ \/ ____/           / __ \/ ____/  |/  / __ \ |  / / ____/
+;   / / / / __/ / __  / / / / / __     / / / __/  \__ \ / /    / /   / / / / / / / __/    ______   / /_/ / __/ / /|_/ / / / / | / / __/
+;  / /_/ / /___/ /_/ / /_/ / /_/ /    / / / /___ ___/ // /    / /___/ /_/ / /_/ / /___   /_____/  / _, _/ /___/ /  / / /_/ /| |/ / /___
+; /_____/_____/_____/\____/\____/    /_/ /_____//____//_/     \____/\____/_____/_____/           /_/ |_/_____/_/  /_/\____/ |___/_____/
+
+USER_CTR = 0xA00
+
+		xor	A,A
+		ld	(USER_CTR),A
+		ld	(USER_CTR+1),A
+		ld	(USER_CTR+2),A
+		ld	(USER_CTR+3),A
+
+
 
 ;;		; bodge to set crtc regs
 ;;
@@ -110,7 +124,27 @@ mos_handle_res::
 		call	OSWRCH
 		or	A,A
 		jr	NZ,1$
-		
+
+		ld	IX,USER_CTR
+		ld	A,(IX+3)
+		call	X_PRINT_HEX_A
+		ld	A,(IX+2)
+		call	X_PRINT_HEX_A
+		ld	A,(IX+1)
+		call	X_PRINT_HEX_A
+		ld	A,(IX+0)
+		call	X_PRINT_HEX_A
+
+		inc	(IX+0)
+		jr	NZ,88$
+		inc	(IX+1)
+		jr	NZ,88$
+		inc	(IX+2)
+		jr	NZ,88$
+		inc	(IX+3)
+88$:
+
+
 		dec	B
 		jp	P,2$
 		dec	C
@@ -220,9 +254,25 @@ popIFF::
 	pop	AF
 	ret
 
+X_PRINT_HEX_A::
+		push	af
+		rra
+		rra
+		rra
+		rra
+		call	X_print_hexNyb
+		pop	af		
+X_print_hexNyb:
+		push	af
+   		and	a,0x0F
+   		add	a,0x90
+   		daa
+   		adc	a,0x40
+   		daa
+   		call	OSWRCH
+   		pop	af
+   		ret
 
-		.area	NOICE_CODE(CON, REL)
-	; placeholder to make sure the linker puts it in the right spot
 
 
 
@@ -303,3 +353,10 @@ mos_OSBYTE_118::
 		;; mock version - returns 0, Cy = 0
 		or	A,A
 		ret
+
+
+
+
+		.area	NOICE_CODE(CON, REL)
+	; placeholder to make sure the linker puts it in the right spot
+
