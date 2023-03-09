@@ -31,6 +31,10 @@ ACLOST  =     23              ;Accuracy lost
 EXPRNG  =     24              ;Exp range
 ;
         .globl  FPP
+
+        .area   CODE(REL,CON)
+
+
 ;
 ;Call entry and despatch code:
 ;
@@ -52,9 +56,9 @@ ERROR:  LD      SP,IY           ;Restore SP from IY
 ;
 ;Perform operation or function:
 ;
-OP:     CP      (RTABLE-DTABLE)/2
+OP:     CP      0+(RTABLE-DTABLE)/2
         JR      NC,BAD
-        CP      (FTABLE-DTABLE)/2
+        CP      0+(FTABLE-DTABLE)/2
         JR      NC,DISPAT
         EX      AF,AF'
         LD      A,B
@@ -525,7 +529,7 @@ IPOW3:  PUSH    BC
         RL      E
         RL      D
         PUSH    DE
-        LD      A,'*' AND 0x0F
+        LD      A,"*" AND 0x0F
         PUSH    AF
         CALL    COPY
         CALL    OP              ;SQUARE
@@ -1193,7 +1197,7 @@ STR:    CALL    SFLOAT
         BIT     7,H             ;NEGATIVE?
         JR      Z,STR10
         RES     7,H
-        LD      A,'-'
+        LD      A,"-"
         LD      (DE),A          ;STORE SIGN
         INC     DE
 STR10:  XOR     A               ;CLEAR A
@@ -1287,7 +1291,7 @@ STR23:  DEC     C
         JR      STR26
 STR24:  PUSH    AF
         LD      A,C
-        ADC     A,'0'           ;ADD CARRY
+        ADC     A,"0"           ;ADD CARRY
         CP      "0"
         JR      Z,STR25         ;SUPPRESS ZERO
         CP      "9"+1
@@ -1297,7 +1301,7 @@ STR25:  EX      (SP),HL
         BIT     6,L             ;ZERO FLAG
         EX      (SP),HL
         JR      NZ,STR27
-        LD      A,'0'
+        LD      A,"0"
 STR26:  INC     A               ;SET +VE
         DEC     A
         PUSH    AF              ;PUT ON STACK + CARRY
@@ -1363,10 +1367,10 @@ STR37:  PUSH    AF
         INC     E
         DEC     E
         JP      M,STR4
-STR33:  LD      A,'0'
+STR33:  LD      A,"0"
 STR38:  DEC     D
         JP      PO,STR39
-        LD      (HL),'.'
+        LD      (HL),"."
         INC     HL
 STR39:  LD      (HL),A
         INC     HL
@@ -1378,26 +1382,26 @@ STR4:   POP     AF
 STR40:  INC     C
         LD      C,L
         JR      NZ,STR44
-        LD      (HL),'E'        ;EXPONENT
+        LD      (HL),"E"        ;EXPONENT
         INC     HL
         LD      A,B
         DEC     A
         JP      P,STR41
-        LD      (HL),'-'
+        LD      (HL),"-"
         INC     HL
         NEG
-STR41:  LD      (HL),'0'
+STR41:  LD      (HL),"0"
         JR      Z,STR47
         CP      10
         LD      B,A
-        LD      A,':'
+        LD      A,":"
         JR      C,STR42
         INC     HL
-        LD      (HL),'0'
+        LD      (HL),"0"
 STR42:  INC     (HL)
         CP      (HL)
         JR      NZ,STR43
-        LD      (HL),'0'
+        LD      (HL),"0"
         DEC     HL
         INC     (HL)
         INC     HL
@@ -1719,7 +1723,7 @@ FLOAT:  BIT     7,H
 ;    Destroys: A,C,H,L,H',L',F
 ;
 FLOATA: EX      AF,AF'
-        ADD     A,(RTABLE-DTABLE)/2
+        ADD     A,0+(RTABLE-DTABLE)/2
         EX      AF,AF'
 FLOAT2: CALL    SWAP
         CALL    SFLOAT
@@ -1803,8 +1807,8 @@ OFLOW:  LD      A,TOOBIG
 FTEST:  CALL    TEST
         RET     Z
         LD      A,H
-        AND     10000000B
-        OR      01000000B
+        AND     0b10000000
+        OR      0b01000000
         RET
 ;
 ;TEST - Test HLH'L' for zero.
@@ -2238,5 +2242,4 @@ SIGNQ:  LD      A,(IX)
         DEC     IX
         RET
 ;
-        END
-
+        .end

@@ -14,6 +14,9 @@
         .globl  PUTIMS
 ;
         .globl   EXTERR
+
+        .area   CODE(REL,CON)
+
 ;
 CLG:
 COLOUR:
@@ -33,5 +36,4 @@ PUTIMS:
         .ascii    'Sorry'
         .db    0
 ;
-        END
-
+        .end

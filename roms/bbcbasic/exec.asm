@@ -13,7 +13,7 @@
         .globl  CHECK
         .globl  MUL16
         .globl  X4OR5
-        .globl  TERM?
+        .globl  TERMQ
         .globl  STORE4
         .globl  STORE5
         .globl  FILL
@@ -115,6 +115,9 @@
         .globl   LISTON
         .globl   PC
         .globl   OC
+
+        .area   CODE(REL,CON)
+
 ;
 TAND    =     0x80
 TOR     =     0x84
@@ -197,7 +200,7 @@ CMDTAB: .dw    AUTO
         .dw    WIDTHV
         .dw    CLI             ;OSCLI
 ;
-RUN:    CALL    TERM?
+RUN:    CALL    TERMQ
         JR      Z,RUN0
 CHAIN:  CALL    EXPRS
         LD      A,CR
@@ -210,10 +213,9 @@ RUN0:   LD      SP,(HIMEM)      ;PREPARE FOR RUN
 		; code always waiting until it was non-zero, resulting in a hang.
 		; Instead we crudely hack around it.
 		ld      a, r
-		jr      nz, .1
+		jr      nz, 1$
 		inc     a
-.1
-        RLCA
+1$:     RLCA
         RLCA
         LD      (IX+3),A
         SBC     A,A
@@ -273,10 +275,10 @@ NEWLIN: LD      A,(IY+0)        ;A=LINE LENGTH
         SBC     HL,DE
         RET     C
         EX      DE,HL
-        LD      A,'['           ;TRACE
+        LD      A,"["           ;TRACE
         CALL    OUTCHR
         CALL    PBCDL
-        LD      A,']'
+        LD      A,"]"
         CALL    OUTCHR
         LD      A," "
         JP      OUTCHR
@@ -310,11 +312,11 @@ REM:    PUSH    IY
 ;
 LET0:   CP      ELSE-TCMD
         JR      Z,REM
-        CP      ('*'-TCMD) AND 0xFF
+        CP      0+("*"-TCMD) & 0xFF
         JR      Z,EXT
-        CP      ('='-TCMD) AND 0xFF
+        CP      0+("="-TCMD) & 0xFF
         JR      Z,FNEND
-        CP      ('['-TCMD) AND 0xFF
+        CP      0+("["-TCMD) & 0xFF
         JR      Z,ASM
         DEC     IY
 LET:    CALL    ASSIGN
@@ -561,7 +563,7 @@ PRINTA: SUB     (HL)
 PRINT0: LD      A,(STAVAR)
         LD      C,A             ;PRINTS
         LD      B,0             ;PRINTF
-PRINTC: CALL    TERM?
+PRINTC: CALL    TERMQ
         JR      Z,PRINT4
         RES     0,B
         INC     IY
@@ -622,7 +624,7 @@ ON:     CP      TERROR
         CALL    EXPRI
         LD      A,(IY)
         INC     IY
-        LD      E,','           ;SEPARATOR
+        LD      E,","           ;SEPARATOR
         CP      TGOTO
         JR      Z,ON1
         CP      TGOSUB
@@ -644,7 +646,7 @@ ON1:    LD      D,A
         JR      Z,ON4
         DEC     C
         JR      Z,ON3           ;INDEX=1
-ON2:    CALL    TERM?
+ON2:    CALL    TERMQ
         JR      Z,ON4           ;OUT OF RANGE
         INC     IY              ;SKIP DELIMITER
         CP      E
@@ -678,7 +680,7 @@ ONPROC: LD      A,TON
 ;GOTO line
 ;
 GOTO:   CALL    ITEMI           ;LINE NUMBER
-GOTO1:  CALL    TERM?
+GOTO1:  CALL    TERMQ
         JP      NZ,SYNTAX
 GOTO2:  EXX
         CALL    FINDL
@@ -694,7 +696,7 @@ GOSUB:  CALL    ITEMI           ;LINE NUMBER
 GOSUB1: PUSH    IY              ;TEXT POINTER
         CALL    CHECK           ;CHECK ROOM
         CALL    GOTO1           ;SAVE MARKER
-GOSCHK  =     $
+GOSCHK:
 ;
 ;RETURN
 ;
@@ -712,7 +714,7 @@ RETURN: POP     DE              ;MARKER
 REPEAT: PUSH    IY
         CALL    CHECK
         CALL    XEQ
-REPCHK  =     $
+REPCHK:
 ;
 ;UNTIL expr
 ;
@@ -776,7 +778,7 @@ FOR1:   PUSH    BC
         PUSH    IX              ;LOOP VARIABLE
         CALL    CHECK
         CALL    XEQ
-FORCHK  =     $
+FORCHK:
 ;
 ;NEXT [var[,var...]]
 ;
@@ -786,7 +788,7 @@ NEXT:   POP     BC              ;MARKER
         SBC     HL,BC
         LD      A,32
         JR      NZ,ERROR3       ;"No FOR"
-        CALL    TERM?
+        CALL    TERMQ
         POP     HL
         PUSH    HL
         PUSH    BC
@@ -806,7 +808,7 @@ NEXT0:  SBC     HL,DE
         CALL    LOADN           ;LOOP VARIABLE
         BIT     7,D             ;SIGN?
         PUSH    AF
-        LD      A,'+' AND 0x0F
+        LD      A,"+" & 0x0F
         CALL    FPP             ;ADD STEP
         JR      C,ERROR3
         POP     AF              ;RESTORE TYPE
@@ -817,7 +819,7 @@ NEXT0:  SBC     HL,DE
         CALL    DLOAD5          ;LIMIT
         POP     AF
         CALL    Z,SWAP
-        LD      A,0+('<'-4) AND 0x0F
+        LD      A,0+("<"-4) AND 0x0F
         CALL    FPP             ;TEST AGAINST LIMIT
         JR      C,ERROR3
         INC     H
@@ -857,14 +859,14 @@ ERROR3: JP      ERROR           ;"Can't match FOR"
 ;
 FN:     PUSH    AF              ;MAKE SPACE ON STACK
         CALL    PROC1
-FNCHK   =     $
+FNCHK:
 ;
 ;PROCname
 ;N.B. ENTERED WITH A = ON PROC FLAG
 ;
 PROC:   PUSH    AF              ;MAKE SPACE ON STACK
         CALL    PROC1
-PROCHK  =     $
+PROCHK:
 PROC1:  CALL    CHECK
         DEC     IY
         PUSH    IY
@@ -1080,7 +1082,7 @@ INPUT:  CP      "#"
         LD      C,0x80
 INPUT0: LD      HL,BUFFER
         LD      (HL),CR         ;INITIALISE EMPTY
-INPUT1: CALL    TERM?
+INPUT1: CALL    TERMQ
         JP      Z,XEQ           ;DONE
         INC     IY
         CP      ","
@@ -1135,7 +1137,7 @@ INPUT3: RES     0,C
 ;
 REFILL: BIT     0,C
         JR      NZ,REFIL0       ;NO PROMPT
-        LD      A,'?'
+        LD      A,"?"
         CALL    OUTCHR          ;PROMPT
         LD      A," "
         CALL    OUTCHR
@@ -1258,7 +1260,7 @@ CLR:    CALL    CLEAR
 ;RESTORE [line]
 ;
 RESTOR: LD      HL,(.page)
-        CALL    TERM?
+        CALL    TERMQ
         JR      Z,RESTR1
         CALL    ITEMI
         EXX
@@ -1376,7 +1378,7 @@ VDU:    CALL    EXPRI
         LD      A,H
         CALL    OSWRCH
 VDU2:   INC     IY
-VDU3:   CALL    TERM?
+VDU3:   CALL    TERMQ
         JR      NZ,VDU
         JP      XEQ
 ;
@@ -1716,7 +1718,7 @@ SAVLO2: PUSH    AF              ;STRING TYPE
         POP     DE
 SAVLO4: PUSH    IX              ;VARPTR
         CALL    SAVLO5
-LOCCHK  =     $
+LOCCHK:
 SAVLO5: CALL    CHECK
         CALL    NXT
         CP      ","             ;MORE?
@@ -1737,7 +1739,7 @@ TERM:   CP      ";"             ;ASSEMBLER TERMINATOR
         RET     Z
         JR      TERM0
 ;
-TERM?:  CALL    NXT
+TERMQ:  CALL    NXT
         CP      ELSE
         RET     NC
 TERM0:  CP      ":"             ;ASSEMBLER SEPARATOR
@@ -1745,7 +1747,7 @@ TERM0:  CP      ":"             ;ASSEMBLER SEPARATOR
         CP      CR
         RET
 ;
-SPAN:   CALL    TERM?
+SPAN:   CALL    TERMQ
         RET     Z
         INC     IY
         JR      SPAN
@@ -1761,7 +1763,7 @@ FORMAT: CP      TAB
         JR      Z,DOTAB
         CP      SPC
         JR      Z,DOSPC
-        CP      ''''
+        CP      "'"
         RET     NZ
         CALL    CRLF
         XOR     A
@@ -2447,7 +2449,7 @@ FIND0:  LD      A,(HL)
         OR      A
         JR      Z,EXIT
         XOR     (IY)
-        AND     01011111B
+        AND     0b01011111
         JR      Z,FIND2
 FIND1:  BIT     7,(HL)
         INC     HL
@@ -2465,7 +2467,7 @@ FIND3:  BIT     7,(HL)
         CALL    Z,SKIP0
         LD      A,(HL)
         XOR     (IY)
-        AND     01011111B
+        AND     0b01011111
         JR      Z,FIND3
 FIND4:  POP     IY
         JR      FIND1
@@ -2503,7 +2505,7 @@ OPCODS: .ascii    'NO'
         .ascii    'AF'
         .db    0
         .ascii    'AF'
-        .db    ' "'"+0x80
+        .db    "'" + 0x80
         .db    8
         .ascii    'RRC'
         .db    "A"+0x80
@@ -2868,5 +2870,6 @@ LDOPS:  .ascii    "I"
 LF      =     0x0A
 CR      =     0x0D
 ;
-FIN:    END
-
+FIN:    .end
+
+

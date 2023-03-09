@@ -26,12 +26,15 @@ COLD    =     0x200
         .globl  GETKEY
         .globl  BYE
 ;
-        ASEG
-        ORG     0x100
+;        ASEG
+ ;       ORG     0x100
 ;
 ;JUMP TABLE - BASIC makes calls to hardware-dependent
 ;features via this table:
 ;
+
+        .area   CODE(REL,CON)
+
         JP      INIT
 CLRSCN: JP      CLS             ;CLEAR SCREEN
 PUTCSR: JP      PCSR            ;SET CURSOR POSN.
@@ -50,7 +53,7 @@ BYE:    JP      REBOOT          ;RETURN TO CP/M
 ;
 ;VECTOR TABLE FOR Z80-CTC:
 ;
-        ORG     $+7 AND 0x0FFF8
+;;        ORG     $+7 AND 0x0FFF8
 ;
 ;VECTOR: .dw    TIMER
 ;        .dw    TIMER
@@ -232,7 +235,7 @@ GCSR:	ld		de, 0
 ;        EX      DE,HL
 ;        RET
 ;
-TIME:   DEFS    4
+TIME:   .rmb    4
 ;
 HOME    =     0x0FF21
 ;
@@ -240,11 +243,11 @@ CTC0    =     0x80
 CRTCS   =     0x84
 CRTCD   =     0x85
 ;
-        IF      $ GT 0x1F4
-        ERROR   'INSUFFICIENT SPACE'
-        ENDIF
+;;        IF      . > 0x1F4
+;;        ERROR   'INSUFFICIENT SPACE'
+;;        ENDIF
 ;
-        ORG     0x1F4
+;;        ORG     0x1F4
 ;
         .db    80              ;WIDTH
         .db    "K" AND 0x1F     ;CURSOR UP
@@ -259,5 +262,5 @@ CRTCD   =     0x85
         .db    "E" AND 0x1F     ;DELETE CHARACTER
         .db    "A" AND 0x1F     ;INSERT CHARACTER
 ;
-FIN:    END
-
+FIN:    .end
+

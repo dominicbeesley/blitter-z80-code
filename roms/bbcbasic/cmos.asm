@@ -42,6 +42,8 @@
         .globl   HIMEM
         .globl   ERRLIN
         .globl   USER
+
+        .area   CODE(REL,CON)
 ;
 ;
 ;OSSAVE - Save an area of memory to a file.
@@ -665,7 +667,7 @@ COPYF:  LD      A,(HL)
         JR      Z,COPYF1
         CP      """
         JR      Z,COPYF1
-        LD      C,'?'
+        LD      C,"?"
         CP      "*"
         JR      Z,COPYF1
         LD      C," "
@@ -854,7 +856,7 @@ SAVLO1: CALL    HEX
         JR      HUH
 ;
 DOT:    INC     HL
-DIR:    LD      A,'?'           ;*DIR
+DIR:    LD      A,"?"           ;*DIR
         CALL    SETUP
         CP      CR
         JR      NZ,HUH
@@ -889,13 +891,13 @@ DIR1:   CALL    LTRAP
         DEC     A
         LD      C,25
         CALL    M,BDC
-        ADD     A,'A'
+        ADD     A,"A"
         CALL    OSWRCH
         LD      B,8
         LD      A," "           ;**
         BIT     7,E             ;** READ ONLY?
         JR      Z,DIR3          ;**
-        LD      A,'*'           ;**
+        LD      A,"*"           ;**
 DIR3:   CALL    CPTEXT
         LD      B,3
         LD      A," "           ;**
@@ -922,9 +924,9 @@ SETOPT: LD      (OPTVAL),A
 RESET:  XOR     A
         JR      SETOPT
 ;
-EXEC:   LD      A,00000001B     ;*EXEC
+EXEC:   LD      A,0b00000001     ;*EXEC
         .db    1               ;SKIP 2 BYTES (LD BC)
-SPOOL:  LD      A,00000010B     ;*SPOOL
+SPOOL:  LD      A,0b00000010     ;*SPOOL
         PUSH    AF
         PUSH    HL
         CALL    SESHUT          ;STOP SPOOL/EXEC
@@ -1033,7 +1035,7 @@ COMDS:  .ascii    'BY'
 ; Destroys: A,B,H,L,F
 ;
 CPTEXT: PUSH    AF              ;**
-        LD      A,':'
+        LD      A,":"
         CALL    OSWRCH
         POP     AF              ;**
 SPTEXT: CALL    OSWRCH          ;**
@@ -1128,7 +1130,7 @@ TEST:   PUSH    DE
         POP     DE
         OR      A
         RET     Z
-        CP      "S" AND 0x1F     ;PAUSE DISPLAY?
+        CP      "S" & 0x1F     ;PAUSE DISPLAY?
         JR      Z,OSRDCH
         CP      ESC
         JR      Z,ESCSET
@@ -1229,7 +1231,7 @@ EDPUT:  LD      A,(FLAGS)
         LD      (EDPTR),HL
         RET
 ;
-PROMPT: LD      E,'>'
+PROMPT: LD      E,">"
 WRCH:   LD      A,(OPTVAL)      ;FAST ENTRY
         ADD     A,3
         CP      3
@@ -1255,7 +1257,7 @@ WRCH1:  CALL    BDOS0
         RET
 ;
 TOGGLE: LD      A,(FLAGS)
-        XOR     00000100B
+        XOR     0b00000100
         LD      (FLAGS),A
         RET
 ;
@@ -1326,7 +1328,7 @@ LIMIT:  CALL    Z,KEYGET        ;READ KEYBOARD
         CP      (IX-8)          ;END OF LINE   (IX-8)
         JP      Z,RIGHT
         LD      C,0             ;INHIBIT REPEAT
-        CP      "P" AND 0x1F
+        CP      "P" & 0x1F
         JP      Z,TOGGLE
         CP      (IX-6)          ;DELETE LEFT   (IX-6)
         JR      Z,BACK
@@ -1447,7 +1449,7 @@ STOP:   LD      C,0             ;STOP REPEAT
 EDITST: .ascii    'EDIT'
 LISTST: .ascii    'LIST'
 ;
-SUMFIX: DEFS    2
+SUMFIX: .rmb    2
 ;
 BEL     =     7
 BS      =     8
@@ -1466,12 +1468,12 @@ DSKBUF  =     0x80
 FCBSIZ  =     128+36+2
 ;
 TRPCNT: .db    10
-TABLE:  DEFS    16              ;FILE BLOCK POINTERS
+TABLE:  .rmb    16              ;FILE BLOCK POINTERS
 FLAGS:  .db    0
 INKEY:  .db    0
 EDPTR:  .dw    0
 OPTVAL: .db    0
 INILEN  =     .-TABLE
 ;
-FIN:    END
-
+FIN:    .end
+

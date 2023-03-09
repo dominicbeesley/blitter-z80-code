@@ -87,6 +87,9 @@
         .globl   ADVAL
 ;
         .globl   FPP
+
+        .area   CODE(REL,CON)
+
 ;
 ;TABLE OF ADDRESSES FOR FUNCTIONS:
 ;
@@ -201,12 +204,12 @@ EXPR1A: CP      ANDK
         JR      EXPR1A
 ;
 EXPR2:  CALL    EXPR3
-        CALL    RELOP?
+        CALL    RELOPQ
         RET     NZ
         LD      B,A
         INC     IY              ;BUMP OVER OPERATOR
         CALL    NXT
-        CALL    RELOP?          ;COMPOUND OPERATOR?
+        CALL    RELOPQ          ;COMPOUND OPERATOR?
         JR      NZ,EXPR2B
         INC     IY
         CP      B
@@ -1442,7 +1445,7 @@ HEXDIG: LD      A,(IY)
         CCF
         RET
 ;
-RELOP?: CP      ">"
+RELOPQ: CP      ">"
         RET     NC
         CP      "="
         RET     NC
@@ -1530,5 +1533,4 @@ DISPT0: PUSH    BC
 ;
 CR      =     0x0D
 ;
-        END
-
+        .end

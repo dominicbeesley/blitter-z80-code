@@ -1,4 +1,4 @@
--i build/test-mos.ihx
+-i build/bbc-basic.ihx
 -b CODE=0x8000
 -m
 -j
@@ -7,7 +7,7 @@ build/cmos.rel
 build/eval.rel
 build/exec.rel
 build/fpp.rel
-build/patch.rel
 build/sorry.rel
+build/patch.rel
 build/ram.rel 
 -e

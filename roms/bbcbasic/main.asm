@@ -10,7 +10,7 @@
         .globl   XEQ
         .globl   RUN0
         .globl   CHAIN0
-        .globl   TERM?
+        .globl   TERMQ
         .globl   MUL16
         .globl   X4OR5
         .globl   FILL
@@ -1620,7 +1620,7 @@ GETDEF: LD      A,(IY+1)
 LOCATE: SUB     "@"
         RET     C
         LD      H,0
-        CP      "Z"- "@"+1
+        CP      "Z"-"@"+1
         JR      NC,LOC0         ;NOT STATIC
         ADD     A,A
         LD      L,A
@@ -1639,9 +1639,9 @@ LOCATE: SUB     "@"
         XOR     A
         RET
 ;
-LOC0:   CP      "_"-'@'
+LOC0:   CP      "_"-"@"
         RET     C
-        CP      "z"- "@"+1
+        CP      "z"-"@"+1
         CCF
         DEC     A               ;SET NZ
         RET     C
@@ -1791,7 +1791,7 @@ PAIR:   CALL    LINNUM          ;FIRST
         OR      L
         JR      NZ,PAIR1
         LD      L,10
-PAIR1:  CALL    TERM?
+PAIR1:  CALL    TERMQ
         INC     IY
         PUSH    HL
         LD      HL,10
@@ -1813,7 +1813,7 @@ PAIR1:  CALL    TERM?
 ;
 DLPAIR: CALL    LINNUM
         PUSH    HL
-        CALL    TERM?
+        CALL    TERMQ
         JR      Z,DLP1
         CP      TIF
         JR      Z,DLP1
@@ -1991,7 +1991,7 @@ ENCODE: SET     4,C
         OR      B
         RRCA
         RRCA
-        XOR     01010100B
+        XOR     0b01010100
         LD      (HL),A
         INC     HL
         LD      A,E
@@ -2033,5 +2033,4 @@ CR      =     0x0D
 LF      =     0x0A
 ESC     =     0x1B
 ;
-        END     START
-
+        .end     START
