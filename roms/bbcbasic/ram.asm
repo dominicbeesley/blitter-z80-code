@@ -36,6 +36,8 @@
 
         .area   CODE(REL,CON)
 
+        .bndry  256
+
 ;
 ;n.b. ACCS, BUFFER & STAVAR must be on page boundaries.
 ;
