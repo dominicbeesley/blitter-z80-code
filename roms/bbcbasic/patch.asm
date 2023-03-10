@@ -15,7 +15,7 @@
 ;
 ;R.T.RUSSELL, 04-02-1984
 ;
-BDOS    =     5
+;;BDOS    =     5
 ;
         .globl  CLRSCN
         .globl  PUTCSR
@@ -134,15 +134,17 @@ PTIME:  DI
 ;CLS - Clear screen.
 ; Destroys: A,D,E,H,L,F
 ;
-CLS:    PUSH    BC
-        LD      C,2
-        LD      E,12
-        CALL    BDOS
-        LD      C,2
-        LD      E,24
-        CALL    BDOS
-        POP     BC
-        RET
+CLS:    ;;PUSH    BC
+        ;;LD      C,2
+        ;;LD      E,12
+        ;;CALL    BDOS
+        ;;LD      C,2
+        ;;LD      E,24
+        ;;CALL    BDOS
+        ;;POP     BC
+        ;;RET
+        LD      A,12
+        JP      OSWRCH
 ;
 ;INKEY - Sample keyboard with specified wait.
 ;   Inputs: HL = Time to wait (centiseconds)
@@ -264,5 +266,6 @@ CRTCD   =     0x85
         .db    "E" AND 0x1F     ;DELETE CHARACTER
         .db    "A" AND 0x1F     ;INSERT CHARACTER
 ;
+PATCH_END::
 FIN:    .end
 
