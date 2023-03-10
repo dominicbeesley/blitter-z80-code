@@ -43,6 +43,8 @@
         .globl   ERRLIN
         .globl   USER
 
+        .globl   PATCH_END
+
         .area   CODE(REL,CON)
 ;
 ;
@@ -1281,7 +1283,7 @@ TOGGLE: LD      A,(FLAGS)
 ;           A=0.
 ; Destroys: A,B,C,D,E,H,L,F
 ;
-OSLINE: LD      IX,0x200
+OSLINE: LD      IX,PATCH_END
         LD      A,(FLAGS)
         BIT     3,A             ;EDIT MODE?
         JR      Z,OSLIN1
