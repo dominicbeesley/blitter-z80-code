@@ -1,4 +1,5 @@
 
+SHEILA				= 0hFE00
 
 sheila_MEM_CTL			= 0hFE31
 BITS_MEM_CTL_SWMOS		= 0h01
