@@ -1,4 +1,18 @@
         .title   BBC BASIC (C) R.T.RUSSELL 1984
+
+oswksp_TIME                     ==      0x0292  ; TIME value 1, high byte...low byte
+sheila_ACIA_CTL         =       0hFE08
+
+ACIA_RDRF               =       0h01
+ACIA_TDRE               =       0h02
+
+BIT_ACIA_RDRF           =       0
+BIT_ACIA_TDRE           =       1
+
+sheila_ACIA_DATA        =       0hFE09
+
+OSWRCH = 0hFFEE
+
 ;
 ;BBC BASIC (Z80) - CP/M VERSION.
 ;(C) COPYRIGHT R.T.RUSSELL, 1984.
@@ -116,8 +130,14 @@ REBOOT: LD      A,3
 ; Destroys: A,D,E,H,L,F
 ;
 GTIME:  DI
-        LD      HL,(TIME)
-        LD      DE,(TIME+2)
+        LD      A,(oswksp_TIME+4)
+        LD      L,A
+        LD      A,(oswksp_TIME+3)
+        LD      H,A
+        LD      A,(oswksp_TIME+2)
+        LD      E,A
+        LD      A,(oswksp_TIME+1)
+        LD      D,A
         EI
         RET
 ;
@@ -126,8 +146,14 @@ GTIME:  DI
 ; Destroys: A,D,E,H,L,F
 ;
 PTIME:  DI
-        LD      (TIME),HL
-        LD      (TIME+2),DE
+        LD      A,L
+        LD      (oswksp_TIME+4),A
+        LD      A,H
+        LD      (oswksp_TIME+3),A
+        LD      A,E
+        LD      (oswksp_TIME+2),A
+        LD      A,D
+        LD      (oswksp_TIME+1),A
         EI
         RET
 ;
@@ -152,21 +178,35 @@ CLS:    ;;PUSH    BC
 ;           If carry set, A = character typed.
 ; Destroys: A,D,E,H,L,F
 ;
-INKEY:  PUSH    BC
-        PUSH    HL
-        LD      C,6
-        LD      E,0x0FF
-        CALL    BDOS            ;CONSOLE INPUT
-        POP     HL
-        POP     BC
-        OR      A
-        SCF
-        RET     NZ              ;KEY PRESSED
+INKEY:  
+
+;        PUSH    BC
+;        PUSH    HL
+;        LD      C,6
+;        LD      E,0x0FF
+;        CALL    BDOS            ;CONSOLE INPUT
+;        POP     HL
+;        POP     BC
+;        OR      A
+;        SCF
+;        RET     NZ              ;KEY PRESSED
+
+        PUSH    BC
+        LD      BC, sheila_ACIA_CTL      ; ACIA status
+        OR      A,A             ; clear carry
+        IN      A,(C)
+        BIT     BIT_ACIA_RDRF,A
+        JR      Z,1$
+        INC     C               ; point at DATA register
+        IN      A,(C)
+        SCF                    
+1$:     POP     BC
+        RET     C
         OR      H
         OR      L
         RET     Z               ;TIME-OUT
         PUSH    HL
-        LD      HL,TIME
+        LD      HL,oswksp_TIME+4
         LD      A,(HL)
 WAIT1:  CP      (HL)
         JR      Z,WAIT1         ;WAIT FOR 10 ms.
@@ -239,7 +279,7 @@ GCSR:	ld		de, 0
 ;        EX      DE,HL
 ;        RET
 ;
-TIME:   .rmb    4
+;;;TIME:   .rmb    4
 ;
 HOME    =     0x0FF21
 ;
@@ -254,17 +294,17 @@ CRTCD   =     0x85
 ;;        ORG     0x1F4
 ;
         .db    80              ;WIDTH
-        .db    "K" AND 0x1F     ;CURSOR UP
-        .db    "J" AND 0x1F     ;CURSOR DOWN
-        .db    "L" AND 0x1F     ;START OF LINE
-        .db    "B" AND 0x1F     ;END OF LINE
-        .db    "C" AND 0x1F     ;DELETE TO END OF LINE
+        .db    "K" & 0x1F     ;CURSOR UP
+        .db    "J" & 0x1F     ;CURSOR DOWN
+        .db    "L" & 0x1F     ;START OF LINE
+        .db    "B" & 0x1F     ;END OF LINE
+        .db    "C" & 0x1F     ;DELETE TO END OF LINE
         .db    0x7F             ;BACKSPACE & DELETE
-        .db    "X" AND 0x1F     ;CANCEL LINE
-        .db    "H" AND 0x1F     ;CURSOR LEFT
-        .db    "I" AND 0x1F     ;CURSOR RIGHT
-        .db    "E" AND 0x1F     ;DELETE CHARACTER
-        .db    "A" AND 0x1F     ;INSERT CHARACTER
+        .db    "X" & 0x1F     ;CANCEL LINE
+        .db    "H" & 0x1F     ;CURSOR LEFT
+        .db    "I" & 0x1F     ;CURSOR RIGHT
+        .db    "E" & 0x1F     ;DELETE CHARACTER
+        .db    "A" & 0x1F     ;INSERT CHARACTER
 ;
 PATCH_END::
 FIN:    .end

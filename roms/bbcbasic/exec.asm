@@ -2739,11 +2739,11 @@ OPCODS: .ascii    'NO'
         .db    "D"+0x80
         .db    0x40
 ;
-        .db    DEF AND 0x7F
+        .db    DEF & 0x7F
         .db    "M"+0x80
         .db    0
 ;
-        .db    DEF AND 0x7F
+        .db    DEF & 0x7F
         .db    "B"+0x80
         .db    0
 ;
@@ -2751,7 +2751,7 @@ OPCODS: .ascii    'NO'
         .db    "T"+0x80
         .db    0
 ;
-        .db    DEF AND 0x7F
+        .db    DEF & 0x7F
         .db    "W"+0x80
         .db    0
 ;
