@@ -12,7 +12,7 @@
 		.area CODE(REL,CON)
 
 start:		di			; disable interrupts
-		im	2		; force interrupt mode 1
+		im	2		; force interrupt mode 2
 
 		; set up SYS VIA to generate 100Hz interrupt
 

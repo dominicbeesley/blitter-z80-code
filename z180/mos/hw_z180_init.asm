@@ -8,6 +8,7 @@
 		.include	"../includes/hardware-z180.inc"
 
 		.globl	NOICE_INT_ENTRY
+		.globl  int0_handle
 
 
 ;===========================================================================
@@ -80,7 +81,7 @@ R0:	RETN				; this will get setup properly by NoIce
 
 DEFAULT_INTS_SIZE      = .-DEFAULT_INTS
 
-DEFAULT_IM2_INTS:
+DEFAULT_IM2_INTS::
 	.dw	INT1_ENTRY
 	.dw	INT2_ENTRY
 	.dw	INT_PRT0_ENTRY
@@ -94,7 +95,7 @@ DEFAULT_IM2_INTS:
 DEFAULT_IM2_INTS_SIZE      = .-DEFAULT_IM2_INTS
 
 
-INT0_ENTRY:
+INT0_ENTRY::
 	PUSH	AF
 	LD	A,11			;(INT0)
 	JP	NOICE_INT_ENTRY
@@ -140,7 +141,7 @@ INT_ASCI1_ENTRY:
 ;
 ;  Non-maskable interrupt:  bash button
 ; this will get setup properly by NoIce
-DEFAULT_NMI:
+DEFAULT_NMI::
 	RETN
 
 ;
@@ -151,7 +152,7 @@ DEFAULT_NMI_SIZE = .-DEFAULT_NMI
 
 
 
-reset_hw_table:
+reset_hw_table::
 
 ;-----------------------------------------------------------------------
 ;  Initialization table for Z180
@@ -222,8 +223,74 @@ BAUD_TC = 11;;(16000000/38400/2/16)-2		; 38400 is the highest common speed that 
 
 reset_hw_table_count = (.-reset_hw_table) / 2
 
+reset_sheila_hw_table::
+
+	.db	<sheila_ACIA_CTL,	0b00000011	; master reset
+
+	; motherboard latches
+; *************************************************************************
+; *		TODO: move to own loop?                                   *
+; *        set addressable latch IC 32 for peripherals via PORT B         *
+; *                                                                       *
+; *       ;bit 3 set sets addressed latch high adds 8 to VIA address      *
+; *       ;bit 3 reset sets addressed latch low                           *
+; *                                                                       *
+; *       Peripheral              VIA bit 3=0             VIA bit 3=1     *
+; *                                                                       *
+; *   0   Sound chip              Enabled                 Disabled        *
+; *   1   speech chip (RS)        Low                     High            *
+; *   2   speech chip (WS)        Low                     High            *
+; *   3   Keyboard Auto Scan      Disabled                Enabled         *
+; *   4   C0 address modifier     Low                     High            * 
+; *   5   C1 address modifier     Low                     High            * 
+; *   6   Caps lock  LED          ON                      OFF             *
+; *   7   Shift lock LED          ON                      OFF             *
+; *                                                                       *
+; *************************************************************************
+
+	.db	<sheila_SYSVIA_ddrb,	0b00001111	; top nyble inputs, latch pins outputs
+
+	.db	<sheila_SYSVIA_orb,	0b00001111	; shift lock OFF
+	.db	<sheila_SYSVIA_orb,	0b00001110	; caps lock OFF
+	.db	<sheila_SYSVIA_orb,	0b00001011	; key scan enabled
+	.db	<sheila_SYSVIA_orb,	0b00001010	; speech WS high
+	.db	<sheila_SYSVIA_orb,	0b00001001	; speech RS high
+
+	; printer port?
+
+	.db	<sheila_USRVIA_ddra,	0xFF		; all out
+
+	; ACIA / SerULA - TODO: this should initialise from sys vars
+	; setup for Terminal 19,200 8n1 RS423
+
+	.db	<sheila_ACIA_CTL,	0b01010110	; 
+					; 0		Rx interrupt disabled
+					;  10		RTS = high Tx interrupt disabled
+					;    101	8n1
+					;	10	div 16
+
+	.db	<sheila_SERIAL_ULA,	0b01000000
+					; 0		motor off
+					;  1		rs423 en
+					;   000		19200 Rx
+					;      000	19200 Tx
+
+reset_sheila_hw_table_count = (.-reset_sheila_hw_table)/2
 
 z180_reset_hw_init::
+
+;  Initialize motherboard hardware
+	ld	HL,reset_sheila_hw_table
+	ld	E,reset_sheila_hw_table_count
+	ld	B,>SHEILA
+1$:	ld	C,(HL)
+	inc	HL
+	ld	A,(HL)
+	inc	HL
+	out	(C),A
+	dec	E
+	jr	NZ, 1$
+
 ;
 ;  Initialize target hardware
 	ld	HL,reset_hw_table		
@@ -265,7 +332,7 @@ RST10:	ld	C,(HL)		;load address from table
 	LDIR
 
 	; INT0
-	LD	BC,INT0_ENTRY
+	LD	BC,int0_handle
 	LD	H,D
 	LD	L,IM2_INT0_VEC
 	LD	(HL),C

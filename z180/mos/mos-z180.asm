@@ -37,6 +37,11 @@
 
 
 mos_handle_res::	
+		di			; disable interrupts
+		im	2		; force interrupt mode 1
+		xor	A,A
+		ld	I,A
+
 		ld	HL,STACKTOP
 		ld	SP,HL
 
@@ -102,12 +107,9 @@ USER_CTR = 0xA00
 		ld	A,D
 		call	OSWRCH
 		ld	E,20			; reps counter
-7$:
-		ld	C,15			; background colour counter
-3$:
-		ld	B,15			; foreground colour counter
-2$:
-		ld	A,17
+7$:		ld	C,15			; background colour counter
+3$:		ld	B,15			; foreground colour counter
+2$:		ld	A,17
 		call	OSWRCH
 		ld	A,B
 		and	A,0xF
@@ -356,6 +358,7 @@ mos_OSBYTE_118::
 		;; mock version - returns 0, Cy = 0
 		or	A,A
 		ret
+
 
 
 
