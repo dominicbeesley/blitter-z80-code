@@ -275,6 +275,54 @@ reset_sheila_hw_table::
 					;   000		19200 Rx
 					;      000	19200 Tx
 
+	; VIAS, clear and disable all interrupts
+
+	.db	<sheila_SYSVIA_ier,	0b01111111
+	.db	<sheila_SYSVIA_ifr,	0b01111111
+	.db	<sheila_USRVIA_ier,	0b01111111
+	.db	<sheila_USRVIA_ifr,	0b01111111
+
+	;enable interrupts 1,4,5,6 of system VIA
+	; TODO: only T1 interrupt actually enabled!!!
+	.db	<sheila_SYSVIA_ier,	0b11000000
+		;			; 1		enabled
+		;			;  1		T1  - 100Hz
+		;			;   1		T2  - speech
+		;			;    1		CB1 - ADC EOC
+		;			;     0		CB2 - LPT stb
+		;			;      0	SHR - shift reg
+		;			;	1	CA1 - Vsync
+		;			;        0	CA2 - Keyboard
+
+	.db	<sheila_SYSVIA_pcr,	0b00000100
+					; 000		CB2 - neg edge input
+					;    0		CB1 - neg edge input
+					;     010	CA2 - pos edge input
+					;        0	CA1 - neg edge input
+
+	.db	<sheila_SYSVIA_acr,	0b01100000
+					; 01		T1  - cont. irq, PB7 off
+					;   1		T2  - timed irq
+					;    000	SHR - disabled
+					;       0	PB  - latch disable
+					;        0	PA  - latch disable
+
+	; T1 100 Hz timer
+T1_VAL = 9998	; = 1MHZ / 100 - 2
+	.db	<sheila_SYSVIA_t1ll,	<T1_VAL
+	.db	<sheila_SYSVIA_t1lh,	>T1_VAL
+	.db	<sheila_SYSVIA_t1ch,	>T1_VAL
+
+
+	; printer port
+
+	.db	<sheila_USRVIA_pcr,	0b00001110
+					; 000		CB2 - neg edge input
+					;    0		CB1 - neg edge input
+					;     111	CA2 - high output
+					;        0	CA1 - neg edge input
+
+
 reset_sheila_hw_table_count = (.-reset_sheila_hw_table)/2
 
 z180_reset_hw_init::

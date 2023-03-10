@@ -38,7 +38,7 @@
 
 mos_handle_res::	
 		di			; disable interrupts
-		im	2		; force interrupt mode 1
+		im	2		; force interrupt mode 2
 		xor	A,A
 		ld	I,A
 
@@ -77,6 +77,7 @@ USER_CTR = 0xA00
 		ld	(USER_CTR+2),A
 		ld	(USER_CTR+3),A
 
+;;		ei
 
 
 ;;		; bodge to set crtc regs
@@ -149,6 +150,19 @@ USER_CTR = 0xA00
 		inc	(IX+3)
 88$:
 
+		ld	A,(oswksp_TIME+0)
+		call	X_PRINT_HEX_A
+		ld	A,(oswksp_TIME+1)
+		call	X_PRINT_HEX_A
+		ld	A,(oswksp_TIME+2)
+		call	X_PRINT_HEX_A
+		ld	A,(oswksp_TIME+3)
+		call	X_PRINT_HEX_A
+		ld	A,(oswksp_TIME+4)
+		call	X_PRINT_HEX_A
+
+
+		call	OSNEWL
 
 		dec	B
 		jp	P,2$
