@@ -363,7 +363,7 @@ x_start_curs_edit::	TODO "x_start_curs_edit"
 ;		pshs	A,CC
 ;		ldx	#vduvar_TXT_CUR_X		;	C56A
 ;		ldy	#vduvar_TEXT_IN_CUR_X		;	C56C
-;		jsr	x_exchange_2atY_with_2atX	;	C56E
+;		jsr	x_exchange_2atHL_with_2atDE	;	C56E
 ;		jsr	x_set_up_displayaddress		;	C571
 ;		ldx	zp_vdu_top_scanline
 ;		jsr	x_set_cursor_position_HL		;	C574
@@ -633,10 +633,9 @@ mos_VDU_28::	TODO "mos_VDU_28"
 ;		jsr	copy4fromXtoY
 ;		jsr	x_check_text_cursor_in_window_setup_display_addr
 ;		bcs	mos_VDU_30
-LC732_set_cursor_position::	TODO "LC732_set_cursor_position"
-;
-;		ldx	zp_vdu_top_scanline				; CHECK!
-;		jmp	x_set_cursor_position_HL
+LC732_set_cursor_position::
+		ld	HL,(zp_vdu_top_scanline)
+		jp	x_set_cursor_position_HL
 ;; ----------------------------------------------------------------------------
 ;; OSWORD 9    read a pixel; on entry &EF=A=9 ; &F0=X=low byte of parameter blockFDBess ; &F1=Y=high byte of parameter blockFDBess ; PARAMETER BLOCK ; bytes 0,1 X coordinate, bytes 2,3 Y coordinate ; EXIT with result in byte 4 =&FF if point was of screen
 ;mos_OSWORD_9:
@@ -664,45 +663,43 @@ LC758rts::	TODO "LC758rts"
 ;		rts					;	C758
 ;; ----------------------------------------------------------------------------
 ;; VDU 12  Clear text Screen		  0 parameters;	 
-mos_VDU_12::	TODO "mos_VDU_12"
-;
-;		jsr	check_vdu5
-;		bne	x_mos_home_CLG
+mos_VDU_12::	
+
+		call	check_vdu5
+		jr	NZ,x_mos_home_CLG
 		bit	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
-;		lbeq	LCBC1_clear_whole_screen
-;LC767:		ldb	vduvar_TXT_WINDOW_TOP
-;LC76A:		stb	vduvar_TXT_CUR_Y
-;		jsr	x_clear_a_line
-;		ldb	vduvar_TXT_CUR_Y
-;		cmpb	vduvar_TXT_WINDOW_BOTTOM
-;		incb
-;		bcc	LC76A
+		jp	Z,LCBC1_clear_whole_screen
+LC767:		ld	A,(IX+vduIX_TXT_WINDOW_TOP)
+LC76A:		ld	(IX+vduIX_TXT_CUR_Y),A
+		call	x_clear_a_line
+		ld	A,(IX+vduIX_TXT_CUR_Y)
+		cp	A,(IX+vduIX_TXT_WINDOW_BOTTOM)
+		inc	A
+		jr	LC76A
 ;; VDU 30  Home cursor			  0  parameters
-mos_VDU_30::	TODO "mos_VDU_30"
-;
-;		jsr	check_vdu5
-;		beq	LC781
-;		jmp	x_home_graphics_cursor
+mos_VDU_30::	
+		call	check_vdu5
+		jr	Z,LC781
+		jp	x_home_graphics_cursor
 ;; ----------------------------------------------------------------------------
-;LC781:		clr	vduvar_VDU_Q_END - 1
-;		clr	vduvar_VDU_Q_END - 2
+LC781:		xor	A,A
+		ld	(IX+vduIX_VDU_Q_END - 1),A
+		ld	(IX+vduIX_VDU_Q_END - 2),A
 ;; VDU 31  Position text cursor		  2  parameters; 0322 = X coordinate ; 0323 = Y coordinate 
-mos_VDU_31::	TODO "mos_VDU_31"
-;
-;		jsr	check_vdu5
-;		bne	LC758rts
-;		jsr	LC7A8
-;		lda	vduvar_VDU_Q_END - 2
-;		adda	vduvar_TXT_WINDOW_LEFT
-;		sta	vduvar_TXT_CUR_X
-;		lda	vduvar_VDU_Q_END - 1
-;		adda	vduvar_TXT_WINDOW_TOP
-;		sta	vduvar_TXT_CUR_Y
-;		jsr	x_check_text_cursor_in_window_setup_display_addr
-;		bcc	LC732_set_cursor_position
-;LC7A8:		ldx	#vduvar_TXT_CUR_X
-;		ldy	#vduvar_TEMP_8
-;		jmp	x_exchange_2atY_with_2atX
+mos_VDU_31::	call	check_vdu5
+		jr	NZ,LC758rts
+		call	LC7A8
+		ld	A,(vduvar_VDU_Q_END - 2)
+		add	A,(IX+vduIX_TXT_WINDOW_LEFT)
+		ld	(IX+vduIX_TXT_CUR_X),A
+		ld	A,(vduvar_VDU_Q_END - 1)
+		add	A,(IX+vduIX_TXT_WINDOW_TOP)
+		ld	(vduvar_TXT_CUR_Y),A
+		call	x_check_text_cursor_in_window_setup_display_addr
+		jr	NC,LC732_set_cursor_position
+LC7A8:		ld	HL,vduvar_TXT_CUR_X
+		ld	DE,vduvar_TEMP_8
+		jp	x_exchange_2atHL_with_2atDE
 ;; ----------------------------------------------------------------------------
 ;; VDU  13	  Carriage  Return	  0 parameters
 mos_VDU_13::	call	check_vdu5	;	C7AF
@@ -1206,7 +1203,7 @@ x_exchange_310_with_328::	TODO "x_exchange_310_with_328"
 ;
 ;		ldx	#vduvar_GRA_CUR_EXT		; ==0x310
 ;		ldy	#vduvar_TEMP_8			; ==0x328
-;		jmp	x_exchange_4atY_with_4atX
+;		jmp	x_exchange_4atHL_with_4atDE
 
 ;; ----------------------------------------------------------------------------
 LCA88_newAPI:
@@ -1687,34 +1684,29 @@ x_soft_scroll1line::	TODO "x_soft_scroll1line"
 ;		dec	zp_vdu_wksp+4
 ;		bne	LCDB0
 
-x_exchange_TXT_CUR_with_BITMAP_READ::	TODO "x_exchange_TXT_CUR_with_BITMAP_READ"
-;	; LCDDA
-;		ldx	#vduvar_TEMP_8
-;		ldy	#vduvar_TXT_CUR_X
-x_exchange_2atY_with_2atX::	TODO "x_exchange_2atY_with_2atX"
-;	; LCDDE
-;		ldb	#0x02				;	CDDE TODO: this is a straigh 16 bit copy do something better?
-;		bra	x_exchange_B_atY_with_B_atX	;	CDE0
-x_exg4atGRACURINTwithGRACURINTOLD::	TODO "x_exg4atGRACURINTwithGRACURINTOLD"
-;	; LCDE2
-;		ldx	#vduvar_GRA_CUR_INT		;	CDE2
-x_exg4atGRACURINTOLDwithX::	TODO "x_exg4atGRACURINTOLDwithX"
-;	; LCDE4
-;		ldy	#vduvar_GRA_CUR_INT_OLD		;	CDE4
-x_exchange_4atY_with_4atX::	TODO "x_exchange_4atY_with_4atX"
-;
-;		ldb	#0x04				;	CDE6
+x_exchange_TXT_CUR_with_BITMAP_READ::			; LCDDA
+		ld	HL,vduvar_TEMP_8
+		ld	DE,vduvar_TXT_CUR_X
+x_exchange_2atHL_with_2atDE::				; LCDDE
+		ld	b,2				;	TODO: this is a straigh 16 bit copy do something better?
+		jr	x_exchange_B_atHL_with_B_atDE	;	CDE0
+x_exg4atGRACURINTwithGRACURINTOLD::			; LCDE2
+		ld	HL,vduvar_GRA_CUR_INT		;	CDE2
+x_exg4atGRACURINTOLDwithX::				; LCDE4
+		ld	DE,vduvar_GRA_CUR_INT_OLD	;	CDE4
+x_exchange_4atHL_with_4atDE::
+		ld	B,4				;	CDE6
 ;; exchange (300/300+A)+Y with (300/300+A)+X
-x_exchange_B_atY_with_B_atX::	TODO "x_exchange_B_atY_with_B_atX"
-;
-;		stb	zp_vdu_wksp			;	CDE8
-;LCDEA:		lda	,x
-;		ldb	,y
-;		sta	,y+
-;		stb	,x+
-;		dec	zp_vdu_wksp			;	CDFA
-;		bne	LCDEA				;	CDFC
-;		rts					;	CDFE
+x_exchange_B_atHL_with_B_atDE::
+LCDEA:		ld	C,(HL)
+		ld	A,(DE)
+		ld	(HL),A
+		ld	A,C
+		ld	(DE),A
+		inc	HL
+		inc	DE
+		djnz	LCDEA				;	CDFC
+		ret					;	CDFE
 ;; ----------------------------------------------------------------------------
 ;; execute upward scroll;  
 x_execute_upward_scroll::	TODO "x_execute_upward_scroll"
@@ -1841,20 +1833,19 @@ LCEE6_setC_rts::
 		scf
 		ret
 ;; ----------------------------------------------------------------------------
-x_check_text_cursor_in_window_setup_display_addr::	TODO "x_check_text_cursor_in_window_setup_display_addr"
-;
-;		ldb	vduvar_TXT_CUR_X
-;		cmpb	vduvar_TXT_WINDOW_LEFT
-;		bmi	LCEE6_setC_rts
-;		cmpb	vduvar_TXT_WINDOW_RIGHT
-;		beq	LCEF7
-;		bpl	LCEE6_setC_rts
-;LCEF7:		ldb	vduvar_TXT_CUR_Y
-;		cmpb	vduvar_TXT_WINDOW_TOP
-;		bmi	LCEE6_setC_rts
-;		cmpb	vduvar_TXT_WINDOW_BOTTOM
-;		beq	x_set_up_displayaddress
-;		bpl	LCEE6_setC_rts
+x_check_text_cursor_in_window_setup_display_addr::
+		ld	A,(vduvar_TXT_CUR_X)
+		cp	A,(IX+vduIX_TXT_WINDOW_LEFT)
+		jp	M,LCEE6_setC_rts
+		cp	A,(IX+vduIX_TXT_WINDOW_RIGHT)
+		jr	Z,LCEF7
+		jr	NC,LCEE6_setC_rts
+LCEF7:		ld	A,(vduvar_TXT_CUR_Y)
+		cp	A,(IX+vduIX_TXT_WINDOW_TOP)
+		jp	M,LCEE6_setC_rts
+		cp	A,(IX+vduIX_TXT_WINDOW_BOTTOM)
+		jr	Z,x_set_up_displayaddress
+		jr	NC,LCEE6_setC_rts
 ;; set up displayaddressess
 ; 
 ; Mode 0: (0319)*640+(0318)* 8 		0
@@ -2864,7 +2855,7 @@ x_drawline_init_bresenham::	TODO "x_drawline_init_bresenham"
 ;		bne	LD437				;
 ;		ldx	#vduvar_TEMP_draw_W		;
 ;		ldy	#vduvar_TEMP_draw_H		;
-;		jsr	x_exchange_2atY_with_2atX	; swap width / height if going up
+;		jsr	x_exchange_2atHL_with_2atDE	; swap width / height if going up
 ;LD437:		ldx	#vduvar_TEMP_draw_W		;
 ;		ldy	#vduvar_GRA_WKSP_7_DELTA_MINOR	;
 ;		jsr	copy4fromXtoY			; 
@@ -3265,7 +3256,7 @@ mos_PLOT_Fill_triangle_routine::	TODO "mos_PLOT_Fill_triangle_routine"
 ;LD636:	ldd	2,x				;	if [2+Y] > [2+X] then swap
 ;	cmpd	2,y				
 ;	blo	LD657rts				
-;	jmp	x_exchange_4atY_with_4atX	
+;	jmp	x_exchange_4atHL_with_4atDE	
 ;; ----------------------------------------------------------------------------
 ;; OSBYTE 134  Read cursor position
 mos_OSBYTE_134::	TODO "mos_OSBYTE_134"
