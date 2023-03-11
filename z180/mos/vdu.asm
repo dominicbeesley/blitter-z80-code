@@ -428,40 +428,43 @@ mos_VDU_5::	TODO "mos_VDU_5"
 		set	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)
 		ret
 ;; VDU 8	 CURSOR LEFT	 NO PARAMETERS
-mos_VDU_8::	TODO "mos_VDU_8"
-;
-;		jsr	check_vdu5	;	C5C5
-;		bne	x_cursor_left_and_down_with_graphics_cursor_in_use;	C5C8
-;		dec	vduvar_TXT_CUR_X		;	C5CA
-;		ldb	vduvar_TXT_CUR_X		;	C5CD
-;		cmpb	vduvar_TXT_WINDOW_LEFT		;	C5D0
-;		bmi	x_execute_wraparound_left_up	;	C5D3
-;		ldb	vduvar_6845_CURSOR_ADDR	+ 1	;	C5D5
-;		subb	vduvar_BYTES_PER_CHAR		;	C5D9
-;		lda	vduvar_6845_CURSOR_ADDR		;	C5DD
-;		sbca	#0x00				;	C5E0
-;		cmpa	vduvar_SCREEN_BOTTOM_HIGH	;	C5E2
-;		bhs	LC5EA				;	C5E5
-;		adda	vduvar_SCREEN_SIZE_HIGH		;	C5E7
-;LC5EA:		tfr	D,X				;	C5EA
-;		jmp	mos_set_cursor_HL		;	C5EB
+mos_VDU_8::	
+
+		call	check_vdu5	;	C5C5
+		jr	NZ, x_cursor_left_and_down_with_graphics_cursor_in_use;	C5C8
+		dec	(IX+vduIX_TXT_CUR_X)		;	C5CA
+		ld	A,(IX+vduIX_TXT_CUR_X)		;	C5CD
+		cp	A,(IX+vduIX_TXT_WINDOW_LEFT)	;	C5D0
+		jr	C,x_execute_wraparound_left_up	;	C5D3
+
+		ld	A,vduvar_6845_CURSOR_ADDR	;	C5D5
+		sub	A,(IX+vduIX_BYTES_PER_CHAR)	;	C5D9
+		ld	L,A
+		ld	A,(IX+vduIX_6845_CURSOR_ADDR+1)	;	C5DD
+		sbc	A,0				;	C5E0
+		cp	A,(IX+vduIX_SCREEN_BOTTOM_HIGH)	;	C5E2
+		jr	NC,LC5EA			;	C5E5
+		add	A,(IX+vduIX_SCREEN_SIZE_HIGH)	;	C5E7
+LC5EA:		ld	H,A				;	C5EA
+		jp	mos_set_cursor_HL		;	C5EB
 ;; ----------------------------------------------------------------------------
 ;; execute wraparound left-up
-x_execute_wraparound_left_up::	TODO "x_execute_wraparound_left_up"
-;
-;		lda	vduvar_TXT_WINDOW_RIGHT		;	C5EE
-;		sta	vduvar_TXT_CUR_X		;	C5F1
-;; cursor up
-x_cursor_up::	TODO "x_cursor_up"
-;
-;		dec	sysvar_SCREENLINES_SINCE_PAGE	;	C5F4
-;		bpl	LC5FC				;	C5F7
-;		inc	sysvar_SCREENLINES_SINCE_PAGE	;	C5F9
-;LC5FC:		ldb	vduvar_TXT_CUR_Y		;	C5FC
-;		cmpb	vduvar_TXT_WINDOW_TOP		;	C5FF
-;		beq	x_cursor_at_top_of_window	;	C602
-;		dec	vduvar_TXT_CUR_Y		;	C604
-;		jmp	x_setup_displayaddress_and_cursor_position
+x_execute_wraparound_left_up::
+
+		ld	A,(IX+vduIX_TXT_WINDOW_RIGHT)	;	C5EE
+		ld	(IX+vduIX_TXT_CUR_X),A		;	C5F1
+; cursor up
+x_cursor_up::	
+
+		ld	HL,sysvar_SCREENLINES_SINCE_PAGE
+		dec	(HL)				;	C5F4
+		jp	P,LC5FC				;	C5F7
+		inc	(HL)				;	C5F9
+LC5FC:		ld	A,(IX+vduIX_TXT_CUR_Y)		;	C5FC
+		cp	(IX+vduIX_TXT_WINDOW_TOP)	;	C5FF
+		jr	Z,x_cursor_at_top_of_window	;	C602
+		dec	(IX+vduIX_TXT_CUR_Y)		;	C604
+		jp	x_setup_displayaddress_and_cursor_position
 ;; ----------------------------------------------------------------------------
 ;; cursor at top of window
 x_cursor_at_top_of_window::
