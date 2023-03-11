@@ -77,7 +77,7 @@ USER_CTR = 0xA00
 		ld	(USER_CTR+2),A
 		ld	(USER_CTR+3),A
 
-;;		ei
+		ei
 
 
 ;;		; bodge to set crtc regs
