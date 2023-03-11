@@ -17,8 +17,12 @@ sheila_MEM_LOMEMTURBO		= 0hFE37
 
 
 sheila_ACIA_CTL		=	0hFE08
+
 ACIA_RDRF		=	0h01
 ACIA_TDRE		=	0h02
+
+BIT_ACIA_RDRF		=	0
+BIT_ACIA_TDRE		=	1
 
 sheila_ACIA_DATA	=	0hFE09
 sheila_SERIAL_ULA	=	0hFE10

@@ -1131,9 +1131,10 @@ ABORT:  LD      HL,FLAGS        ;ACKNOWLEDGE
 ;
 TEST20: LD      (HL),20
 TEST:   PUSH    DE
-        LD      A,6
-        LD      E,0x0FF
-        CALL    BDOS0
+        PUSH    HL
+        LD      HL,0
+        CALL    GETKEY
+        POP     HL
         POP     DE
         OR      A
         RET     Z
@@ -1141,7 +1142,7 @@ TEST:   PUSH    DE
         JR      Z,OSRDCH
         CP      ESC
         JR      Z,ESCSET
-        LD      (INKEY),A
+        LD      (KEYSAVE),A
         RET
 ;
 ;OSRDCH - Read from the current input stream (keyboard).
@@ -1188,7 +1189,7 @@ EXECIN: PUSH    BC              ;SAVE REGISTERS
 ; Destroys: A,H,L,F
 ;
 OSKEY:  PUSH    HL
-        LD      HL,INKEY
+        LD      HL,KEYSAVE
         LD      A,(HL)
         LD      (HL),0
         POP     HL
@@ -1485,7 +1486,7 @@ FCBSIZ  =     128+36+2
 TRPCNT: .db    10
 TABLE:  .rmb    16              ;FILE BLOCK POINTERS
 FLAGS:  .db    0
-INKEY:  .db    0
+KEYSAVE:  .db    0
 EDPTR:  .dw    0
 OPTVAL: .db    0
 INILEN  =     .-TABLE

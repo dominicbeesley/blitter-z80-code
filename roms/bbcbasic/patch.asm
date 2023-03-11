@@ -179,7 +179,6 @@ CLS:    ;;PUSH    BC
 ; Destroys: A,D,E,H,L,F
 ;
 INKEY:  
-
 ;        PUSH    BC
 ;        PUSH    HL
 ;        LD      C,6
@@ -193,9 +192,8 @@ INKEY:
 
         PUSH    BC
         LD      BC, sheila_ACIA_CTL      ; ACIA status
-        OR      A,A             ; clear carry
         IN      A,(C)
-        BIT     BIT_ACIA_RDRF,A
+        AND     A,ACIA_RDRF
         JR      Z,1$
         INC     C               ; point at DATA register
         IN      A,(C)
