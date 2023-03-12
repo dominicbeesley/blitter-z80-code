@@ -768,7 +768,7 @@ LC805:		and	A,(IX+vduIX_COL_COUNT_MINUS1)
 		add	HL,DE
 		ld	(HL),A				; store in one of the FORE/BACK TXt/GFX slots
 
-		ld	A,2
+		ld	A,1
 		cp	A,E		
 		jr	C,LC82C				; if GFX colour
 		ld	A,(vduvar_TXT_FORE)
@@ -779,9 +779,9 @@ LC805:		and	A,(IX+vduIX_COL_COUNT_MINUS1)
 LC82B:		ret
 		; THIS LOOKS WRONG!
 LC82C:		ld	A,(vduvar_VDU_Q_END - 2)
-		ld	HL,vduvar_GRA_FORE
-		ld	E,C
-		ld	(HL),A
+		inc	HL
+		inc	HL
+		ld	(HL),A				; store plot mode
 		ret
 ;; ----------------------------------------------------------------------------
 LC833:		ld	A,0x20				;	C833
