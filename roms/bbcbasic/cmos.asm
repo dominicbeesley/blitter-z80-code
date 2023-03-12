@@ -1062,7 +1062,10 @@ BADSUM: CALL    TELL
 ;            Z-flag reset indicates AUTO-RUN.
 ;  Destroys: A,B,C,D,E,H,L,F
 ;
-OSINIT:         LD      HL,0x0E00
+OSINIT:         
+                ; TODO: get these from MOS calls
+
+                LD      HL,0x0E00
                 LD      DE,0x3000
                 XOR     A,A
                 RET

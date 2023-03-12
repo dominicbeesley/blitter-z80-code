@@ -1,12 +1,7 @@
 ;
         .globl  CLG
-        .globl  COLOUR
-        .globl  DRAW
         .globl  ENVEL
         .globl  GCOL
-        .globl  MODE
-        .globl  MOVE
-        .globl  PLOT
         .globl  SOUND
         .globl  ADVAL
         .globl  POINT
@@ -19,13 +14,7 @@
 
 ;
 CLG:
-COLOUR:
-DRAW:
 ENVEL:
-GCOL:
-MODE:
-MOVE:
-PLOT:
 SOUND:
 ADVAL:
 POINT:

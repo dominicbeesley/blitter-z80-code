@@ -1090,7 +1090,7 @@ INPUT1: CALL    TERMQ
         CP      ";"
         JR      Z,INPUT3
         PUSH    HL              ;SAVE BUFFER POINTER
-        CP      """
+        CP      0h22
         JR      NZ,INPUT6
         PUSH    BC
         CALL    CONS
@@ -2870,6 +2870,86 @@ LDOPS:  .ascii    "I"
 LF      =     0x0A
 CR      =     0x0D
 ;
+
+; NOT SORRY !!!! - Stuff moved from Sorry
+
+PLOT::   
+        CALL    EXPRI
+        EXX
+        PUSH    HL              ; pushed PLOT code
+        CALL    COMMA
+DRAWMOVE:
+        CALL    EXPRI
+        EXX
+        PUSH    HL              ; pushed PLOT X
+        CALL    COMMA
+        CALL    EXPRI
+        POP     HL
+        POP     BC
+
+        LD      A,25
+        CALL    OSWRCH
+        LD      A,C             ; plot CODE
+        CALL    OSWRCH
+        LD      A,L             ; X low
+        CALL    OSWRCH
+        LD      A,H             ; X high
+        CALL    OSWRCH
+        EXX
+        LD      A,L             ; Y low
+        CALL    OSWRCH
+        LD      A,H             ; Y high
+        CALL    OSWRCH
+        JP      XEQ
+
+MOVE::  LD      A,4
+        PUSH    AF
+        JP      DRAWMOVE
+DRAW::  LD      A,4
+        PUSH    AF
+        JP      DRAWMOVE
+        
+
+
+GCOL::  CALL    EXPRI
+        EXX
+        PUSH    HL
+        CALL    COMMA
+        CALL    EXPRI
+        EXX
+        EX      (SP),HL        
+        LD      A,18
+        CALL    OSWRCH
+        LD      A,L
+        CALL    OSWRCH
+        POP     HL
+        LD      A,L
+        CALL    OSWRCH
+        JP      XEQ
+
+COLOUR::LD      A,17
+        JP      EXPRI_VDU_XEQ
+
+MODE::  LD      A,22
+        CALL    EXPRI_VDU
+        ; TODO: shift HIMEM, CLEAR, etc
+        JP      XEQ
+
+EXPRI_VDU:
+        PUSH    AF
+        CALL    EXPRI
+        POP     AF
+        CALL    OSWRCH
+VDU_L:  EXX
+        LD      A,L
+        EXX
+        JP    OSWRCH
+
+EXPRI_VDU_XEQ:
+        CALL    EXPRI_VDU
+        JP      XEQ
+
+
 FIN:    .end
 
 
