@@ -517,12 +517,11 @@ jmp_cal_ext_coors::	TODO "jmp_cal_ext_coors"
 ;		jmp	x_calculate_external_coordinates_from_internal_coordinates;	C658
 ;; ----------------------------------------------------------------------------
 ;; VDU 11 Cursor Up    No Parameters
-mos_VDU_11::	TODO "mos_VDU_11"
-;
-;		jsr	check_vdu5	;	C65B
-;		lbeq	x_cursor_up			;	C65E
-;LC660:		ldb	#0x02				;	C660
-;		bra	x_graphic_cursor_up_Beq2	;	C662
+mos_VDU_11::
+		call	check_vdu5	;	C65B
+		jp	Z,x_cursor_up			;	C65E
+LC660:		ld	B,2				;	C660
+		jp	x_graphic_cursor_up_Beq2	;	C662
 ;; VDU 9 Cursor right	No parameters
 mos_VDU_9:
 		bit	VDUSTAT5_vdu5,(IY+zpIY_vdu_status)
@@ -1043,13 +1042,12 @@ mos_VDU_25::	TODO "mos_VDU_25"
 ;		jmp	x_PLOT_ROUTINES_ENTER_HERE	;else enter Plot routine at D060
 ;; ----------------------------------------------------------------------------
 ;; adjust screen RAMFDBesses
-x_adjust_screen_RAM_addresses::	TODO "x_adjust_screen_RAM_addresses"
-;
-;		ldd	vduvar_6845_SCREEN_START	
-;		jsr	x_subtract_bytes_per_line_from_D
-;		bcc	LC9B3
-;		adda	vduvar_SCREEN_SIZE_HIGH
-;		bcc	LC9B3
+x_adjust_screen_RAM_addresses::
+		ld	HL,(vduvar_6845_SCREEN_START)
+		call	x_subtract_bytes_per_line_from_HL
+		jr	NC,LC9B3_2
+		add	A,(IX+vduIX_SCREEN_SIZE_HIGH)
+		jr	LC9B3
 x_adjust_screen_RAM_addresses_one_line_scroll:
 
 		ld	HL,(vduvar_BYTES_PER_ROW)
@@ -1061,7 +1059,7 @@ x_adjust_screen_RAM_addresses_one_line_scroll:
 		jp	P,LC9B3
 		sub	A,(IX+vduIX_SCREEN_SIZE_HIGH)
 LC9B3:		ld	H,A
-		ld	(vduvar_6845_SCREEN_START),HL
+LC9B3_2:	ld	(vduvar_6845_SCREEN_START),HL
 		ld	B,0xC
 		jp	x_set_6845_screenstart_from_HL
 ;; VDU 26  set default windows		  0 parameters
@@ -1533,12 +1531,14 @@ LCBC1_clear_whole_screen::
 ;;;	bra	1B
 ;; ----------------------------------------------------------------------------
 ;; subtract bytes per line from X/A
-; note new API, address in D instead of X/A and carry flag is opposite sense
-x_subtract_bytes_per_line_from_D::	TODO "x_subtract_bytes_per_line_from_D"
-;
-;		subd	vduvar_BYTES_PER_ROW
-;		cmpa	vduvar_SCREEN_BOTTOM_HIGH
-;LCD06:		rts					;	CD06
+; note new API, address in HL instead of X/A and carry flag is opposite sense
+x_subtract_bytes_per_line_from_HL::		; TODO: inline this?
+		or	A,A				; clear carry
+		ld	DE,(vduvar_BYTES_PER_ROW)
+		sbc	HL,DE
+		ld	A,H
+		cp	A,(IX+vduIX_SCREEN_BOTTOM_HIGH)
+LCD06:		ret					;	CD06
 ; ----------------------------------------------------------------------------
 ; OSBYTE 20		  Explode characters;  
 mos_OSBYTE_20::
@@ -1667,7 +1667,7 @@ x_soft_scroll1line::	TODO "x_soft_scroll1line"
 ;		lda	vduvar_TXT_WINDOW_BOTTOM	;	CDA7
 ;		sta	vduvar_TXT_CUR_Y		;	CDAA
 ;		jsr	x_set_up_displayaddress	;	CDAD
-;LCDB0:		jsr	x_subtract_bytes_per_line_from_D;	CDB0
+;LCDB0:		jsr	x_subtract_bytes_per_line_from_HL;	CDB0
 ;		bcc	LCDB8				;	CDB3
 ;		adda	vduvar_SCREEN_SIZE_HIGH		;	CDB5
 ;LCDB8:		std	zp_vdu_wksp			;	CDB8
@@ -1676,7 +1676,7 @@ x_soft_scroll1line::	TODO "x_soft_scroll1line"
 ;LCDC0:		jsr	x_copy_text_line_window_LCE73				;	CDC0
 ;		bra	LCDCE
 ;; ----------------------------------------------------------------------------
-;LCDC6:		jsr	x_subtract_bytes_per_line_from_D;	CDC6
+;LCDC6:		jsr	x_subtract_bytes_per_line_from_HL;	CDC6
 ;		bcs	LCDC0				;	CDC9
 ;		jsr	x_copy_text_line_window_LCE38			;	CDCB
 ;LCDCE:		lda	zp_vdu_wksp+2			;	CDCE
