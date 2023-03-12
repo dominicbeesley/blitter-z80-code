@@ -99,7 +99,7 @@
         .globl   ZERO
 ;
         .globl   ACCS
-        .globl   .page
+        .globl   PAGE
         .globl   LOMEM
         .globl   HIMEM
         .globl   FREE
@@ -223,11 +223,11 @@ RUN0:   LD      SP,(HIMEM)      ;PREPARE FOR RUN
         CALL    CLEAR
         LD      HL,0
         LD      (ERRTRP),HL
-        LD      HL,(.page)
+        LD      HL,(PAGE)
         LD      A,DATA
         CALL    SEARCH          ;LOOK FOR "DATA"
         LD      (DATPTR),HL     ;SET DATA POINTER
-        LD      IY,(.page)
+        LD      IY,(PAGE)
 XEQ0:   CALL    NEWLIN
 XEQ:    LD      (ERRLIN),IY     ;ERROR POINTER
         CALL    TRAP            ;CHECK KEYBOARD
@@ -876,7 +876,7 @@ PROC1:  CALL    CHECK
         LD      A,30
         JR      C,ERROR3        ;"Bad call"
         PUSH    BC
-        LD      HL,(.page)
+        LD      HL,(PAGE)
 PROC2:  LD      A,DEF
         CALL    SEARCH          ;LOOK FOR "DEF"
         JR      C,PROC3
@@ -1254,12 +1254,12 @@ REPOR:  CALL    REPORT
 ;CLEAR
 ;
 CLR:    CALL    CLEAR
-        LD      HL,(.page)
+        LD      HL,(PAGE)
         JR      RESTR1
 ;
 ;RESTORE [line]
 ;
-RESTOR: LD      HL,(.page)
+RESTOR: LD      HL,(PAGE)
         CALL    TERMQ
         JR      Z,RESTR1
         CALL    ITEMI
@@ -1273,7 +1273,7 @@ RESTR1: LD      A,DATA
         JP      XEQ
 ;
 ;PTR#channel=expr
-;.page=expr
+;PAGE=expr
 ;TIME=expr
 ;LOMEM=expr
 ;HIMEM=expr
@@ -1294,7 +1294,7 @@ PAGEV:  CALL    EQUALS
         CALL    EXPRI
         EXX
         LD      L,0
-        LD      (.page),HL
+        LD      (PAGE),HL
         JP      XEQ
 ;
 TIMEV:  CP      "$"
@@ -1439,11 +1439,11 @@ USR:    CALL    ITEMI
         EXX
 USR1:   PUSH    HL              ;ADDRESS ON STACK
         EX      (SP),IY
-        INC     H               ;.page &FF?
+        INC     H               ;PAGE &FF?
         LD      HL,USR2         ;RETURN ADDRESS
         PUSH    HL
         LD      IX,STAVAR
-        CALL    Z,OSCALL        ;INTERCEPT .page &FF
+        CALL    Z,OSCALL        ;INTERCEPT PAGE &FF
         LD      C,(IX+24)
         PUSH    BC
         POP     AF              ;LOAD FLAGS

@@ -60,7 +60,7 @@
         .globl   RANGE
 ;
         .globl   STAVAR
-        .globl   .page
+        .globl   PAGE
         .globl   TOP
         .globl   LOMEM
         .globl   HIMEM
@@ -98,7 +98,7 @@ FUNTOK  =     0x8D             ;1st FUNCTION TOKEN
 FUNTBL: .dw    DECODE          ;Line number
         .dw    OPENIN          ;OPENIN
         .dw    PTR             ;PTR
-        .dw    PAGEV           ;.page
+        .dw    PAGEV           ;PAGE
         .dw    TIMEV           ;TIME
         .dw    LOMEMV          ;LOMEM
         .dw    HIMEMV          ;HIMEM
@@ -606,7 +606,7 @@ LOADS2: LD      A,(HL)
 ;LEN - length of string.
 ;LOMEM - location of dynamic variables.
 ;HIMEM - top of available RAM.
-;.page - start of current text page.
+;PAGE - start of current text page.
 ;TOP - address of first free byte after program.
 ;ERL - line number where last error occurred.
 ;ERR - number of last error.
@@ -652,7 +652,7 @@ LOMEMV: LD      HL,(LOMEM)
         JR      COUNT1
 HIMEMV: LD      HL,(HIMEM)
         JR      COUNT1
-PAGEV:  LD      HL,(.page)
+PAGEV:  LD      HL,(PAGE)
         JR      COUNT1
 TOPV:   LD      A,(IY)
         INC     IY              ;SKIP "P"

@@ -74,7 +74,7 @@
         .globl  LEXAN2
         .globl  RANGE
 ;
-        .globl   .page
+        .globl   PAGE
         .globl   ACCS
         .globl   BUFFER
         .globl   LINENO
@@ -161,7 +161,7 @@ PURGE:  LD      (HL),A          ;CLEAR SCRATCHPAD
         LD      (ERRTXT),HL
         CALL    OSINIT
         LD      (HIMEM),DE
-        LD      (.page),HL
+        LD      (PAGE),HL
         CALL    NEWIT
         JP      NZ,CHAIN0       ;AUTO-RUN
         CALL    TELL
@@ -466,7 +466,7 @@ KEYWDS: .db    0x80
         .db    0x0F1
         .ascii    'PRINT'
         .db    0x90
-        .ascii    '.page'
+        .ascii    'PAGE'
         .db    0
         .db    0x8F
         .ascii    'PTR'
@@ -566,7 +566,7 @@ KEYWDS: .db    0x80
         .db    0x0D2
         .ascii    'LOMEM'
         .db    0x0D0
-        .ascii    '.page'
+        .ascii    'PAGE'
         .db    0x0CF
         .ascii    'PTR'
         .db    0x0D1
@@ -852,7 +852,7 @@ WARMNC: JP      NC,WARM
 RENUM:  CALL    CLEAR           ;USES DYNAMIC AREA
         CALL    PAIR            ;LOAD HL,BC
         EXX
-        LD      HL,(.page)
+        LD      HL,(PAGE)
         LD      DE,(LOMEM)
 RENUM1: LD      A,(HL)          ;BUILD TABLE
         OR      A
@@ -904,7 +904,7 @@ RENUM2: EX      DE,HL
         LD      (HL),-1
         LD      DE,(LOMEM)
         EXX
-        LD      HL,(.page)
+        LD      HL,(PAGE)
 RENUM3: LD      C,(HL)
         LD      A,C
         OR      A
@@ -999,7 +999,7 @@ NEW:    CALL    NEWIT
 ;
 ;OLD
 ;
-OLD:    LD      HL,(.page)
+OLD:    LD      HL,(PAGE)
         PUSH    HL
         INC     HL
         INC     HL
@@ -1029,7 +1029,7 @@ SAVE:   CALL    SETTOP          ;SET TOP
         CALL    EXPRS           ;FILENAME
         LD      A,CR
         LD      (DE),A
-        LD      DE,(.page)
+        LD      DE,(PAGE)
         LD      HL,(TOP)
         OR      A
         SBC     HL,DE
@@ -1158,7 +1158,7 @@ DEL:    PUSH    DE
 ; AND WRITE FF FF, THEN LOAD (TOP).
 ; Destroys: A,B,C,H,L,F
 ;
-LOAD0:  LD      DE,(.page)
+LOAD0:  LD      DE,(PAGE)
         LD      HL,-256
         ADD     HL,SP
         SBC     HL,DE           ;FIND AVAILABLE SPACE
@@ -1176,7 +1176,7 @@ CLEAN:  CALL    SETTOP
         LD      (HL),-1
         JR      CLEAR
 ;
-SETTOP: LD      HL,(.page)
+SETTOP: LD      HL,(PAGE)
         LD      B,0
         LD      A,CR
 SETOP1: LD      C,(HL)
@@ -1202,7 +1202,7 @@ SETOP2: INC     HL              ;N.B. CALLED FROM NEWIT
 ; FUNCTION AND PROCEDURE POINTERS.
 ;   Destroys: Nothing
 ;
-NEWIT:  LD      HL,(.page)
+NEWIT:  LD      HL,(PAGE)
         LD      (HL),0
         CALL    SETOP2
 CLEAR:  PUSH    HL
@@ -1358,7 +1358,7 @@ TOKEN1: LD      A,(HL)
 ; Destroys: A,B,C,D,E,H,L,F
 ;
 FINDL:  EX      DE,HL
-        LD      HL,(.page)
+        LD      HL,(PAGE)
         XOR     A               ;A=0
         CP      (HL)
         INC     A
@@ -1386,7 +1386,7 @@ FINDL1: LD      C,(HL)
 ;
 SETLIN: LD      B,0
         LD      DE,(ERRLIN)
-        LD      HL,(.page)
+        LD      HL,(PAGE)
         OR      A
         SBC     HL,DE
         ADD     HL,DE

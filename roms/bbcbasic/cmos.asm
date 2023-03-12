@@ -1058,7 +1058,7 @@ BADSUM: CALL    TELL
 ;If BASIC is entered by BBCBASIC FILENAME then file
 ;FILENAME.BBC is automatically CHAINed.
 ;   Outputs: DE = initial value of HIMEM (top of RAM)
-;            HL = initial value of .page (user program)
+;            HL = initial value of PAGE (user program)
 ;            Z-flag reset indicates AUTO-RUN.
 ;  Destroys: A,B,C,D,E,H,L,F
 ;
@@ -1103,7 +1103,7 @@ OSINIT:         LD      HL,0x0E00
 ;;;NOBOOT: EX      DE,HL
 ;;;        LD      (HL),CR
 ;;;        LD      DE,(6)          ;DE = HIMEM
-;;;        LD      E,A             ;.page BOUNDARY
+;;;        LD      E,A             ;PAGE BOUNDARY
 ;;;        LD      HL,USER
 ;;;        RET
 ;
