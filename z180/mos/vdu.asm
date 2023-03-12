@@ -608,7 +608,7 @@ mos_VDU_10::
 		call	check_vdu5	;	C6F0
 		jp	Z, x_text_cursor_down		;	C6F3
 LC6F5:		ld	B,2				;	C6F5
-;		jp	x_cursor_down_with_graphics_in_use;	C6F7
+		jp	x_cursor_down_with_graphics_in_use;	C6F7
 ;; ----------------------------------------------------------------------------
 ;; VDU 28   define text window	      4 parameters; parameters are set up thus ; 0320  P1 left margin ; 0321  P2 bottom margin ; 0322  P3 right margin ; 0323  P4 top margin ; Note that last parameter is always in 0323 
 mos_VDU_28::	TODO "mos_VDU_28"
@@ -796,6 +796,7 @@ mos_VDU_20::
 		xor	A,A				;	C83B
 		ld	HL, vduvar_TXT_FORE
 LC83D:		ld	(HL),A				;	C83D
+		inc	HL
 		djnz	LC83D				;	C841
 		LD	E,A				; = 0
 		ld	A,(vduvar_COL_COUNT_MINUS1)	;	C843
@@ -1091,7 +1092,7 @@ LC9C1:		ld	(HL),A
 		call	mos_VDU_24			;	C9E8
 		res	VDUSTAT3_softscroll,(IY+zpIY_vdu_status)
 		ld	HL,(vduvar_6845_SCREEN_START)	;	C9F0
-mos_set_cursor_HL:
+mos_set_cursor_HL::
 		ld	(vduvar_6845_CURSOR_ADDR),HL	;	C9F6
 		ld	A,0x7F
 		cp	A,H
@@ -1099,11 +1100,11 @@ mos_set_cursor_HL:
 		ld	A,H				; if so normalize by subtracting screen size
 		sub	A,(IX+vduIX_SCREEN_SIZE_HIGH)
 		ld	H,A
-x_set_cursor_position_HL:
+x_set_cursor_position_HL::
 		ld	(zp_vdu_top_scanline),HL
 		ld	HL,(vduvar_6845_CURSOR_ADDR)	; get back unadjusted value
 		ld	B,0xE
-x_set_6845_screenstart_from_HL:				; LCA0E
+x_set_6845_screenstart_from_HL::				; LCA0E
 		ld	A,(vduvar_MODE)
 		cp	A,7
 		jr	NC,LCA27
@@ -1415,11 +1416,11 @@ mos_VDU_set_mode_bmsk1::
 		xor	A,7				;	CB85
 		srl	A
 		ld	E,A
-		ld	(vduvar_BYTES_PER_ROW),A
+		ld	(vduvar_BYTES_PER_ROW+1),A
 		ld	HL,mostbl_VDU_bytes_per_row_low
 		add	HL,DE
 		ld	A,(HL)
-		ld	(vduvar_BYTES_PER_ROW + 1),A
+		ld	(vduvar_BYTES_PER_ROW),A
 
 
 		ld	A, #(1<<VDUSTAT6_cursor_edit)|(1<<VDUSTAT1_scrolldis)|(1<<VDUSTAT0_printen)
@@ -1877,7 +1878,7 @@ x_set_up_displayaddress::
 		inc	HL
 		ld	D,(HL)	
 		ld	HL,(vduvar_6845_SCREEN_START)
-		cp	A,1
+		cp	A,2
 		jr	NC,20$				; mode size >=2 leave it *40 or * 320
 		add	HL,DE				;
 20$:		add	HL,DE
