@@ -2902,11 +2902,11 @@ DRAWMOVE:
         CALL    OSWRCH
         JP      XEQ
 
-MOVE::  LD      A,4
-        PUSH    AF
+MOVE::  LD      L,4
+        PUSH    HL
         JP      DRAWMOVE
-DRAW::  LD      A,4
-        PUSH    AF
+DRAW::  LD      L,5
+        PUSH    HL
         JP      DRAWMOVE
         
 
