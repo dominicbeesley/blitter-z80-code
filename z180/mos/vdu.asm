@@ -1151,9 +1151,6 @@ db_endian_vdu_q_swap::	TODO "db_endian_vdu_q_swap"
 ;; ----------------------------------------------------------------------------
 ;; VDU 24 Define graphics window		  8 parameters; &31C/D Left margin ; &31E/F Bottom margin ; &320/1 Right margin ; &322/3 Top margin 
 mos_VDU_24::
-		rst 8
-
-
 ;; temporary equs to make things clearer
 vduvar_VDU_Q_24_LEFT	=	vduvar_VDU_Q_END - 8
 vduvar_VDU_Q_24_BOTTOM	=	vduvar_VDU_Q_END - 6
@@ -2351,17 +2348,13 @@ x_cursor_and_margins_check::
 		dec	HL
 		sbc	A,(IX+1)
 		jp	M,LD146
-		inc	HL
+		ld	A,(HL)
+		sub	A,(IX+4)
 		inc	HL
 		ld	A,(HL)
-		sub	A,(IX+2)
-		inc	HL
-		ld	A,(HL)
+		sbc	A,(IX+5)
 		dec	HL
-		dec	HL
-		dec	HL
-		sbc	A,(IX+3)
-		ret	P
+		ret	M
 		inc	(IY+zpIY_vdu_wksp)		;	D144
 LD146:		inc	(IY+zpIY_vdu_wksp)		;	D146
 		ret					;	D148
