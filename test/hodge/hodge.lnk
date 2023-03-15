@@ -1,0 +1,6 @@
+-i build/hodge.ihx
+-b _CODE=0xE00
+-m
+-j
+build/hodge.rel
+-e
