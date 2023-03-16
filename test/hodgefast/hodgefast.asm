@@ -300,14 +300,26 @@ div:		; H=A/L, corrupts A
 		ret
 		
 divHL:		; return HL/A
+		; optimised by recognising the greatest value will be 255*9 i.e. 
 		ld	C,A
 		xor	A,A		; clear carry and get 0
-		ld	B,A
-1$:		sbc	HL,BC
-		inc	A
-		jr	NC, 1$
-		dec	A
+		add	HL,HL
+		add	HL,HL
+		add	HL,HL
+		add	HL,HL
+		ld	B,12
+1$:		add	HL,HL
+   		rla
+   		cp	A,C
+   		jr	C, 2$
+
+   		sub	A,C
+   		inc	L
+   
+2$:   		djnz	1$
+   		ld	A,L
 		ret
+
 
 
 srcbank:	ld	A,(flip)
