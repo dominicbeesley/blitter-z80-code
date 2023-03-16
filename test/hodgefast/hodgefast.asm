@@ -142,15 +142,16 @@ proclp::	call	getNeigh
 		jr	NZ,not_healthy
 		; healthy state = 
 
-		ld	A,B
-		ld	L,K1
+		ld	L,B
+		ld	H,K1
+		call	div	; L=L/H
+		ld	B,L
+
+		ld	L,C
+		ld	H,K2
 		call	div
-		ld	B,H
-		ld	A,C
-		ld	L,K2
-		call	div
-		ld	A,B
-		add	A,H
+		ld	A,H
+		add	A,B
 		jr	setit		; = infected/k1 + ill/k2
 
 not_healthy::	cp	A,Q
@@ -292,12 +293,24 @@ setXY::		push	AF
 		xor	A,A
 		ret		
 
-div:		; H=A/L, corrupts A
-		ld	H,-1
-1$:		inc	H
-		sub	A,L
-		jr	NC,1$
+div:		; L=L/H, corrupts B,A
+
+		xor	A
+		ld	B,8
+1$:		rl	L
+		rla
+		cp	A,H
+		jr	C,2$
+		sub	A,H
+		inc	L
+2$:		djnz	1$
 		ret
+
+;		ld	H,-1
+;1$:		inc	H
+;		sub	A,L
+;		jr	NC,1$
+;		ret
 		
 divHL:		; return HL/A
 		; optimised by recognising the greatest value will be 255*9 i.e. 
