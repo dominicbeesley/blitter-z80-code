@@ -54,58 +54,80 @@ mainlp:		call	show
 		jr	mainlp
 
 
-show:		xor	A,A
-		ld	D,A		; X counter
-		ld	E,A		; Y counter
-showlp:		;GCOL
-		ld	A,18
-		call	OSWRCH
-		ld	A,0
-		call	OSWRCH
-		call	getXY
+show:		call	srcbank		; HL points at start of data
+		ld	DE,0h3000	; DE points at screen
+		ld	BC,64*64
+
+		ld	A,32
+		
+sh_ch_rw_lp:	ld	(char_rw_ctr),A
+		ld	A,64		
+sh_ch_col_lp:	ld	(char_col_ctr),A
+		push	BC
+		ld	A,(HL)
+		push	HL
+		ld	HL,coltab
 		ld	C,A
 		ld	B,0
-		ld	HL,coltab
 		add	HL,BC
 		ld	A,(HL)
-		call	OSWRCH
-		;PLOT
-		ld	A,25
-		call	OSWRCH
-		ld	A,69
-		call	OSWRCH
+		pop	HL
+
+		ld	BC,64		; next row for source data
+		add	HL,BC
+
+		pop	BC
+
+		ld	(DE),A
+		inc	DE
+		ld	(DE),A
+		inc	DE
+		ld	(DE),A
+		inc	DE
+		ld	(DE),A
+		inc	DE
+
+		; second pixel row in char cell
+		push	BC
+		ld	A,(HL)
+		push	HL
+		ld	HL,coltab
+		ld	C,A
 		ld	B,0
-		ld	A,D
-		sla	A
-		rl	B
-		sla	A
-		rl	B
-		sla	A
-		rl	B
-		call	OSWRCH
-		ld	A,B
-		call	OSWRCH
-		ld	B,0
+		add	HL,BC
+		ld	A,(HL)
+		pop	HL
+
+		ld	BC,-63		; prev row, next pixel for source data
+		add	HL,BC
+
+		pop	BC
+
+		ld	(DE),A
+		inc	DE
+		ld	(DE),A
+		inc	DE
+		ld	(DE),A
+		inc	DE
+		ld	(DE),A
+		inc	DE
+
+		ld	A,(char_col_ctr)
+		dec	A	
+		jr	NZ, sh_ch_col_lp
+
+		; next screen row
 		ld	A,E
-		sla	A
-		rl	B
-		sla	A
-		rl	B
-		sla	A
-		rl	B
-		call	OSWRCH
-		ld	A,B
-		call	OSWRCH
-		
+		add	A,0h80
+		ld	E,A
+		jr	NC,1$
 		inc	D
-		ld	A,D
-		cp	A,SZ
-		jr	NZ, showlp
-		ld	D,0
-		inc	E
-		ld	A,E
-		cp	A,SZ
-		jr	NZ, showlp
+1$:
+
+		ld	A,(char_rw_ctr)
+		dec	A
+		jr	NZ, sh_ch_rw_lp
+
 		ret
 
 process::	xor	A,A
@@ -369,7 +391,7 @@ CCCA    = 0
 coltab:
 	.db	0
 	.rept	Q-2
-	.db	CCC
+	.db	(CCC & 1) | ((CCC & 1)<<1) | ((CCC & 2) << 1) | ((CCC & 2)<<2) | ((CCC & 4) << 2) | ((CCC & 4)<<3) | ((CCC & 8) << 3) | ((CCC & 8)<<4)
 
 CCCA = CCCA + 13
 	.if CCCA / Q
@@ -377,15 +399,21 @@ CCCA = CCCA + 13
 		CCC = CCC + 1
 	.endif
 	.endm
-	.db	15
-	.db	15
-	.db	15
-	.db	15
-	.db	15
-	.db	15
+	.db	0xFF
+	.db	0xFF
+	.db	0xFF
+	.db	0xFF
+	.db	0xFF
+	.db	0xFF
 
 flip:	.rmb 1
 sav:	.rmb 1
+
+char_rw_ctr:	.rmb 1
+char_col_ctr:	.rmb 1
+
+		.area _DATA(ABS,CON)
+
 bank1:	.rmb	SZ*SZ
 bank2:	.rmb	SZ*SZ
 
