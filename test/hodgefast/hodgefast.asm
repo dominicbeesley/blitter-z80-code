@@ -6,8 +6,8 @@ SZ=64	;power of 2
 SZS=5	;shift for SZ
 Q = 100
 K1 = 2
-K2 = 2 	
-G = 5
+K2 = 3 	
+G = 23
 
 OSWRCH	= 0hFFEE
 
@@ -144,14 +144,12 @@ proclp::	call	getNeigh
 
 		ld	L,B
 		ld	H,K1
-		call	div	; L=L/H
-		ld	B,L
-
+		call	div	; A=L/H
 		ld	L,C
+		ld	C,A
 		ld	H,K2
-		call	div
-		ld	A,H
-		add	A,B
+		call	div	; A=L/H
+		add	A,C
 		jr	setit		; = infected/k1 + ill/k2
 
 not_healthy::	cp	A,Q
@@ -293,17 +291,18 @@ setXY::		push	AF
 		xor	A,A
 		ret		
 
-div:		; L=L/H, corrupts B,A
+div::		; L,A=L/H, corrupts B,A
 
 		xor	A
 		ld	B,8
-1$:		rl	L
+1$:		sla	L
 		rla
 		cp	A,H
 		jr	C,2$
 		sub	A,H
 		inc	L
 2$:		djnz	1$
+		ld	A,L
 		ret
 
 ;		ld	H,-1
@@ -312,7 +311,7 @@ div:		; L=L/H, corrupts B,A
 ;		jr	NC,1$
 ;		ret
 		
-divHL:		; return HL/A
+divHL::		; return HL/A
 		; optimised by recognising the greatest value will be 255*9 i.e. 
 		ld	C,A
 		xor	A,A		; clear carry and get 0
@@ -356,22 +355,41 @@ destbank:	ld	A,(flip)
 		.db	(g << 4)|b
 		.endm
 
-palette:	RGB	0,0,0,0
-		RGB	1,4,0,0
-		RGB	2,6,0,0
-		RGB	3,7,0,0
-		RGB	4,8,0,0
-		RGB	5,10,0,0
-		RGB	6,12,0,0
-		RGB	7,13,4,0
-		RGB	8,14,8,0
-		RGB	9,15,10,0
-		RGB	10,15,11,0
-		RGB	11,15,12,0
-		RGB	12,15,13,0
-		RGB	13,15,14,0
-		RGB	14,15,15,0
-		RGB	15,15,15,8
+
+palette:	RGB	 0, 0,15, 0
+		RGB	 1, 2,14, 0
+		RGB	 2, 4,12, 0
+		RGB	 3, 6,10, 0
+		RGB	 4, 8, 8, 0
+		RGB	 5,10, 6, 0
+		RGB	 6,12, 4, 0
+		RGB	 7,14, 2, 0
+		RGB	 8,15, 0, 0
+		RGB	 9,14, 2, 4
+		RGB	10,12, 4, 8
+		RGB	11,10, 6,10
+		RGB	12, 8, 8,10
+		RGB	13, 6,10, 8
+		RGB	14, 4,12, 4
+		RGB	15, 0,14, 2
+
+
+;;palette:	RGB	0,0,0,0
+;;		RGB	1,4,0,0
+;;		RGB	2,6,0,0
+;;		RGB	3,7,0,0
+;;		RGB	4,8,0,0
+;;		RGB	5,10,0,0
+;;		RGB	6,12,0,0
+;;		RGB	7,13,4,0
+;;		RGB	8,14,8,0
+;;		RGB	9,15,10,0
+;;		RGB	10,15,11,0
+;;		RGB	11,15,12,0
+;;		RGB	12,15,13,0
+;;		RGB	13,15,14,0
+;;		RGB	14,15,15,0
+;;		RGB	15,15,15,8
 		
 
 ; from https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Random
