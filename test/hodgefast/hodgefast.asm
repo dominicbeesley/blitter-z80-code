@@ -7,7 +7,7 @@ SZS=5	;shift for SZ
 Q = 100
 K1 = 2
 K2 = 2 	
-G = 23
+G = 5
 
 OSWRCH	= 0hFFEE
 
@@ -122,6 +122,10 @@ sh_ch_col_lp:	ld	(char_col_ctr),A
 		ld	E,A
 		jr	NC,1$
 		inc	D
+
+		; next data row
+		ld	BC,64
+		add	HL,BC
 1$:
 
 		ld	A,(char_rw_ctr)
@@ -342,7 +346,7 @@ palette:	RGB	0,0,0,0
 		RGB	12,15,13,0
 		RGB	13,15,14,0
 		RGB	14,15,15,0
-		RGB	15,4,4,6
+		RGB	15,15,15,8
 		
 
 ; from https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Random
