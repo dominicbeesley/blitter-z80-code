@@ -5,9 +5,9 @@
 SZ=64	;power of 2
 SZS=5	;shift for SZ
 Q = 100
-K1 = 2
+K1 = 3
 K2 = 3 	
-G = 23
+G = 15
 
 OSWRCH	= 0hFFEE
 
